@@ -1,0 +1,164 @@
+[
+	{
+		"comment": "/**\r\n * @namespace myModule\r\n */",
+		"meta": {
+			"filename": "myModule.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\core",
+			"code": {}
+		},
+		"kind": "namespace",
+		"name": "myModule",
+		"longname": "myModule",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * @namespace myModule_Namespace1\r\n * @memberof myModule\r\n */",
+		"meta": {
+			"filename": "namespace1.js",
+			"lineno": 2,
+			"columnno": 0,
+			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {}
+		},
+		"kind": "namespace",
+		"name": "myModule_Namespace1",
+		"memberof": "myModule",
+		"scope": "static",
+		"longname": "myModule.myModule_Namespace1",
+		"___id": "T000002R000006",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * Executes some fancy commands\r\n\t * @param {string} param1 Some string parameter\r\n\t * @param {string[]} param2 Some string array\r\n\t * @returns {object} a fancy object\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
+		"meta": {
+			"range": [
+				341,
+				383
+			],
+			"filename": "namespace1.js",
+			"lineno": 15,
+			"columnno": 1,
+			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000022",
+				"name": "function1",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"param1",
+					"param2"
+				]
+			}
+		},
+		"description": "Executes some fancy commands",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Some string parameter",
+				"name": "param1"
+			},
+			{
+				"type": {
+					"names": [
+						"Array.<string>"
+					]
+				},
+				"description": "Some string array",
+				"name": "param2"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"object"
+					]
+				},
+				"description": "a fancy object"
+			}
+		],
+		"memberof": "myModule.myModule_Namespace1",
+		"name": "function1",
+		"longname": "myModule.myModule_Namespace1.function1",
+		"kind": "function",
+		"scope": "static",
+		"___id": "T000002R000008",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * @namespace myModule_Namespace2\r\n * @memberof myModule\r\n */",
+		"meta": {
+			"filename": "namespace2.js",
+			"lineno": 2,
+			"columnno": 0,
+			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {}
+		},
+		"kind": "namespace",
+		"name": "myModule_Namespace2",
+		"memberof": "myModule",
+		"scope": "static",
+		"longname": "myModule.myModule_Namespace2",
+		"___id": "T000002R000010",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * Destroys your system\r\n\t * @returns {string} A funny joke about you\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
+		"meta": {
+			"range": [
+				243,
+				285
+			],
+			"filename": "namespace2.js",
+			"lineno": 13,
+			"columnno": 1,
+			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {
+				"id": "astnode100000039",
+				"name": "function1",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"param1",
+					"param2"
+				]
+			}
+		},
+		"description": "Destroys your system",
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "A funny joke about you"
+			}
+		],
+		"memberof": "myModule.myModule_Namespace2",
+		"name": "function1",
+		"longname": "myModule.myModule_Namespace2.function1",
+		"kind": "function",
+		"scope": "static",
+		"params": [],
+		"___id": "T000002R000012",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"e:\\jsdoc2tsd\\exampleProject\\src\\core\\myModule.js",
+			"e:\\jsdoc2tsd\\exampleProject\\src\\namespace1\\namespace1.js",
+			"e:\\jsdoc2tsd\\exampleProject\\src\\namespace2\\namespace2.js"
+		],
+		"___id": "T000002R000014",
+		"___s": true
+	}
+]
