@@ -1,0 +1,40 @@
+{
+	"extends": "tslint:recommended",
+	"rules": {
+		"max-line-length": {
+			"options": [
+				180
+			]
+		},
+		"quotemark": [
+			true,
+			"double"
+		],
+		"object-literal-sort-keys": true,
+		"arrow-parens": true,
+		"trailing-comma": false,
+		"eofline": true,
+		"indent": [
+			true,
+			"tabs",
+			4
+		],
+		"newline-before-return": true,
+		"ordered-imports": true,
+		"linebreak-style": [
+			true,
+			"CRLF"
+		],
+		"interface-name": [
+			true,
+			"never-prefix"
+		],
+		"prefer-const": false,
+		"member-ordering": {
+			"options": {
+				"order":"fields-first",
+				"alphabetize": true
+			}
+		}
+	}
+}
