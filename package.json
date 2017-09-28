@@ -2,7 +2,7 @@
 	"name": "jsdoc2tsd",
 	"version": "0.1.0",
 	"description": "",
-	"main": "",
+	"main": "./src-out/core/publish.js",
 	"scripts": {
 		"compile": "tsc -watch -p ./"
 	},
@@ -11,7 +11,12 @@
 	"devDependencies": {
 		"@types/node": "^8.0.29",
 		"grunt": "^1.0.1",
+		"grunt-jsdoc": "^2.1.1",
 		"tslint": "^5.7.0",
 		"typescript": "^2.5.2"
+	},
+	"dependencies": {
+		"jsdoc": "^3.5.5",
+		"dts-dom": "^0.1.20"
 	}
 }
