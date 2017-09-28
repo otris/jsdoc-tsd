@@ -1,0 +1,16 @@
+{
+	"comment": "/**\r\n * @namespace myModule\r\n */",
+	"meta": {
+		"filename": "myModule.js",
+		"lineno": 1,
+		"columnno": 0,
+		"path": "e:\\jsdoc2tsd\\exampleProject\\src\\core",
+		"code": {}
+	},
+	"kind": "namespace",
+	"name": "myModule",
+	"longname": "myModule",
+	"scope": "global",
+	"___id": "T000002R000002",
+	"___s": true
+}
