@@ -3,7 +3,7 @@ import * as dom from "dts-dom";
 export class JSDocTsdParser {
 
 	private resultItems: {
-		[key: string]: dom.DeclarationBase;
+		[key: string]: dom.DeclarationBase[];
 	};
 
 	constructor() {
@@ -17,6 +17,8 @@ export class JSDocTsdParser {
 	public parse(jsdocItems: TDoclet[]) {
 
 		jsdocItems.forEach((item) => {
+			this.resultItems[item.longname] = [];
+
 			switch (item.kind) {
 				case "namespace":
 					this.parseNamespace(item as INamespaceDoclet);
@@ -29,6 +31,6 @@ export class JSDocTsdParser {
 	}
 
 	private parseNamespace(jsdocItem: INamespaceDoclet) {
-		this.resultItems[jsdocItem.longname] = dom.create.namespace(jsdocItem.name);
+		this.resultItems[jsdocItem.longname].push(dom.create.namespace(jsdocItem.name));
 	}
 }
