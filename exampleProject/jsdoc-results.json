@@ -5,7 +5,7 @@
 			"filename": "myModule.js",
 			"lineno": 1,
 			"columnno": 0,
-			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\core",
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\core",
 			"code": {}
 		},
 		"kind": "namespace",
@@ -21,7 +21,7 @@
 			"filename": "namespace1.js",
 			"lineno": 2,
 			"columnno": 0,
-			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
 			"code": {}
 		},
 		"kind": "namespace",
@@ -33,23 +33,24 @@
 		"___s": true
 	},
 	{
-		"comment": "/**\r\n\t * Executes some fancy commands\r\n\t * @param {string} param1 Some string parameter\r\n\t * @param {string[]} param2 Some string array\r\n\t * @returns {object} a fancy object\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
+		"comment": "/**\r\n\t * Executes some fancy commands\r\n\t * @param {string|object} param1 Some string parameter\r\n\t * @param {string[]} param2 Some string array\r\n\t * @param {DocFile} param3 fgfg\r\n\t * @returns {object} a fancy object\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
 		"meta": {
 			"range": [
-				341,
-				383
+				382,
+				432
 			],
 			"filename": "namespace1.js",
-			"lineno": 15,
+			"lineno": 16,
 			"columnno": 1,
-			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
 			"code": {
 				"id": "astnode100000022",
 				"name": "function1",
 				"type": "FunctionDeclaration",
 				"paramnames": [
 					"param1",
-					"param2"
+					"param2",
+					"param3"
 				]
 			}
 		},
@@ -58,7 +59,8 @@
 			{
 				"type": {
 					"names": [
-						"string"
+						"string",
+						"object"
 					]
 				},
 				"description": "Some string parameter",
@@ -72,6 +74,15 @@
 				},
 				"description": "Some string array",
 				"name": "param2"
+			},
+			{
+				"type": {
+					"names": [
+						"DocFile"
+					]
+				},
+				"description": "fgfg",
+				"name": "param3"
 			}
 		],
 		"returns": [
@@ -98,7 +109,7 @@
 			"filename": "namespace2.js",
 			"lineno": 2,
 			"columnno": 0,
-			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
 			"code": {}
 		},
 		"kind": "namespace",
@@ -110,18 +121,18 @@
 		"___s": true
 	},
 	{
-		"comment": "/**\r\n\t * Destroys your system\r\n\t * @returns {string} A funny joke about you\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
+		"comment": "/**\r\n\t * Destroys your system\r\n\t * @param {string} param1 A simple string param\r\n\t * @param {object} param2 A object param\r\n\t * @returns {string} A funny joke about you\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
 		"meta": {
 			"range": [
-				243,
-				285
+				336,
+				378
 			],
 			"filename": "namespace2.js",
-			"lineno": 13,
+			"lineno": 15,
 			"columnno": 1,
-			"path": "e:\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
 			"code": {
-				"id": "astnode100000039",
+				"id": "astnode100000040",
 				"name": "function1",
 				"type": "FunctionDeclaration",
 				"paramnames": [
@@ -131,6 +142,26 @@
 			}
 		},
 		"description": "Destroys your system",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "A simple string param",
+				"name": "param1"
+			},
+			{
+				"type": {
+					"names": [
+						"object"
+					]
+				},
+				"description": "A object param",
+				"name": "param2"
+			}
+		],
 		"returns": [
 			{
 				"type": {
@@ -146,19 +177,125 @@
 		"longname": "myModule.myModule_Namespace2.function1",
 		"kind": "function",
 		"scope": "static",
-		"params": [],
 		"___id": "T000002R000012",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A simple function\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
+		"meta": {
+			"range": [
+				462,
+				490
+			],
+			"filename": "namespace2.js",
+			"lineno": 23,
+			"columnno": 1,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {
+				"id": "astnode100000045",
+				"name": "function2",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			}
+		},
+		"description": "A simple function",
+		"memberof": "myModule.myModule_Namespace2",
+		"name": "function2",
+		"longname": "myModule.myModule_Namespace2.function2",
+		"kind": "function",
+		"scope": "static",
+		"params": [],
+		"___id": "T000002R000013",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A function with multiple return values\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t * @returns {string|boolean}\r\n\t */",
+		"meta": {
+			"range": [
+				626,
+				654
+			],
+			"filename": "namespace2.js",
+			"lineno": 32,
+			"columnno": 1,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {
+				"id": "astnode100000048",
+				"name": "function3",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			}
+		},
+		"description": "A function with multiple return values",
+		"memberof": "myModule.myModule_Namespace2",
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"string",
+						"boolean"
+					]
+				}
+			}
+		],
+		"name": "function3",
+		"longname": "myModule.myModule_Namespace2.function3",
+		"kind": "function",
+		"scope": "static",
+		"params": [],
+		"___id": "T000002R000014",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * Function with different parameter types\r\n\t * @param {string|boolean} param1 A fancy parameter\r\n\t */",
+		"meta": {
+			"range": [
+				770,
+				804
+			],
+			"filename": "namespace2.js",
+			"lineno": 40,
+			"columnno": 1,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {
+				"id": "astnode100000051",
+				"name": "function4",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"param1"
+				]
+			}
+		},
+		"description": "Function with different parameter types",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string",
+						"boolean"
+					]
+				},
+				"description": "A fancy parameter",
+				"name": "param1"
+			}
+		],
+		"name": "function4",
+		"longname": "<anonymous>~function4",
+		"kind": "function",
+		"memberof": "<anonymous>",
+		"scope": "inner",
+		"___id": "T000002R000015",
 		"___s": true
 	},
 	{
 		"kind": "package",
 		"longname": "package:undefined",
 		"files": [
-			"e:\\jsdoc2tsd\\exampleProject\\src\\core\\myModule.js",
-			"e:\\jsdoc2tsd\\exampleProject\\src\\namespace1\\namespace1.js",
-			"e:\\jsdoc2tsd\\exampleProject\\src\\namespace2\\namespace2.js"
+			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\core\\myModule.js",
+			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1\\namespace1.js",
+			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2\\namespace2.js"
 		],
-		"___id": "T000002R000014",
+		"___id": "T000002R000020",
 		"___s": true
 	}
 ]
