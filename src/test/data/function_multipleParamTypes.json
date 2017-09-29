@@ -1,0 +1,41 @@
+{
+	"comment": "/**\r\n\t * Function with different parameter types\r\n\t * @param {string|boolean} param1 A fancy parameter\r\n\t */",
+	"meta": {
+		"range": [
+			770,
+			804
+		],
+		"filename": "namespace2.js",
+		"lineno": 40,
+		"columnno": 1,
+		"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+		"code": {
+			"id": "astnode100000051",
+			"name": "function4",
+			"type": "FunctionDeclaration",
+			"paramnames": [
+				"param1"
+			]
+		}
+	},
+	"description": "Function with different parameter types",
+	"params": [
+		{
+			"type": {
+				"names": [
+					"string",
+					"boolean"
+				]
+			},
+			"description": "A fancy parameter",
+			"name": "param1"
+		}
+	],
+	"name": "function4",
+	"longname": "<anonymous>~function4",
+	"kind": "function",
+	"memberof": "<anonymous>",
+	"scope": "inner",
+	"___id": "T000002R000015",
+	"___s": true
+}
