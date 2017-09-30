@@ -35,6 +35,7 @@
 				"order":"fields-first",
 				"alphabetize": true
 			}
-		}
+		},
+		"no-console": false
 	}
 }

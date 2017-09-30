@@ -2,6 +2,7 @@ import * as dom from "dts-dom";
 
 export class JSDocTsdParser {
 
+	private jsdocItems: TDoclet[];
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
@@ -15,6 +16,7 @@ export class JSDocTsdParser {
 	}
 
 	public parse(jsdocItems: TDoclet[]) {
+		this.jsdocItems = jsdocItems;
 
 		jsdocItems.forEach((item) => {
 			this.resultItems[item.longname] = [];
@@ -32,6 +34,17 @@ export class JSDocTsdParser {
 					throw new Error(`Unsupported jsdoc item kind: ${item.kind}`);
 			}
 		});
+	}
+
+	public resolveResults(): string {
+		let output = "";
+
+		let results = this.prepareResults();
+		Object.keys(results).forEach((key) => {
+			output += dom.emit(results[key]);
+		});
+
+		return output;
 	}
 
 	private parseFunction(jsdocItem: IFunctionDoclet) {
@@ -105,5 +118,87 @@ export class JSDocTsdParser {
 
 	private parseNamespace(jsdocItem: INamespaceDoclet) {
 		this.resultItems[jsdocItem.longname].push(dom.create.namespace(jsdocItem.name));
+	}
+
+	private prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
+		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
+
+		for (let jsdocItem of this.jsdocItems) {
+			// is this item a member of any other item?
+			if (jsdocItem.memberof) {
+				// we have to find the parent item
+				let parentItem: dom.TopLevelDeclaration = {} as dom.TopLevelDeclaration;
+
+				let parentItemNames = jsdocItem.memberof.split(".");
+				parentItemNames.forEach((name, index) => {
+
+					if (index < 1) {
+						parentItem = domTopLevelDeclarations[name];
+
+						if (!parentItem) {
+							if (this.resultItems[name]) {
+								domTopLevelDeclarations[name] = this.resultItems[name][0] as dom.TopLevelDeclaration;
+								parentItem = domTopLevelDeclarations[name];
+							}
+						}
+					} else if (parentItem) {
+						let parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
+						let parentItemName = "";
+						for (let i = 0; i < index; i++) {
+							if (i > 0) {
+								parentItemName += ".";
+							}
+
+							parentItemName += parentItemNames[i];
+						}
+
+						let itemFound = parentItemAsNamespace.members.some((item) => {
+							if (item.name === name) {
+								parentItem = item;
+
+								return true;
+							} else {
+								return false;
+							}
+						});
+					}
+				}, this);
+
+				if (parentItem) {
+					// add the items we parsed before as a member of the top level declaration
+					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+						// TODO: For now it works only with namespaces, we have to switch the types
+						if (parentItem.kind === "namespace") {
+							(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
+						} else {
+							// missing the top level declaration
+							console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
+
+							if (!domTopLevelDeclarations[jsdocItem.longname]) {
+								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+							}
+						}
+					}
+				} else {
+					// missing the top level declaration
+					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
+
+					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+						if (!domTopLevelDeclarations[jsdocItem.longname]) {
+							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+						}
+					}
+				}
+			} else {
+				// add this item as a top level declaration
+				for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+					if (!domTopLevelDeclarations[jsdocItem.longname]) {
+						domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+					}
+				}
+			}
+		}
+
+		return domTopLevelDeclarations;
 	}
 }
