@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "./src-out/core/publish.js",
 	"scripts": {
-		"compile": "tsc -watch -p ./"
+		"compile": "tsc -watch -p ./",
+		"parse-example": "move /Y src-out\\core\\publish.js src-out\\core\\publish.backup.js && copy /Y src-out\\core\\publish-example.js src-out\\core\\publish.js && jsdoc -r exampleProject -t src-out\\core && move /Y src-out\\core\\publish.backup.js src-out\\core\\publish.js",
 	},
 	"author": "",
 	"license": "ISC",
