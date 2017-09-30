@@ -167,7 +167,7 @@ describe("JSDocTsdParser.parse.function.multipleReturnValue", () => {
 		expect(functionData.returns[0].type.names.length).to.equal(1);
 		expect(functionData.returns[0].type.names[0]).to.equal(dom.type.string);
 		functionData.returns[0].type.names.push(dom.type.number.toString());
-		
+
 		let parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
@@ -199,5 +199,68 @@ describe("JSDocTsdParser.parse.function.multipleReturnValue", () => {
 		expect(functionDeclarations.length).to.equal(2);
 		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
 		expect(functionDeclarations[1].returnType).to.eq(dom.type.number);
+	});
+});
+
+describe("JSDocTsdParser.mapReturnValue", () => {
+	it("should map array values to dom.type.array-Values", () => {
+		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
+
+		let primitiveTypeValues = [
+			"string",
+			"number",
+			"boolean",
+			"any",
+			"void",
+			"object",
+			"null",
+			"undefined",
+			"true",
+			"false"
+		];
+
+		for (let primitiveTypeValue of primitiveTypeValues) {
+			functionData.returns = [
+				{
+					description: "..",
+					type: {
+						names: [
+							primitiveTypeValue
+						]
+					}
+				}
+			];
+
+			let parser = new JSDocTsdParser();
+			parser.parse([functionData]);
+
+			let functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
+			expect(functionDeclarations.length).to.eq(1);
+			expect(functionDeclarations[0].returnType).to.eq(primitiveTypeValue as dom.Type);
+		}
+
+		// do the same with arrays
+		for (let primitiveTypeValue of primitiveTypeValues) {
+			functionData.returns = [
+				{
+					description: "..",
+					type: {
+						names: [
+							primitiveTypeValue + "[]",
+							"Array.<" + primitiveTypeValue + ">"
+						]
+					}
+				}
+			];
+
+			let parser = new JSDocTsdParser();
+			parser.parse([functionData]);
+
+			let functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
+			expect(functionDeclarations.length).to.eq(2);
+
+			expect(JSON.stringify(functionDeclarations[0].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
+			expect(JSON.stringify(functionDeclarations[1].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
+		}
 	});
 });
