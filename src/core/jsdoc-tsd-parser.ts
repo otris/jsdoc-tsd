@@ -31,7 +31,8 @@ export class JSDocTsdParser {
 					break;
 
 				default:
-					throw new Error(`Unsupported jsdoc item kind: ${item.kind}`);
+					console.warn(`Unsupported jsdoc item kind: ${item.kind}`);
+					break;
 			}
 		});
 	}
