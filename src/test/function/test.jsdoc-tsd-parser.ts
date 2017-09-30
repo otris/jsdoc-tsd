@@ -264,3 +264,45 @@ describe("JSDocTsdParser.mapReturnValue", () => {
 		}
 	});
 });
+
+describe("JSDocTsdParser.parse.function.comment", () => {
+	it("should create a function with jsdoc comments", () => {
+		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
+		let parser = new JSDocTsdParser();
+		parser.parse([functionData]);
+
+		let result = parser.getResultItems();
+
+		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		expect(functionDeclarations.length).to.equals(2);
+
+		let functionDescription = `Function with different parameter types\n@param param1 A fancy parameter`;
+
+		for (let functionDeclaration of functionDeclarations) {
+			expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
+		}
+
+		// ensure that non function specific jsdoc comments will be removed
+		functionData.comment = `
+		/**
+		 * A function
+		 * @param {string} bla blub
+		 * @returns {boolean} bla
+		 * @throws {string} error
+		 * @memberof abc.def
+		 * @private
+		 * @static
+		 * @function
+		 */`;
+
+		parser = new JSDocTsdParser();
+		parser.parse([functionData]);
+		result = parser.getResultItems();
+		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+
+		let functionDeclaration = functionDeclarations[0];
+		functionDescription = `A function\n@param bla blub\n@throws {string} error`;
+		expect(functionDeclarations.length).to.equals(2);
+		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
+	});
+});

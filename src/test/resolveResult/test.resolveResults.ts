@@ -11,7 +11,8 @@ describe("JSDocTsdParser.resolveResults.function", () => {
 		parser.parse([functionData]);
 
 		let result = parser.resolveResults();
-		expect(result).to.equals("declare function function2(): void;\r\n\r\n");
+		let expected = `/**\r\n * A simple function\r\n */\r\ndeclare function function2(): void;\r\n\r\n`;
+		expect(result).to.equals(expected);
 	});
 });
 
