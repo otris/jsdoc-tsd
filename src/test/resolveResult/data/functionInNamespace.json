@@ -1,0 +1,46 @@
+[
+	{
+		"comment": "/**\r\n * @namespace myModule_Namespace2\r\n */",
+		"meta": {
+			"filename": "namespace2.js",
+			"lineno": 2,
+			"columnno": 0,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {}
+		},
+		"kind": "namespace",
+		"name": "myModule_Namespace2",
+		"scope": "static",
+		"longname": "myModule_Namespace2",
+		"___id": "T000002R000010",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A simple function\r\n\t * @memberof myModule_Namespace2\r\n\t */",
+		"meta": {
+			"range": [
+				462,
+				490
+			],
+			"filename": "namespace2.js",
+			"lineno": 23,
+			"columnno": 1,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
+			"code": {
+				"id": "astnode100000045",
+				"name": "function2",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			}
+		},
+		"description": "A simple function",
+		"memberof": "myModule_Namespace2",
+		"name": "function2",
+		"longname": "myModule_Namespace2.function2",
+		"kind": "function",
+		"scope": "static",
+		"params": [],
+		"___id": "T000002R000013",
+		"___s": true
+	}
+]
