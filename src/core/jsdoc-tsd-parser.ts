@@ -48,13 +48,25 @@ export class JSDocTsdParser {
 		return output;
 	}
 
+	private mapVariableType(variableType: string) {
+		let matches = variableType.match(/(?:Array\.<([^>]+)>)|(?:([^\[]+)\[\])/);
+
+		if (matches) {
+			let type = matches[1] || matches[2];
+
+			return dom.type.array(type as dom.Type);
+		} else {
+			return variableType as dom.Type;
+		}
+	}
+
 	private parseFunction(jsdocItem: IFunctionDoclet) {
 		let functionReturnValues: dom.Type[] = [];
 
 		if (jsdocItem.returns && jsdocItem.returns.length > 0) {
 			if (jsdocItem.returns[0].type) {
 				jsdocItem.returns[0].type.names.forEach((returnType) => {
-					functionReturnValues.push(returnType as dom.Type);
+					functionReturnValues.push(this.mapVariableType(returnType));
 				});
 			} else {
 				// the jsdoc comment is incomplete, there is no type information for the return value
@@ -80,15 +92,15 @@ export class JSDocTsdParser {
 
 						jsdocItemParams.forEach((singleTypeParam) => {
 							if (singleTypeParam.name === param.name) {
-								functionParams.push(dom.create.parameter(param.name, paramType as dom.Type));
+								functionParams.push(dom.create.parameter(param.name, this.mapVariableType(paramType)));
 							} else {
-								functionParams.push(dom.create.parameter(singleTypeParam.name, singleTypeParam.type.names[0] as dom.Type));
+								functionParams.push(dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0])));
 							}
 						});
 
 						for (let returnType of functionReturnValues) {
 							this.resultItems[jsdocItem.longname].push(
-								dom.create.function(jsdocItem.name, functionParams, returnType as dom.Type)
+								dom.create.function(jsdocItem.name, functionParams, returnType)
 							);
 						}
 					}, this);
@@ -98,12 +110,12 @@ export class JSDocTsdParser {
 
 				jsdocItem.params.forEach((param) => {
 					// We know that the parameter can only have on type
-					params.push(dom.create.parameter(param.name, param.type.names[0] as dom.Type));
+					params.push(dom.create.parameter(param.name, this.mapVariableType(param.type.names[0])));
 				});
 
 				for (let returnType of functionReturnValues) {
 					this.resultItems[jsdocItem.longname].push(
-						dom.create.function(jsdocItem.name, params, returnType as dom.Type)
+						dom.create.function(jsdocItem.name, params, returnType)
 					);
 				}
 			}
@@ -111,7 +123,7 @@ export class JSDocTsdParser {
 			// no params => create a single function declaration
 			for (let returnType of functionReturnValues) {
 				this.resultItems[jsdocItem.longname].push(
-					dom.create.function(jsdocItem.name, [], returnType as dom.Type)
+					dom.create.function(jsdocItem.name, [], returnType)
 				);
 			}
 		}
