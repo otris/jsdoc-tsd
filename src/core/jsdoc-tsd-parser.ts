@@ -48,6 +48,28 @@ export class JSDocTsdParser {
 		return output;
 	}
 
+	private cleanJSDocComment(comment: string | undefined): string {
+		let cleanLines = [];
+
+		if (comment) {
+			for (let line of comment.split(/\r?\n/)) {
+				let cleanedLine = line.trim()
+					.replace(/^\/\*\*\s?/, "") // JSDoc-Header ("/**")
+					.replace(/\s*\*\/\s?$/, "") // JSDoc-Footer ("*/")
+					.replace(/^\*\s?/, "") // Line ("*")
+					.replace(/@param\s\{[^\}]+\}/g, "@param") // Parameter-Types
+					.trim();
+
+				// ignore everything that is not part of the function description in tsd-files
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || !cleanedLine.startsWith("@"))) {
+					cleanLines.push(cleanedLine);
+				}
+			}
+		}
+
+		return cleanLines.join("\n");
+	}
+
 	private mapVariableType(variableType: string) {
 		let matches = variableType.match(/(?:Array\.<([^>]+)>)|(?:([^\[]+)\[\])/);
 
@@ -91,17 +113,21 @@ export class JSDocTsdParser {
 						let functionParams: dom.Parameter[] = [];
 
 						jsdocItemParams.forEach((singleTypeParam) => {
+							let domParam: dom.Parameter = {} as dom.Parameter;
+
 							if (singleTypeParam.name === param.name) {
-								functionParams.push(dom.create.parameter(param.name, this.mapVariableType(paramType)));
+								domParam = dom.create.parameter(param.name, this.mapVariableType(paramType));
 							} else {
-								functionParams.push(dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0])));
+								domParam = dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0]));
 							}
+
+							functionParams.push(domParam);
 						});
 
 						for (let returnType of functionReturnValues) {
-							this.resultItems[jsdocItem.longname].push(
-								dom.create.function(jsdocItem.name, functionParams, returnType)
-							);
+							let domFunction = dom.create.function(jsdocItem.name, functionParams, returnType);
+							domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+							this.resultItems[jsdocItem.longname].push(domFunction);
 						}
 					}, this);
 				}
@@ -114,23 +140,25 @@ export class JSDocTsdParser {
 				});
 
 				for (let returnType of functionReturnValues) {
-					this.resultItems[jsdocItem.longname].push(
-						dom.create.function(jsdocItem.name, params, returnType)
-					);
+					let domFunction = dom.create.function(jsdocItem.name, params, returnType);
+					domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+					this.resultItems[jsdocItem.longname].push(domFunction);
 				}
 			}
 		} else {
 			// no params => create a single function declaration
 			for (let returnType of functionReturnValues) {
-				this.resultItems[jsdocItem.longname].push(
-					dom.create.function(jsdocItem.name, [], returnType)
-				);
+				let domFunction = dom.create.function(jsdocItem.name, [], returnType);
+				domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+				this.resultItems[jsdocItem.longname].push(domFunction);
 			}
 		}
 	}
 
 	private parseNamespace(jsdocItem: INamespaceDoclet) {
-		this.resultItems[jsdocItem.longname].push(dom.create.namespace(jsdocItem.name));
+		let domNamespace = dom.create.namespace(jsdocItem.name);
+		domNamespace.jsDocComment = this.cleanJSDocComment(jsdocItem.comment).replace(/@namespace[^\r\n]+\r?\n/, "");
+		this.resultItems[jsdocItem.longname].push(domNamespace);
 	}
 
 	private prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
