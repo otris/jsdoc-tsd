@@ -71,14 +71,23 @@ export class JSDocTsdParser {
 	}
 
 	private mapVariableType(variableType: string) {
-		let matches = variableType.match(/(?:Array\.<([^>]+)>)|(?:([^\[]+)\[\])/);
+		let matches = variableType.match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
 
 		if (matches) {
 			let type = matches[1] || matches[2];
 
-			return dom.type.array(type as dom.Type);
+			if (type === "*" || type === "") {
+				// wrong type definition
+				return dom.type.any;
+			} else {
+				return dom.type.array(type as dom.Type);
+			}
 		} else {
-			return variableType as dom.Type;
+			if (variableType.match(/array/i) || variableType === "*") {
+				return dom.type.any;
+			} else {
+				return variableType as dom.Type;
+			}
 		}
 	}
 
