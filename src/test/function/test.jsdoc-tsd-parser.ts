@@ -202,6 +202,59 @@ describe("JSDocTsdParser.parse.function.multipleReturnValue", () => {
 	});
 });
 
+describe("JSDocTsdParser.parse.function.arrayReturnValue", () => {
+	it("Should handle multiple represantations of type 'array'", () => {
+		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+
+		if (!functionData.returns) {
+			throw new Error("The function data has no return value");
+		}
+
+		expect(functionData.returns.length).to.equal(1);
+		expect(functionData.returns[0].type.names.length).to.equal(1);
+
+		// add different array parameters to the function
+		functionData.params = [
+			{
+				name: "param1",
+				type: {
+					names: [
+						"Array.<string>",
+						"array.<boolean>",
+						"object[]",
+						"array",
+						"Array",
+						"[]",
+						"*[]",
+						"Array.<*>",
+						"array.<*>"
+					]
+				},
+				comment: "..",
+				description: ".."
+			}
+		];
+
+		let parser = new JSDocTsdParser();
+		parser.parse([functionData]);
+
+		let result = parser.getResultItems();
+		let functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		expect(functionDeclarations.length).to.equal(functionData.params[0].type.names.length);
+
+		// ensure that every type is mapped correctly
+		expect(JSON.stringify(functionDeclarations[0].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.string)));
+		expect(JSON.stringify(functionDeclarations[1].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
+		expect(JSON.stringify(functionDeclarations[2].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.object)));
+		expect(functionDeclarations[3].parameters[0].type).to.eq(dom.type.any);
+		expect(functionDeclarations[4].parameters[0].type).to.eq(dom.type.any);
+		expect(functionDeclarations[5].parameters[0].type).to.eq(dom.type.any);
+		expect(functionDeclarations[6].parameters[0].type).to.eq(dom.type.any);
+		expect(functionDeclarations[7].parameters[0].type).to.eq(dom.type.any);
+		expect(functionDeclarations[8].parameters[0].type).to.eq(dom.type.any);
+	});
+});
+
 describe("JSDocTsdParser.mapReturnValue", () => {
 	it("should map array values to dom.type.array-Values", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
@@ -262,6 +315,48 @@ describe("JSDocTsdParser.mapReturnValue", () => {
 			expect(JSON.stringify(functionDeclarations[0].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
 			expect(JSON.stringify(functionDeclarations[1].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
 		}
+	});
+});
+
+describe("JSDocTsdParser.parse.function.comment", () => {
+	it("should create a function with jsdoc comments", () => {
+		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
+		let parser = new JSDocTsdParser();
+		parser.parse([functionData]);
+
+		let result = parser.getResultItems();
+
+		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		expect(functionDeclarations.length).to.equals(2);
+
+		let functionDescription = `Function with different parameter types\n@param param1 A fancy parameter`;
+
+		for (let functionDeclaration of functionDeclarations) {
+			expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
+		}
+
+		// ensure that non function specific jsdoc comments will be removed
+		functionData.comment = `
+		/**
+		 * A function
+		 * @param {string} bla blub
+		 * @returns {boolean} bla
+		 * @throws {string} error
+		 * @memberof abc.def
+		 * @private
+		 * @static
+		 * @function
+		 */`;
+
+		parser = new JSDocTsdParser();
+		parser.parse([functionData]);
+		result = parser.getResultItems();
+		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+
+		let functionDeclaration = functionDeclarations[0];
+		functionDescription = `A function\n@param bla blub\n@throws {string} error`;
+		expect(functionDeclarations.length).to.equals(2);
+		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 });
 
