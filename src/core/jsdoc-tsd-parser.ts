@@ -30,6 +30,10 @@ export class JSDocTsdParser {
 					this.parseNamespace(item as INamespaceDoclet);
 					break;
 
+				case "typedef":
+					this.parseTypeDefinition(item as ITypedefDoclet);
+					break;
+
 				default:
 					console.warn(`Unsupported jsdoc item kind: ${item.kind}`);
 					break;
@@ -168,6 +172,25 @@ export class JSDocTsdParser {
 		let domNamespace = dom.create.namespace(jsdocItem.name);
 		domNamespace.jsDocComment = this.cleanJSDocComment(jsdocItem.comment).replace(/@namespace[^\r\n]+\r?\n/, "");
 		this.resultItems[jsdocItem.longname].push(domNamespace);
+	}
+
+	private parseTypeDefinition(jsdocItem: ITypedefDoclet) {
+		let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+		domInterface.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+
+		if (jsdocItem.properties) {
+			for (let property of jsdocItem.properties) {
+				if (property.type) {
+					for (let propertyType of property.type.names) {
+						let domProperty = dom.create.property(property.name, this.mapVariableType(propertyType));
+						domProperty.jsDocComment = this.cleanJSDocComment(property.description);
+						domInterface.members.push(domProperty);
+					}
+				}
+			}
+		}
+
+		this.resultItems[jsdocItem.longname].push(domInterface);
 	}
 
 	private prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
