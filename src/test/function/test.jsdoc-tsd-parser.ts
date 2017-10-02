@@ -255,6 +255,49 @@ describe("JSDocTsdParser.parse.function.arrayReturnValue", () => {
 	});
 });
 
+describe("JSDocTsdParser.parse.function.booleanReturnValue", () => {
+	it("Should handle multiple represantations of type 'boolean'", () => {
+		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+
+		if (!functionData.returns) {
+			throw new Error("The function data has no return value");
+		}
+
+		expect(functionData.returns.length).to.equal(1);
+		expect(functionData.returns[0].type.names.length).to.equal(1);
+
+		// add different boolean parameters to the function
+		functionData.params = [
+			{
+				name: "param1",
+				type: {
+					names: [
+						"bool",
+						"boolean",
+						"bool[]",
+						"boolean[]"
+					]
+				},
+				comment: "..",
+				description: ".."
+			}
+		];
+
+		let parser = new JSDocTsdParser();
+		parser.parse([functionData]);
+
+		let result = parser.getResultItems();
+		let functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		expect(functionDeclarations.length).to.equal(functionData.params[0].type.names.length);
+
+		// ensure that every type is mapped correctly
+		expect(functionDeclarations[0].parameters[0].type).to.eq(dom.type.boolean);
+		expect(functionDeclarations[1].parameters[0].type).to.eq(dom.type.boolean);
+		expect(JSON.stringify(functionDeclarations[2].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
+		expect(JSON.stringify(functionDeclarations[3].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
+	});
+});
+
 describe("JSDocTsdParser.mapReturnValue", () => {
 	it("should map array values to dom.type.array-Values", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
