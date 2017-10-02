@@ -1,0 +1,170 @@
+[
+	{
+		"comment": "/**\r\n\t * Stupid enum member\r\n\t * @enum {string}\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
+		"meta": {
+			"range": [
+				219,
+				334
+			],
+			"filename": "namespace1.js",
+			"lineno": 13,
+			"columnno": 5,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000023",
+				"name": "myStupidEnum",
+				"type": "ObjectExpression",
+				"value": "{\"VAL1\":\"VAL1\",\"VAL2\":\"VAL2\"}"
+			}
+		},
+		"description": "Stupid enum member",
+		"kind": "member",
+		"isEnum": true,
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"memberof": "myModule.myModule_Namespace1",
+		"name": "myStupidEnum",
+		"longname": "myModule.myModule_Namespace1.myStupidEnum",
+		"scope": "static",
+		"params": [],
+		"properties": [
+			{
+				"comment": "/** Stupid enum value 1 */",
+				"meta": {
+					"range": [
+						269,
+						281
+					],
+					"filename": "namespace1.js",
+					"lineno": 15,
+					"columnno": 2,
+					"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+					"code": {
+						"id": "astnode100000026",
+						"name": "VAL1",
+						"type": "Literal",
+						"value": "VAL1"
+					}
+				},
+				"description": "Stupid enum value 1",
+				"name": "VAL1",
+				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+				"kind": "member",
+				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+				"scope": "static",
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"defaultvalue": "VAL1",
+				"___id": "T000002R000009",
+				"___s": true
+			},
+			{
+				"comment": "/** Stupid enum value 2 */",
+				"meta": {
+					"range": [
+						318,
+						330
+					],
+					"filename": "namespace1.js",
+					"lineno": 18,
+					"columnno": 2,
+					"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+					"code": {
+						"id": "astnode100000028",
+						"name": "VAL2",
+						"type": "Literal",
+						"value": "VAL2"
+					}
+				},
+				"description": "Stupid enum value 2",
+				"name": "VAL2",
+				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+				"kind": "member",
+				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+				"scope": "static",
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"defaultvalue": "VAL2",
+				"___id": "T000002R000010",
+				"___s": true
+			}
+		],
+		"___id": "T000002R000008",
+		"___s": true
+	},
+	{
+		"comment": "/** Stupid enum value 1 */",
+		"meta": {
+			"range": [
+				269,
+				281
+			],
+			"filename": "namespace1.js",
+			"lineno": 15,
+			"columnno": 2,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000026",
+				"name": "VAL1",
+				"type": "Literal",
+				"value": "VAL1"
+			}
+		},
+		"description": "Stupid enum value 1",
+		"name": "VAL1",
+		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+		"kind": "member",
+		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+		"scope": "static",
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"defaultvalue": "VAL1",
+		"___id": "T000002R000009",
+		"___s": true
+	},
+	{
+		"comment": "/** Stupid enum value 2 */",
+		"meta": {
+			"range": [
+				318,
+				330
+			],
+			"filename": "namespace1.js",
+			"lineno": 18,
+			"columnno": 2,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000028",
+				"name": "VAL2",
+				"type": "Literal",
+				"value": "VAL2"
+			}
+		},
+		"description": "Stupid enum value 2",
+		"name": "VAL2",
+		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+		"kind": "member",
+		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+		"scope": "static",
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"defaultvalue": "VAL2",
+		"___id": "T000002R000010",
+		"___s": true
+	}
+]

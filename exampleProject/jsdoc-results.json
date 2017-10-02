@@ -33,18 +33,186 @@
 		"___s": true
 	},
 	{
+		"comment": "/**\r\n\t * Stupid enum member\r\n\t * @enum {string}\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
+		"meta": {
+			"range": [
+				219,
+				334
+			],
+			"filename": "namespace1.js",
+			"lineno": 13,
+			"columnno": 5,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000023",
+				"name": "myStupidEnum",
+				"type": "ObjectExpression",
+				"value": "{\"VAL1\":\"VAL1\",\"VAL2\":\"VAL2\"}"
+			}
+		},
+		"description": "Stupid enum member",
+		"kind": "member",
+		"isEnum": true,
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"memberof": "myModule.myModule_Namespace1",
+		"name": "myStupidEnum",
+		"longname": "myModule.myModule_Namespace1.myStupidEnum",
+		"scope": "static",
+		"params": [],
+		"properties": [
+			{
+				"comment": "/** Stupid enum value 1 */",
+				"meta": {
+					"range": [
+						269,
+						281
+					],
+					"filename": "namespace1.js",
+					"lineno": 15,
+					"columnno": 2,
+					"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+					"code": {
+						"id": "astnode100000026",
+						"name": "VAL1",
+						"type": "Literal",
+						"value": "VAL1"
+					}
+				},
+				"description": "Stupid enum value 1",
+				"name": "VAL1",
+				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+				"kind": "member",
+				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+				"scope": "static",
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"defaultvalue": "VAL1",
+				"___id": "T000002R000009",
+				"___s": true
+			},
+			{
+				"comment": "/** Stupid enum value 2 */",
+				"meta": {
+					"range": [
+						318,
+						330
+					],
+					"filename": "namespace1.js",
+					"lineno": 18,
+					"columnno": 2,
+					"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+					"code": {
+						"id": "astnode100000028",
+						"name": "VAL2",
+						"type": "Literal",
+						"value": "VAL2"
+					}
+				},
+				"description": "Stupid enum value 2",
+				"name": "VAL2",
+				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+				"kind": "member",
+				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+				"scope": "static",
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"defaultvalue": "VAL2",
+				"___id": "T000002R000010",
+				"___s": true
+			}
+		],
+		"___id": "T000002R000008",
+		"___s": true
+	},
+	{
+		"comment": "/** Stupid enum value 1 */",
+		"meta": {
+			"range": [
+				269,
+				281
+			],
+			"filename": "namespace1.js",
+			"lineno": 15,
+			"columnno": 2,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000026",
+				"name": "VAL1",
+				"type": "Literal",
+				"value": "VAL1"
+			}
+		},
+		"description": "Stupid enum value 1",
+		"name": "VAL1",
+		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+		"kind": "member",
+		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+		"scope": "static",
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"defaultvalue": "VAL1",
+		"___id": "T000002R000009",
+		"___s": true
+	},
+	{
+		"comment": "/** Stupid enum value 2 */",
+		"meta": {
+			"range": [
+				318,
+				330
+			],
+			"filename": "namespace1.js",
+			"lineno": 18,
+			"columnno": 2,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
+			"code": {
+				"id": "astnode100000028",
+				"name": "VAL2",
+				"type": "Literal",
+				"value": "VAL2"
+			}
+		},
+		"description": "Stupid enum value 2",
+		"name": "VAL2",
+		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+		"kind": "member",
+		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+		"scope": "static",
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"defaultvalue": "VAL2",
+		"___id": "T000002R000010",
+		"___s": true
+	},
+	{
 		"comment": "/**\r\n\t * Executes some fancy commands\r\n\t * @param {string|object} param1 Some string parameter\r\n\t * @param {string[]} param2 Some string array\r\n\t * @param {DocFile} param3 fgfg\r\n\t * @returns {object} a fancy object\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
 		"meta": {
 			"range": [
-				382,
-				432
+				607,
+				657
 			],
 			"filename": "namespace1.js",
-			"lineno": 16,
+			"lineno": 29,
 			"columnno": 1,
 			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1",
 			"code": {
-				"id": "astnode100000022",
+				"id": "astnode100000030",
 				"name": "function1",
 				"type": "FunctionDeclaration",
 				"paramnames": [
@@ -100,7 +268,7 @@
 		"longname": "myModule.myModule_Namespace1.function1",
 		"kind": "function",
 		"scope": "static",
-		"___id": "T000002R000008",
+		"___id": "T000002R000011",
 		"___s": true
 	},
 	{
@@ -117,7 +285,7 @@
 		"memberof": "myModule",
 		"scope": "static",
 		"longname": "myModule.myModule_Namespace2",
-		"___id": "T000002R000010",
+		"___id": "T000002R000014",
 		"___s": true
 	},
 	{
@@ -132,7 +300,7 @@
 			"columnno": 1,
 			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
 			"code": {
-				"id": "astnode100000040",
+				"id": "astnode100000050",
 				"name": "function1",
 				"type": "FunctionDeclaration",
 				"paramnames": [
@@ -177,7 +345,7 @@
 		"longname": "myModule.myModule_Namespace2.function1",
 		"kind": "function",
 		"scope": "static",
-		"___id": "T000002R000012",
+		"___id": "T000002R000016",
 		"___s": true
 	},
 	{
@@ -192,7 +360,7 @@
 			"columnno": 1,
 			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
 			"code": {
-				"id": "astnode100000045",
+				"id": "astnode100000055",
 				"name": "function2",
 				"type": "FunctionDeclaration",
 				"paramnames": []
@@ -205,7 +373,7 @@
 		"kind": "function",
 		"scope": "static",
 		"params": [],
-		"___id": "T000002R000013",
+		"___id": "T000002R000017",
 		"___s": true
 	},
 	{
@@ -220,7 +388,7 @@
 			"columnno": 1,
 			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
 			"code": {
-				"id": "astnode100000048",
+				"id": "astnode100000058",
 				"name": "function3",
 				"type": "FunctionDeclaration",
 				"paramnames": []
@@ -243,7 +411,7 @@
 		"kind": "function",
 		"scope": "static",
 		"params": [],
-		"___id": "T000002R000014",
+		"___id": "T000002R000018",
 		"___s": true
 	},
 	{
@@ -258,7 +426,7 @@
 			"columnno": 1,
 			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2",
 			"code": {
-				"id": "astnode100000051",
+				"id": "astnode100000061",
 				"name": "function4",
 				"type": "FunctionDeclaration",
 				"paramnames": [
@@ -284,7 +452,7 @@
 		"kind": "function",
 		"memberof": "<anonymous>",
 		"scope": "inner",
-		"___id": "T000002R000015",
+		"___id": "T000002R000019",
 		"___s": true
 	},
 	{
@@ -322,11 +490,11 @@
 		"memberof": "myModule.myModule_Namespace1",
 		"scope": "static",
 		"longname": "myModule.myModule_Namespace1.myRealyCoolObject",
-		"___id": "T000002R000020",
+		"___id": "T000002R000024",
 		"___s": true
 	},
 	{
-		"comment": "/**\r\n * My other object\r\n * @typedef someOtherObject\r\n * @property {bool} heyho Some property\r\n * @memberof myModule.myModule_Namespace1\r\n */",
+		"comment": "/**\r\n * My other object\r\n * @typedef someOtherObject\r\n * @property {boolean} heyho Some property\r\n * @memberof myModule.myModule_Namespace1\r\n */",
 		"meta": {
 			"filename": "typedefs.js",
 			"lineno": 9,
@@ -341,7 +509,7 @@
 			{
 				"type": {
 					"names": [
-						"bool"
+						"boolean"
 					]
 				},
 				"description": "Some property",
@@ -351,7 +519,7 @@
 		"memberof": "myModule.myModule_Namespace1",
 		"scope": "static",
 		"longname": "myModule.myModule_Namespace1.someOtherObject",
-		"___id": "T000002R000021",
+		"___id": "T000002R000025",
 		"___s": true
 	},
 	{
@@ -363,7 +531,7 @@
 			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2\\namespace2.js",
 			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\typedefs.js"
 		],
-		"___id": "T000002R000022",
+		"___id": "T000002R000026",
 		"___s": true
 	}
 ]

@@ -6,6 +6,19 @@
 var myModule_Namespace1 = (function () {
 
 	/**
+	 * Stupid enum member
+	 * @enum {string}
+	 * @memberof myModule.myModule_Namespace1
+	 */
+	var myStupidEnum = {
+		/** Stupid enum value 1 */
+		VAL1: "VAL1",
+
+		/** Stupid enum value 2 */
+		VAL2: "VAL2"
+	};
+
+	/**
 	 * Executes some fancy commands
 	 * @param {string|object} param1 Some string parameter
 	 * @param {string[]} param2 Some string array
@@ -18,7 +31,8 @@ var myModule_Namespace1 = (function () {
 	}
 
 	return {
-		function1: function1
+		function1: function1,
+		myStupidEnum
 	};
 
 })();
