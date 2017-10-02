@@ -26,6 +26,14 @@ export class JSDocTsdParser {
 					this.parseFunction(item as IFunctionDoclet);
 					break;
 
+				case "member":
+					if (item.isEnum) {
+						this.parseEnum(item as IMemberDoclet);
+					} else {
+						console.warn("Unknown member type: " + item.longname);
+					}
+					break;
+
 				case "namespace":
 					this.parseNamespace(item as INamespaceDoclet);
 					break;
@@ -35,7 +43,7 @@ export class JSDocTsdParser {
 					break;
 
 				default:
-					console.warn(`Unsupported jsdoc item kind: ${item.kind}`);
+					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 					break;
 			}
 		});
@@ -101,6 +109,25 @@ export class JSDocTsdParser {
 				return variableType as dom.Type;
 			}
 		}
+	}
+
+	private parseEnum(jsdocItem: IMemberDoclet) {
+		if (!jsdocItem.isEnum) {
+			throw new Error(`item ${jsdocItem.longname} is not an enum`);
+		}
+
+		let domEnum: dom.EnumDeclaration = dom.create.enum(jsdocItem.name, (jsdocItem.kind === "constant"));
+		domEnum.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+
+		if (jsdocItem.properties) {
+			for (let property of jsdocItem.properties) {
+				let domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, property.defaultvalue);
+				domEnumMember.jsDocComment = this.cleanJSDocComment(property.description);
+				domEnum.members.push(domEnumMember);
+			}
+		}
+
+		this.resultItems[jsdocItem.longname].push(domEnum);
 	}
 
 	private parseFunction(jsdocItem: IFunctionDoclet) {
