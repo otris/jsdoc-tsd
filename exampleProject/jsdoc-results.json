@@ -288,14 +288,82 @@
 		"___s": true
 	},
 	{
+		"comment": "/**\r\n * A realy cool object\r\n * @typedef myRealyCoolObject\r\n * @property {string} A property\r\n * @property {myModule.myModule_Namespace1.someOtherObject} Property, yeah\r\n * @memberof myModule.myModule_Namespace1\r\n */",
+		"meta": {
+			"filename": "typedefs.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"description": "A realy cool object",
+		"kind": "typedef",
+		"name": "myRealyCoolObject",
+		"properties": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "property",
+				"name": "A"
+			},
+			{
+				"type": {
+					"names": [
+						"myModule.myModule_Namespace1.someOtherObject"
+					]
+				},
+				"description": "yeah",
+				"name": "Property,"
+			}
+		],
+		"memberof": "myModule.myModule_Namespace1",
+		"scope": "static",
+		"longname": "myModule.myModule_Namespace1.myRealyCoolObject",
+		"___id": "T000002R000020",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * My other object\r\n * @typedef someOtherObject\r\n * @property {bool} heyho Some property\r\n * @memberof myModule.myModule_Namespace1\r\n */",
+		"meta": {
+			"filename": "typedefs.js",
+			"lineno": 9,
+			"columnno": 0,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"description": "My other object",
+		"kind": "typedef",
+		"name": "someOtherObject",
+		"properties": [
+			{
+				"type": {
+					"names": [
+						"bool"
+					]
+				},
+				"description": "Some property",
+				"name": "heyho"
+			}
+		],
+		"memberof": "myModule.myModule_Namespace1",
+		"scope": "static",
+		"longname": "myModule.myModule_Namespace1.someOtherObject",
+		"___id": "T000002R000021",
+		"___s": true
+	},
+	{
 		"kind": "package",
 		"longname": "package:undefined",
 		"files": [
 			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\core\\myModule.js",
 			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace1\\namespace1.js",
-			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2\\namespace2.js"
+			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\namespace2\\namespace2.js",
+			"C:\\Users\\maxim\\Develop\\jsdoc2tsd\\exampleProject\\src\\typedefs.js"
 		],
-		"___id": "T000002R000020",
+		"___id": "T000002R000022",
 		"___s": true
 	}
 ]
