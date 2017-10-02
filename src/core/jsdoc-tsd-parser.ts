@@ -84,12 +84,20 @@ export class JSDocTsdParser {
 				// wrong type definition
 				return dom.type.any;
 			} else {
+				if (type === "bool") {
+					type = "boolean";
+				}
+
 				return dom.type.array(type as dom.Type);
 			}
 		} else {
 			if (variableType.match(/array/i) || variableType === "*") {
 				return dom.type.any;
 			} else {
+				if (variableType === "bool") {
+					variableType = "boolean";
+				}
+
 				return variableType as dom.Type;
 			}
 		}
