@@ -42,6 +42,10 @@ export class JSDocTsdParser {
 					this.parseTypeDefinition(item as ITypedefDoclet);
 					break;
 
+				case "file":
+					// suppress warnings for this type
+					break;
+
 				default:
 					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 					break;
