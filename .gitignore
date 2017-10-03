@@ -14,5 +14,3 @@ src-out/*
 .vscode/*
 !.vscode/launch.json
 jsconfig.json
-tsconfig.json
-typings/*

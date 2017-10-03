@@ -155,7 +155,7 @@ export class JSDocTsdParser {
 
 			// if a parameter has different types we have create multiple function declarations
 			let paramsWithMultipleTypes = jsdocItem.params.filter((param) => {
-				return param.type.names.length > 1;
+				return param.hasOwnProperty("type") && param.type.names.length > 1;
 			});
 
 			if (paramsWithMultipleTypes.length > 0) {
@@ -187,8 +187,12 @@ export class JSDocTsdParser {
 				let params: dom.Parameter[] = [];
 
 				jsdocItem.params.forEach((param) => {
-					// We know that the parameter can only have on type
-					params.push(dom.create.parameter(param.name, this.mapVariableType(param.type.names[0])));
+					if (param.type) {
+						// We know that the parameter can only have on type
+						params.push(dom.create.parameter(param.name, this.mapVariableType(param.type.names[0])));
+					} else {
+						params.push(dom.create.parameter(param.name, dom.type.any));
+					}
 				});
 
 				for (let returnType of functionReturnValues) {
