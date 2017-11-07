@@ -30,7 +30,7 @@ export class JSDocTsdParser {
 					if (item.isEnum) {
 						this.parseEnum(item as IMemberDoclet);
 					} else {
-						console.warn("Unknown member type: " + item.longname);
+						this.parseMember(item as IMemberDoclet);
 					}
 					break;
 
@@ -222,6 +222,24 @@ export class JSDocTsdParser {
 		}
 	}
 
+	private parseMember(jsdocItem: IMemberDoclet) {
+		if (jsdocItem.isEnum) {
+			throw new Error(`item ${jsdocItem.longname} is an enum`);
+		}
+
+		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
+			jsdocItem.type.names.forEach((typeName) => {
+				let propertyDeclaration: dom.PropertyDeclaration = dom.create.property(jsdocItem.name, this.mapVariableType(typeName));
+				propertyDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+				this.resultItems[jsdocItem.longname].push(propertyDeclaration);
+			});
+		} else {
+			let propertyDeclaration: dom.PropertyDeclaration = dom.create.property(jsdocItem.name, dom.type.any);
+			propertyDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+			this.resultItems[jsdocItem.longname].push(propertyDeclaration);
+		}
+	}
+
 	private parseNamespace(jsdocItem: INamespaceDoclet) {
 		let domNamespace = dom.create.namespace(jsdocItem.name);
 		domNamespace.jsDocComment = this.cleanJSDocComment(jsdocItem.comment).replace(/@namespace[^\r\n]+\r?\n/, "");
@@ -298,17 +316,24 @@ export class JSDocTsdParser {
 						if (parentItem.kind === "namespace") {
 							(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
 						} else if (parentItem.kind === "class") {
-							let functionDeclaration = parsedItem as dom.FunctionDeclaration;
-							let methodDeclaration: dom.MethodDeclaration = {
-								kind: "method",
-								name: functionDeclaration.name,
-								parameters: functionDeclaration.parameters,
-								returnType: functionDeclaration.returnType,
-								typeParameters: functionDeclaration.typeParameters
-							};
+							let classMember = parsedItem as dom.ClassMember;
 
-							methodDeclaration.jsDocComment = functionDeclaration.jsDocComment;
-							(parentItem as dom.ClassDeclaration).members.push(methodDeclaration as dom.ClassMember);
+							switch ((classMember as any).kind) {
+								case "function":
+									let functionDeclaration: any = classMember as any;
+									classMember = {
+										kind: "method",
+										name: functionDeclaration.name,
+										parameters: functionDeclaration.parameters,
+										returnType: functionDeclaration.returnType,
+										typeParameters: functionDeclaration.typeParameters
+									};
+
+									classMember.jsDocComment = functionDeclaration.jsDocComment;
+									break;
+							}
+
+							(parentItem as dom.ClassDeclaration).members.push(classMember);
 						} else {
 							// missing the top level declaration
 							console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
