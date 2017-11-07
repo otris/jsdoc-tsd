@@ -1,0 +1,71 @@
+[
+	{
+		"comment": "/**\r\n * Destroys your system\r\n * @param {string} param1 A simple string param\r\n * @param {object} [param2] A object param\r\n * @returns {string} A funny joke about you\r\n */",
+		"meta": {
+			"range": [
+				173,
+				214
+			],
+			"filename": "test.js",
+			"lineno": 7,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000002",
+				"name": "function1",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"param1",
+					"param2"
+				]
+			}
+		},
+		"description": "Destroys your system",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "A simple string param",
+				"name": "param1"
+			},
+			{
+				"type": {
+					"names": [
+						"object"
+					]
+				},
+				"optional": true,
+				"description": "A object param",
+				"name": "param2"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "A funny joke about you"
+			}
+		],
+		"name": "function1",
+		"longname": "function1",
+		"kind": "function",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\test.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]

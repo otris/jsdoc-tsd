@@ -423,4 +423,19 @@ describe("JSDocTsdParser.parse.function", () => {
 		expect(functionDeclarations.length).to.equals(2);
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
+
+	it("should create a function with one optional parameter", () => {
+		let functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_twoParamsSecondOptional.json"), { encoding: "utf-8" }));
+		let parser = new JSDocTsdParser();
+		parser.parse(functionData);
+
+		let result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("function1");
+
+		let functionDeclaration: dom.FunctionDeclaration = result["function1"] as dom.FunctionDeclaration;
+		expect(functionDeclaration.parameters.length).to.eq(2);
+
+		let optionalParam = functionDeclaration.parameters[1];
+		expect(optionalParam.flags).to.eq(dom.ParameterFlags.Optional);
+	});
 });
