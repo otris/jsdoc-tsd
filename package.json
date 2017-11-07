@@ -1,6 +1,6 @@
 {
 	"name": "jsdoc-tsd",
-	"version": "0.1.0",
+	"version": "0.4.0",
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
 	"main": "./src-out/core/publish.js",
 	"scripts": {

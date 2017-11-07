@@ -26,9 +26,12 @@ You can also add this template to your JSON configuration file:
 ## Supported Tags
 * @enum
 * @function (implicitly)
+* @method
 * @memberof
 * @namespace
 * @typedef
+* @class
+* @member
 
 ## Ignored Tags
 * @file
