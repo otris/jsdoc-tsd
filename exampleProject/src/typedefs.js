@@ -2,7 +2,7 @@
  * A realy cool object
  * @typedef myRealyCoolObject
  * @property {string} A property
- * @property {myModule.myModule_Namespace1.someOtherObject} Property, yeah
+ * @property {myModule.myModule_Namespace1.someOtherObject} B Property, yeah
  * @memberof myModule.myModule_Namespace1
  */
 
