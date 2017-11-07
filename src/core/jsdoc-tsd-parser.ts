@@ -312,35 +312,51 @@ export class JSDocTsdParser {
 				if (parentItem) {
 					// add the items we parsed before as a member of the top level declaration
 					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
-						// TODO: For now it works only with namespaces, we have to switch the types
-						if (parentItem.kind === "namespace") {
-							(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
-						} else if (parentItem.kind === "class") {
-							let classMember = parsedItem as dom.ClassMember;
+						switch (parentItem.kind) {
+							case "namespace":
+								(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
+								break;
 
-							switch ((classMember as any).kind) {
-								case "function":
-									let functionDeclaration: any = classMember as any;
-									classMember = {
-										kind: "method",
-										name: functionDeclaration.name,
-										parameters: functionDeclaration.parameters,
-										returnType: functionDeclaration.returnType,
-										typeParameters: functionDeclaration.typeParameters
-									};
+							case "class":
+								let classMember = parsedItem as dom.ClassMember;
+							
+								switch ((classMember as any).kind) {
+									case "function":
+										let functionDeclaration: any = classMember as any;
+										classMember = {
+											kind: "method",
+											name: functionDeclaration.name,
+											parameters: functionDeclaration.parameters,
+											returnType: functionDeclaration.returnType,
+											typeParameters: functionDeclaration.typeParameters
+										};
+							
+										classMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+								}
 
-									classMember.jsDocComment = functionDeclaration.jsDocComment;
-									break;
-							}
+								(parentItem as dom.ClassDeclaration).members.push(classMember);
+								break;
 
-							(parentItem as dom.ClassDeclaration).members.push(classMember);
-						} else {
-							// missing the top level declaration
-							console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
+							case "enum":
+								// enum members can already exist	
+								let foundItem = parentItem.members.filter((member) => {
+									return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
+								}).length > 0;
 
-							if (!domTopLevelDeclarations[jsdocItem.longname]) {
-								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
-							}
+								if (!foundItem) {
+									parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
+								}
+								break;
+
+							default:
+								// missing the top level declaration
+								console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
+							
+								if (!domTopLevelDeclarations[jsdocItem.longname]) {
+									domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+								}
+								break;
 						}
 					}
 				} else {
