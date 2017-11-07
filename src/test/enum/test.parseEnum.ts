@@ -5,9 +5,10 @@ import * as path from "path";
 import { JSDocTsdParser } from "../../core/jsdoc-tsd-parser";
 
 describe("JSDocTsdParser.parse.enum", () => {
+	let enumData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enum.json"), { encoding: "utf-8" }));
+	expect(enumData.length).to.eq(3);
+
 	it("Should should create an enum declartation", () => {
-		let enumData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enum.json"), { encoding: "utf-8" }));
-		expect(enumData.length).to.eq(3);
 
 		let parser = new JSDocTsdParser();
 		parser.parse(enumData);
@@ -30,5 +31,21 @@ describe("JSDocTsdParser.parse.enum", () => {
 		expect(member.jsDocComment).to.eq("Stupid enum value 2");
 		expect(member.name).to.eq(enumData[2].name);
 		expect(member.value).to.eq(enumData[2].defaultvalue);
+	});
+
+	it("should add the enum member only once", () => {
+		let enumMembers = enumData.filter((data) => {
+			return !(data as any).isEnum;
+		});
+		expect(enumMembers.length).to.eq(2);
+
+		let parser = new JSDocTsdParser();
+		parser.parse(enumData);
+
+		let result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("myStupidEnum");
+
+		let enumDeclaration: dom.EnumDeclaration = result["myStupidEnum"] as dom.EnumDeclaration;
+		expect(enumDeclaration.members.length).to.eq(2);
 	});
 })
