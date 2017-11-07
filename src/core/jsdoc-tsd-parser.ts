@@ -46,6 +46,10 @@ export class JSDocTsdParser {
 					// suppress warnings for this type
 					break;
 
+				case "class":
+					this.parseClass(item as IClassDoclet);
+					break;
+
 				default:
 					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 					break;
@@ -113,6 +117,13 @@ export class JSDocTsdParser {
 				return variableType as dom.Type;
 			}
 		}
+	}
+
+	private parseClass(jsdocItem: IClassDoclet) {
+		let domClass: dom.ClassDeclaration = dom.create.class(jsdocItem.name);
+		domClass.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+
+		this.resultItems[jsdocItem.longname].push(domClass);
 	}
 
 	private parseEnum(jsdocItem: IMemberDoclet) {
@@ -286,6 +297,18 @@ export class JSDocTsdParser {
 						// TODO: For now it works only with namespaces, we have to switch the types
 						if (parentItem.kind === "namespace") {
 							(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
+						} else if (parentItem.kind === "class") {
+							let functionDeclaration = parsedItem as dom.FunctionDeclaration;
+							let methodDeclaration: dom.MethodDeclaration = {
+								kind: "method",
+								name: functionDeclaration.name,
+								parameters: functionDeclaration.parameters,
+								returnType: functionDeclaration.returnType,
+								typeParameters: functionDeclaration.typeParameters
+							};
+
+							methodDeclaration.jsDocComment = functionDeclaration.jsDocComment;
+							(parentItem as dom.ClassDeclaration).members.push(methodDeclaration as dom.ClassMember);
 						} else {
 							// missing the top level declaration
 							console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
