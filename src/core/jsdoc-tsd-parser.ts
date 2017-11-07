@@ -351,8 +351,8 @@ export class JSDocTsdParser {
 
 							default:
 								// missing the top level declaration
-								console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
-							
+								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
+
 								if (!domTopLevelDeclarations[jsdocItem.longname]) {
 									domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
 								}
