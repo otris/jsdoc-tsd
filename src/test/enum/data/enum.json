@@ -25,9 +25,8 @@
 				"string"
 			]
 		},
-		"memberof": "myModule.myModule_Namespace1",
 		"name": "myStupidEnum",
-		"longname": "myModule.myModule_Namespace1.myStupidEnum",
+		"longname": "myStupidEnum",
 		"scope": "static",
 		"params": [],
 		"properties": [
@@ -51,9 +50,9 @@
 				},
 				"description": "Stupid enum value 1",
 				"name": "VAL1",
-				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+				"longname": ".myStupidEnum.VAL1",
 				"kind": "member",
-				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+				"memberof": "myStupidEnum",
 				"scope": "static",
 				"type": {
 					"names": [
@@ -84,9 +83,9 @@
 				},
 				"description": "Stupid enum value 2",
 				"name": "VAL2",
-				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+				"longname": "myStupidEnum.VAL2",
 				"kind": "member",
-				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+				"memberof": "myStupidEnum",
 				"scope": "static",
 				"type": {
 					"names": [
@@ -121,9 +120,9 @@
 		},
 		"description": "Stupid enum value 1",
 		"name": "VAL1",
-		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+		"longname": "myStupidEnum.VAL1",
 		"kind": "member",
-		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+		"memberof": "myStupidEnum",
 		"scope": "static",
 		"type": {
 			"names": [
@@ -154,9 +153,9 @@
 		},
 		"description": "Stupid enum value 2",
 		"name": "VAL2",
-		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+		"longname": "myStupidEnum.VAL2",
 		"kind": "member",
-		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
+		"memberof": "myStupidEnum",
 		"scope": "static",
 		"type": {
 			"names": [
