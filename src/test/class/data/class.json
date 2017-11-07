@@ -1,0 +1,103 @@
+[
+	{
+		"comment": "/**\r\n * My test class\r\n * @class\r\n */",
+		"meta": {
+			"range": [
+				39,
+				260
+			],
+			"filename": "class1.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class1",
+			"code": {
+				"id": "astnode100000002",
+				"name": "myTestClass",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			},
+			"vars": {
+				"this.myNumberMember": "myTestClass#myNumberMember",
+				"this.mySimpleFunction": "myTestClass#mySimpleFunction",
+				"": null
+			}
+		},
+		"description": "My test class",
+		"kind": "class",
+		"name": "myTestClass",
+		"longname": "myTestClass",
+		"scope": "global",
+		"params": [],
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A simple number member\r\n\t * @type {number}\r\n\t */",
+		"meta": {
+			"range": [
+				126,
+				149
+			],
+			"filename": "class1.js",
+			"lineno": 10,
+			"columnno": 1,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class1",
+			"code": {
+				"id": "astnode100000006",
+				"name": "this.myNumberMember",
+				"type": "Literal",
+				"value": 0,
+				"paramnames": []
+			}
+		},
+		"description": "A simple number member",
+		"type": {
+			"names": [
+				"number"
+			]
+		},
+		"name": "myNumberMember",
+		"longname": "myTestClass#myNumberMember",
+		"kind": "member",
+		"memberof": "myTestClass",
+		"scope": "instance",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A simple function\r\n\t */",
+		"meta": {
+			"range": [
+				190,
+				257
+			],
+			"filename": "class1.js",
+			"lineno": 15,
+			"columnno": 1,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class1",
+			"code": {
+				"id": "astnode100000012",
+				"name": "this.mySimpleFunction",
+				"type": "FunctionExpression",
+				"paramnames": []
+			}
+		},
+		"description": "A simple function",
+		"name": "mySimpleFunction",
+		"longname": "myTestClass#mySimpleFunction",
+		"kind": "function",
+		"memberof": "myTestClass",
+		"scope": "instance",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\class1\\class1.js"
+		],
+		"___id": "T000002R000005",
+		"___s": true
+	}
+]

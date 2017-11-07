@@ -247,7 +247,7 @@ export class JSDocTsdParser {
 		this.resultItems[jsdocItem.longname].push(domInterface);
 	}
 
-	private prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
+	public prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
 		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
 		for (let jsdocItem of this.jsdocItems) {
