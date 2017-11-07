@@ -122,8 +122,74 @@ export class JSDocTsdParser {
 	private parseClass(jsdocItem: IClassDoclet) {
 		let domClass: dom.ClassDeclaration = dom.create.class(jsdocItem.name);
 		domClass.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
-
 		this.resultItems[jsdocItem.longname].push(domClass);
+
+		// Add the constructor
+		if (jsdocItem.params && jsdocItem.params.length > 0) {
+			let jsdocItemParams: IDocletProp[] = jsdocItem.params || [];
+
+			// if a parameter has different types we have to create multiple constructor declarations
+			let paramsWithMultipleTypes = jsdocItem.params.filter((param) => {
+				return param.hasOwnProperty("type") && param.type.names.length > 1;
+			});
+
+			if (paramsWithMultipleTypes.length > 0) {
+				// the constructor has parameters with multiple types
+				for (let param of paramsWithMultipleTypes) {
+					param.type.names.forEach((paramType, index) => {
+						let constructorParams: dom.Parameter[] = [];
+
+						jsdocItemParams.forEach((singleTypeParam) => {
+							let domParam: dom.Parameter = {} as dom.Parameter;
+
+							if (singleTypeParam.name === param.name) {
+								domParam = dom.create.parameter(param.name, this.mapVariableType(paramType));
+							} else {
+								domParam = dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0]));
+							}
+
+							if (singleTypeParam.optional) {
+								domParam.flags = dom.ParameterFlags.Optional;
+							}
+
+							constructorParams.push(domParam);
+						});
+
+						let constructorDeclaration = dom.create.constructor(constructorParams);
+						constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+						domClass.members.push(constructorDeclaration);
+					}, this);
+				}
+			} else {
+				let constructorParams: dom.Parameter[] = [];
+
+				jsdocItem.params.forEach((param) => {
+					let domParam: dom.Parameter;
+
+					if (param.type) {
+						// We know that the parameter can only have one type
+						domParam = dom.create.parameter(param.name, this.mapVariableType(param.type.names[0]));
+					} else {
+						domParam = dom.create.parameter(param.name, dom.type.any);
+					}
+
+					if (param.optional) {
+						domParam.flags = dom.ParameterFlags.Optional;
+					}
+
+					constructorParams.push(domParam);
+				});
+
+				let constructorDeclaration = dom.create.constructor(constructorParams);
+				constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+				domClass.members.push(constructorDeclaration);
+			}
+		} else {
+			// no params
+			let constructorDeclaration = dom.create.constructor([]);
+			constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+			domClass.members.push(constructorDeclaration);
+		}
 	}
 
 	private parseEnum(jsdocItem: IMemberDoclet) {
@@ -336,7 +402,7 @@ export class JSDocTsdParser {
 
 							case "class":
 								let classMember = parsedItem as dom.ClassMember;
-							
+
 								switch ((classMember as any).kind) {
 									case "function":
 										let functionDeclaration: any = classMember as any;
@@ -347,7 +413,7 @@ export class JSDocTsdParser {
 											returnType: functionDeclaration.returnType,
 											typeParameters: functionDeclaration.typeParameters
 										};
-							
+
 										classMember.jsDocComment = functionDeclaration.jsDocComment;
 										break;
 								}
