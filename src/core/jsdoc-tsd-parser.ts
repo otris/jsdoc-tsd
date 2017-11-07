@@ -268,6 +268,11 @@ export class JSDocTsdParser {
 					for (let propertyType of property.type.names) {
 						let domProperty = dom.create.property(property.name, this.mapVariableType(propertyType));
 						domProperty.jsDocComment = this.cleanJSDocComment(property.description);
+
+						if (property.optional) {
+							domProperty.flags = dom.DeclarationFlags.Optional;
+						}
+
 						domInterface.members.push(domProperty);
 					}
 				}
