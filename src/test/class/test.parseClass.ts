@@ -31,9 +31,9 @@ describe("JSDocTsdParser.parse.class", () => {
 		expect(result).haveOwnPropertyDescriptor("myTestClass");
 
 		let parsedClass: dom.ClassDeclaration = result["myTestClass"] as dom.ClassDeclaration;
-		expect(parsedClass.members.length).to.eq(1);
+		expect(parsedClass.members.length).to.eq(3);
 
-		let methodDeclaration: dom.MethodDeclaration = parsedClass.members[0] as dom.MethodDeclaration;
+		let methodDeclaration: dom.MethodDeclaration = parsedClass.members[2] as dom.MethodDeclaration;
 		expect(methodDeclaration.jsDocComment).to.eq("A simple function");
 	});
 })

@@ -35,7 +35,11 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		expect(typeData.length).to.eq(1);
 
 		let typeDefinition: ITypedefDoclet = typeData[0];
-		expect(typeDefinition).haveOwnPropertyDescriptor("properties");
+
+		if (!typeDefinition.properties) {
+			throw new Error("Property 'properties' not defined");
+		}
+
 		expect(typeDefinition.properties.length).to.equal(1);
 		expect(typeDefinition.properties[0].optional).to.equal(true);
 

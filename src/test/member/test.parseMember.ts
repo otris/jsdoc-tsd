@@ -17,12 +17,15 @@ describe("JSDocTsdParser.parse.member", () => {
 		expect(result).haveOwnPropertyDescriptor("myTestClass");
 
 		let myClass: dom.ClassDeclaration = result["myTestClass"] as dom.ClassDeclaration;
-		expect(myClass.members.length).to.equal(1);
+		expect(myClass.members.length).to.equal(2);
 
-		let myPropertyMember: dom.PropertyDeclaration = myClass.members[0] as dom.PropertyDeclaration;
+		let myPropertyMember: dom.PropertyDeclaration = myClass.members[1] as dom.PropertyDeclaration;
 		expect(myPropertyMember.name).to.eq("myNumberMember");
 		expect(myPropertyMember.jsDocComment).to.eq("A simple number member");
-		expect(myPropertyMember.type).to.eq(dom.type.number);
+
+		let unionType = myPropertyMember.type as dom.UnionType;
+		expect(unionType.members.length).to.eq(1);
+		expect(unionType.members[0]).to.eq(dom.type.number);
 	});
 
 });
