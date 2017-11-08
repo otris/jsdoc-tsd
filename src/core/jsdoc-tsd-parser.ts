@@ -158,71 +158,16 @@ export class JSDocTsdParser {
 		this.resultItems[jsdocItem.longname].push(domClass);
 
 		// Add the constructor
+		let constructorDeclaration: dom.ConstructorDeclaration;
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
-			let jsdocItemParams: IDocletProp[] = jsdocItem.params || [];
-
-			// if a parameter has different types we have to create multiple constructor declarations
-			let paramsWithMultipleTypes = jsdocItem.params.filter((param) => {
-				return param.hasOwnProperty("type") && param.type.names.length > 1;
-			});
-
-			if (paramsWithMultipleTypes.length > 0) {
-				// the constructor has parameters with multiple types
-				for (let param of paramsWithMultipleTypes) {
-					param.type.names.forEach((paramType, index) => {
-						let constructorParams: dom.Parameter[] = [];
-
-						jsdocItemParams.forEach((singleTypeParam) => {
-							let domParam: dom.Parameter = {} as dom.Parameter;
-
-							if (singleTypeParam.name === param.name) {
-								domParam = dom.create.parameter(param.name, this.mapVariableType(paramType));
-							} else {
-								domParam = dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0]));
-							}
-
-							if (singleTypeParam.optional) {
-								domParam.flags = dom.ParameterFlags.Optional;
-							}
-
-							constructorParams.push(domParam);
-						});
-
-						let constructorDeclaration = dom.create.constructor(constructorParams);
-						constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-						domClass.members.push(constructorDeclaration);
-					}, this);
-				}
-			} else {
-				let constructorParams: dom.Parameter[] = [];
-
-				jsdocItem.params.forEach((param) => {
-					let domParam: dom.Parameter;
-
-					if (param.type) {
-						// We know that the parameter can only have one type
-						domParam = dom.create.parameter(param.name, this.mapVariableType(param.type.names[0]));
-					} else {
-						domParam = dom.create.parameter(param.name, dom.type.any);
-					}
-
-					if (param.optional) {
-						domParam.flags = dom.ParameterFlags.Optional;
-					}
-
-					constructorParams.push(domParam);
-				});
-
-				let constructorDeclaration = dom.create.constructor(constructorParams);
-				constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-				domClass.members.push(constructorDeclaration);
-			}
+			constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params));
 		} else {
 			// no params
-			let constructorDeclaration = dom.create.constructor([]);
-			constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-			domClass.members.push(constructorDeclaration);
+			constructorDeclaration = dom.create.constructor([]);
 		}
+
+		constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+		domClass.members.push(constructorDeclaration);
 	}
 
 	private parseEnum(jsdocItem: IMemberDoclet) {
@@ -245,92 +190,29 @@ export class JSDocTsdParser {
 	}
 
 	private parseFunction(jsdocItem: IFunctionDoclet) {
-		let functionReturnValues: dom.Type[] = [];
+		let functionReturnValue: dom.Type;
 
 		if (jsdocItem.returns && jsdocItem.returns.length > 0) {
 			if (jsdocItem.returns[0].type) {
-				jsdocItem.returns[0].type.names.forEach((returnType) => {
-					functionReturnValues.push(this.mapVariableType(returnType));
-				});
+				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names);
 			} else {
 				// the jsdoc comment is incomplete, there is no type information for the return value
-				functionReturnValues.push(dom.type.any);
+				functionReturnValue = dom.type.any;
 			}
 		} else {
-			functionReturnValues.push(dom.type.void);
+			functionReturnValue =  dom.type.void;
 		}
 
+		let domFunction: dom.FunctionDeclaration;
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
-			let jsdocItemParams: IDocletProp[] = jsdocItem.params || [];
-
-			// if a parameter has different types we have to create multiple function declarations
-			let paramsWithMultipleTypes = jsdocItem.params.filter((param) => {
-				return param.hasOwnProperty("type") && param.type.names.length > 1;
-			});
-
-			if (paramsWithMultipleTypes.length > 0) {
-				// the function has parameters with multiple types
-				for (let param of paramsWithMultipleTypes) {
-					param.type.names.forEach((paramType, index) => {
-						let functionParams: dom.Parameter[] = [];
-
-						jsdocItemParams.forEach((singleTypeParam) => {
-							let domParam: dom.Parameter = {} as dom.Parameter;
-
-							if (singleTypeParam.name === param.name) {
-								domParam = dom.create.parameter(param.name, this.mapVariableType(paramType));
-							} else {
-								domParam = dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0]));
-							}
-
-							if (singleTypeParam.optional) {
-								domParam.flags = dom.ParameterFlags.Optional;
-							}
-
-							functionParams.push(domParam);
-						});
-
-						for (let returnType of functionReturnValues) {
-							let domFunction = dom.create.function(jsdocItem.name, functionParams, returnType);
-							domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-							this.resultItems[jsdocItem.longname].push(domFunction);
-						}
-					}, this);
-				}
-			} else {
-				let params: dom.Parameter[] = [];
-
-				jsdocItem.params.forEach((param) => {
-					let domParam: dom.Parameter;
-
-					if (param.type) {
-						// We know that the parameter can only have one type
-						domParam = dom.create.parameter(param.name, this.mapVariableType(param.type.names[0]));
-					} else {
-						domParam = dom.create.parameter(param.name, dom.type.any);
-					}
-
-					if (param.optional) {
-						domParam.flags = dom.ParameterFlags.Optional;
-					}
-
-					params.push(domParam);
-				});
-
-				for (let returnType of functionReturnValues) {
-					let domFunction = dom.create.function(jsdocItem.name, params, returnType);
-					domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-					this.resultItems[jsdocItem.longname].push(domFunction);
-				}
-			}
+			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params), functionReturnValue);
 		} else {
 			// no params => create a single function declaration
-			for (let returnType of functionReturnValues) {
-				let domFunction = dom.create.function(jsdocItem.name, [], returnType);
-				domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-				this.resultItems[jsdocItem.longname].push(domFunction);
-			}
+			domFunction = dom.create.function(jsdocItem.name, [], functionReturnValue);
 		}
+
+		domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+		this.resultItems[jsdocItem.longname].push(domFunction);
 	}
 
 	private parseMember(jsdocItem: IMemberDoclet) {
@@ -339,11 +221,14 @@ export class JSDocTsdParser {
 		}
 
 		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
+			let domTypes: dom.Type[] = [];
 			jsdocItem.type.names.forEach((typeName) => {
-				let propertyDeclaration: dom.PropertyDeclaration = dom.create.property(jsdocItem.name, this.mapVariableType(typeName));
-				propertyDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
-				this.resultItems[jsdocItem.longname].push(propertyDeclaration);
+				domTypes.push(this.mapVariableType(typeName));
 			});
+
+			let propertyDeclaration: dom.PropertyDeclaration = dom.create.property(jsdocItem.name, dom.create.union(domTypes));
+			propertyDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+			this.resultItems[jsdocItem.longname].push(propertyDeclaration);
 		} else {
 			let propertyDeclaration: dom.PropertyDeclaration = dom.create.property(jsdocItem.name, dom.type.any);
 			propertyDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
