@@ -42,7 +42,11 @@ describe("JSDocTsdParser.parse.function", () => {
 			expect(functionDeclarations.length).to.equals(1);
 
 			let functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
-			expect(functionDeclaration.parameters[0].type).to.equals(functionData.params[0].type.names[0]);
+			expect(functionDeclaration.parameters.length).to.eq(1);
+
+			let unionParam = functionDeclaration.parameters[0].type as dom.UnionType;
+			expect(unionParam.members.length).to.eq(1);
+			expect(unionParam.members[0]).to.equals(functionData.params[0].type.names[0]);
 		} else {
 			throw new Error("Sample function has no params");
 		}
@@ -60,10 +64,15 @@ describe("JSDocTsdParser.parse.function", () => {
 
 			let result = parser.getResultItems();
 			let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
-			expect(functionDeclarations.length).to.equal(2);
+			expect(functionDeclarations.length).to.equal(1);
 
-			expect(functionDeclarations[0].parameters[0].type).to.eq(functionData.params[0].type.names[0]);
-			expect(functionDeclarations[1].parameters[0].type).to.eq(functionData.params[0].type.names[1]);
+			let functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
+			expect(functionDeclaration.parameters.length).to.eq(1);
+
+			let unionParam = functionDeclaration.parameters[0].type as dom.UnionType;
+			expect(unionParam.members.length).to.eq(2);
+			expect(unionParam.members[0]).to.eq(functionData.params[0].type.names[0]);
+			expect(unionParam.members[1]).to.eq(functionData.params[0].type.names[1]);
 		} else {
 			throw new Error("Sample function has no params");
 		}
@@ -121,7 +130,10 @@ describe("JSDocTsdParser.parse.function", () => {
 		let result = parser.getResultItems();
 		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
-		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
+
+		let union = functionDeclarations[0].returnType as dom.UnionType;
+		expect(union.members.length).to.eq(1);
+		expect(union.members[0]).to.eq(dom.type.string);
 
 		// add a parameter to the function
 		functionData.params = [
@@ -143,7 +155,10 @@ describe("JSDocTsdParser.parse.function", () => {
 		result = parser.getResultItems();
 		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
-		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
+
+		union = functionDeclarations[0].returnType as dom.UnionType;
+		expect(union.members.length).to.eq(1);
+		expect(union.members[0]).to.eq(dom.type.string);
 	});
 
 	it("should create a single dom function declaration with return value 'string'", () => {
@@ -163,9 +178,12 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		let result = parser.getResultItems();
 		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
-		expect(functionDeclarations.length).to.equal(2);
-		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
-		expect(functionDeclarations[1].returnType).to.eq(dom.type.number);
+		expect(functionDeclarations.length).to.equal(1);
+
+		let union = functionDeclarations[0].returnType as dom.UnionType;
+		expect(union.members.length).to.eq(2);
+		expect(union.members[0]).to.eq(dom.type.string);
+		expect(union.members[1]).to.eq(dom.type.number);
 
 		// add a parameter to the function
 		functionData.params = [
@@ -186,9 +204,11 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		result = parser.getResultItems();
 		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
-		expect(functionDeclarations.length).to.equal(2);
-		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
-		expect(functionDeclarations[1].returnType).to.eq(dom.type.number);
+		expect(functionDeclarations.length).to.equal(1);
+
+		union = functionDeclarations[0].returnType as dom.UnionType;
+		expect(union.members[0]).to.eq(dom.type.string);
+		expect(union.members[1]).to.eq(dom.type.number);
 	});
 
 	it("Should handle multiple represantations of type 'array'", () => {
@@ -228,18 +248,25 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		let result = parser.getResultItems();
 		let functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
-		expect(functionDeclarations.length).to.equal(functionData.params[0].type.names.length);
+		expect(functionDeclarations.length).to.equal(1);
 
 		// ensure that every type is mapped correctly
-		expect(JSON.stringify(functionDeclarations[0].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.string)));
-		expect(JSON.stringify(functionDeclarations[1].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
-		expect(JSON.stringify(functionDeclarations[2].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.object)));
-		expect(functionDeclarations[3].parameters[0].type).to.eq(dom.type.any);
-		expect(functionDeclarations[4].parameters[0].type).to.eq(dom.type.any);
-		expect(functionDeclarations[5].parameters[0].type).to.eq(dom.type.any);
-		expect(functionDeclarations[6].parameters[0].type).to.eq(dom.type.any);
-		expect(functionDeclarations[7].parameters[0].type).to.eq(dom.type.any);
-		expect(functionDeclarations[8].parameters[0].type).to.eq(dom.type.any);
+		let union = functionDeclarations[0].parameters[0].type as dom.UnionType;
+		expect(union.members.length).to.eq(9);
+
+		expect((union.members[0] as any).kind).to.eq("array");
+		expect((union.members[0] as any).type).to.eq(dom.type.string);
+		expect((union.members[1] as any).kind).to.eq("array");
+		expect((union.members[1] as any).type).to.eq(dom.type.boolean);
+		expect((union.members[2] as any).kind).to.eq("array");
+		expect((union.members[2] as any).type).to.eq(dom.type.object);
+		expect(union.members[3]).to.eq(dom.type.any);
+		expect(union.members[4]).to.eq(dom.type.any);
+		expect(union.members[5]).to.eq(dom.type.any);
+		expect(union.members[6]).to.eq(dom.type.any);
+		expect(union.members[7]).to.eq(dom.type.any);
+		expect(union.members[8]).to.eq(dom.type.any);
+		
 	});
 
 	it("Should handle multiple represantations of type 'boolean'", () => {
@@ -274,13 +301,17 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		let result = parser.getResultItems();
 		let functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
-		expect(functionDeclarations.length).to.equal(functionData.params[0].type.names.length);
+		expect(functionDeclarations.length).to.equal(1);
 
 		// ensure that every type is mapped correctly
-		expect(functionDeclarations[0].parameters[0].type).to.eq(dom.type.boolean);
-		expect(functionDeclarations[1].parameters[0].type).to.eq(dom.type.boolean);
-		expect(JSON.stringify(functionDeclarations[2].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
-		expect(JSON.stringify(functionDeclarations[3].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
+		let union = functionDeclarations[0].parameters[0].type as dom.UnionType;
+		expect(union.members.length).to.eq(4);
+		expect(union.members[0]).to.eq(dom.type.boolean);
+		expect(union.members[1]).to.eq(dom.type.boolean);
+		expect((union.members[2] as any).kind).to.eq("array");
+		expect((union.members[2] as any).type).to.eq(dom.type.boolean);
+		expect((union.members[3] as any).kind).to.eq("array");
+		expect((union.members[3] as any).type).to.eq(dom.type.boolean);
 	});
 
 	it("should map array values to dom.type.array-Values", () => {
@@ -316,7 +347,10 @@ describe("JSDocTsdParser.parse.function", () => {
 
 			let functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.eq(1);
-			expect(functionDeclarations[0].returnType).to.eq(primitiveTypeValue as dom.Type);
+
+			let union = functionDeclarations[0].returnType as dom.UnionType;
+			expect(union.members.length).to.eq(1);
+			expect(union.members[0]).to.eq(primitiveTypeValue as dom.Type);
 		}
 
 		// do the same with arrays
@@ -337,10 +371,14 @@ describe("JSDocTsdParser.parse.function", () => {
 			parser.parse([functionData]);
 
 			let functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
-			expect(functionDeclarations.length).to.eq(2);
+			expect(functionDeclarations.length).to.eq(1);
 
-			expect(JSON.stringify(functionDeclarations[0].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
-			expect(JSON.stringify(functionDeclarations[1].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
+			let union = functionDeclarations[0].returnType as dom.UnionType;
+			expect(union.members.length).to.eq(2);
+			expect((union.members[0] as any).kind).to.eq("array");
+			expect((union.members[0] as any).type).to.eq(primitiveTypeValue);
+			expect((union.members[1] as any).kind).to.eq("array");
+			expect((union.members[1] as any).type).to.eq(primitiveTypeValue);
 		}
 	});
 
@@ -352,13 +390,10 @@ describe("JSDocTsdParser.parse.function", () => {
 		let result = parser.getResultItems();
 
 		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
-		expect(functionDeclarations.length).to.equals(2);
+		expect(functionDeclarations.length).to.equals(1);
 
 		let functionDescription = `Function with different parameter types\n@param param1 A fancy parameter`;
-
-		for (let functionDeclaration of functionDeclarations) {
-			expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
-		}
+		expect(functionDeclarations[0].jsDocComment).to.equals(functionDescription);
 
 		// ensure that non function specific jsdoc comments will be removed
 		functionData.comment = `
@@ -378,9 +413,9 @@ describe("JSDocTsdParser.parse.function", () => {
 		result = parser.getResultItems();
 		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 
+		expect(functionDeclarations.length).to.equals(1);
 		let functionDeclaration = functionDeclarations[0];
 		functionDescription = `A function\n@param bla blub\n@throws {string} error`;
-		expect(functionDeclarations.length).to.equals(2);
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 
@@ -392,13 +427,10 @@ describe("JSDocTsdParser.parse.function", () => {
 		let result = parser.getResultItems();
 
 		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
-		expect(functionDeclarations.length).to.equals(2);
+		expect(functionDeclarations.length).to.equals(1);
 
 		let functionDescription = `Function with different parameter types\n@param param1 A fancy parameter`;
-
-		for (let functionDeclaration of functionDeclarations) {
-			expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
-		}
+		expect(functionDeclarations[0].jsDocComment).to.equals(functionDescription);
 
 		// ensure that non function specific jsdoc comments will be removed
 		functionData.comment = `
@@ -418,9 +450,9 @@ describe("JSDocTsdParser.parse.function", () => {
 		result = parser.getResultItems();
 		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 
+		expect(functionDeclarations.length).to.equals(1);
 		let functionDeclaration = functionDeclarations[0];
 		functionDescription = `A function\n@param bla blub\n@throws {string} error`;
-		expect(functionDeclarations.length).to.equals(2);
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 
