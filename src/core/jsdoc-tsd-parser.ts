@@ -113,6 +113,16 @@ export class JSDocTsdParser {
 		return cleanLines.join("\n");
 	}
 
+	private mapTypesToUnion(types: string[]): dom.UnionType {
+		let domTypes: dom.Type[] = [];
+
+		types.forEach((type) => {
+			domTypes.push(this.mapVariableType(type));
+		});
+
+		return dom.create.union(domTypes);
+	}
+
 	private mapVariableType(variableType: string) {
 		let matches = variableType.match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
 
