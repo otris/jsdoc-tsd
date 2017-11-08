@@ -68,6 +68,29 @@ export class JSDocTsdParser {
 		return output;
 	}
 
+	private createDomParams(params: IDocletProp[]): dom.Parameter[] {
+		let domParams: dom.Parameter[] = [];
+
+		params.forEach((param) => {
+			let domParam: dom.Parameter;
+
+			if (param.type && param.type.names.length > 0) {
+				domParam = dom.create.parameter(param.name, this.mapTypesToUnion(param.type.names));
+			} else {
+				// the param has no type => map to "any"
+				domParam = dom.create.parameter(param.name, dom.type.any);
+			}
+
+			if (param.optional) {
+				domParam.flags = dom.ParameterFlags.Optional;
+			}
+
+			domParams.push(domParam);
+		});
+
+		return domParams;
+	}
+
 	private cleanJSDocComment(comment: string | undefined): string {
 		let cleanLines = [];
 
