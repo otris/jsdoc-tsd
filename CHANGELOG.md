@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.5.0
+New features in this release:
+ - For classes the constructor will be added now
+ - Support for optional properties / parameters
+
 ### v0.4.0
 New features in this release:
  - The template supports now the tag @class for generating class definitions
