@@ -29,4 +29,26 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		expect(property.type).to.eq(typeData.properties[0].type.names[0] as dom.Type);
 		expect(property.jsDocComment).to.eq(typeData.properties[0].description);
 	});
+
+	it("should create an interface with an optional property", () => {
+		let typeData: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/typedefinition_optional.json"), { encoding: "utf-8" }));
+		expect(typeData.length).to.eq(1);
+
+		let typeDefinition: ITypedefDoclet = typeData[0];
+		expect(typeDefinition).haveOwnPropertyDescriptor("properties");
+		expect(typeDefinition.properties.length).to.equal(1);
+		expect(typeDefinition.properties[0].optional).to.equal(true);
+
+		let parser = new JSDocTsdParser();
+		parser.parse(typeData);
+
+		let result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("someOtherObject");
+
+		let interfaceDeclaration: dom.InterfaceDeclaration = result["someOtherObject"] as dom.InterfaceDeclaration;
+		expect(interfaceDeclaration.members.length).to.eq(1);
+
+		let optionalMember = interfaceDeclaration.members[0];
+		expect(optionalMember.flags).to.eq(dom.DeclarationFlags.Optional);
+	});
 });

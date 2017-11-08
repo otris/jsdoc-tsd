@@ -26,9 +26,7 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		expect(functionDeclaration.returnType).to.equals(dom.type.void);
 	});
-});
 
-describe("JSDocTsdParser.parse.function.checkSingleParamType", () => {
 	it("should create one single dom function declaration", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
@@ -49,9 +47,7 @@ describe("JSDocTsdParser.parse.function.checkSingleParamType", () => {
 			throw new Error("Sample function has no params");
 		}
 	});
-});
 
-describe("JSDocTsdParser.parse.function.checkMultipleParamTypes", () => {
 	it("should create 2 dom function declarations", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
 
@@ -72,9 +68,7 @@ describe("JSDocTsdParser.parse.function.checkMultipleParamTypes", () => {
 			throw new Error("Sample function has no params");
 		}
 	});
-});
 
-describe("JSDocTsdParser.parse.function.noReturnValue", () => {
 	it("should create a single dom function declaration with return value 'void'", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
 		expect(functionData.returns).to.be.undefined;
@@ -109,9 +103,7 @@ describe("JSDocTsdParser.parse.function.noReturnValue", () => {
 		expect(functionDeclarations.length).to.equal(1);
 		expect(functionDeclarations[0].returnType).to.eq(dom.type.void);
 	});
-});
 
-describe("JSDocTsdParser.parse.function.singleReturnValue", () => {
 	it("should create a single dom function declaration with return value 'string'", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
@@ -153,9 +145,7 @@ describe("JSDocTsdParser.parse.function.singleReturnValue", () => {
 		expect(functionDeclarations.length).to.equal(1);
 		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
 	});
-});
 
-describe("JSDocTsdParser.parse.function.multipleReturnValue", () => {
 	it("should create a single dom function declaration with return value 'string'", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
@@ -200,9 +190,7 @@ describe("JSDocTsdParser.parse.function.multipleReturnValue", () => {
 		expect(functionDeclarations[0].returnType).to.eq(dom.type.string);
 		expect(functionDeclarations[1].returnType).to.eq(dom.type.number);
 	});
-});
 
-describe("JSDocTsdParser.parse.function.arrayReturnValue", () => {
 	it("Should handle multiple represantations of type 'array'", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
@@ -253,9 +241,7 @@ describe("JSDocTsdParser.parse.function.arrayReturnValue", () => {
 		expect(functionDeclarations[7].parameters[0].type).to.eq(dom.type.any);
 		expect(functionDeclarations[8].parameters[0].type).to.eq(dom.type.any);
 	});
-});
 
-describe("JSDocTsdParser.parse.function.booleanReturnValue", () => {
 	it("Should handle multiple represantations of type 'boolean'", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
@@ -296,9 +282,7 @@ describe("JSDocTsdParser.parse.function.booleanReturnValue", () => {
 		expect(JSON.stringify(functionDeclarations[2].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
 		expect(JSON.stringify(functionDeclarations[3].parameters[0].type)).to.eq(JSON.stringify(dom.type.array(dom.type.boolean)));
 	});
-});
 
-describe("JSDocTsdParser.mapReturnValue", () => {
 	it("should map array values to dom.type.array-Values", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
 
@@ -359,9 +343,7 @@ describe("JSDocTsdParser.mapReturnValue", () => {
 			expect(JSON.stringify(functionDeclarations[1].returnType)).to.eq(JSON.stringify(dom.type.array(primitiveTypeValue as dom.Type)));
 		}
 	});
-});
 
-describe("JSDocTsdParser.parse.function.comment", () => {
 	it("should create a function with jsdoc comments", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
 		let parser = new JSDocTsdParser();
@@ -401,9 +383,7 @@ describe("JSDocTsdParser.parse.function.comment", () => {
 		expect(functionDeclarations.length).to.equals(2);
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
-});
 
-describe("JSDocTsdParser.parse.function.comment", () => {
 	it("should create a function with jsdoc comments", () => {
 		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
 		let parser = new JSDocTsdParser();
@@ -442,5 +422,20 @@ describe("JSDocTsdParser.parse.function.comment", () => {
 		functionDescription = `A function\n@param bla blub\n@throws {string} error`;
 		expect(functionDeclarations.length).to.equals(2);
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
+	});
+
+	it("should create a function with one optional parameter", () => {
+		let functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_twoParamsSecondOptional.json"), { encoding: "utf-8" }));
+		let parser = new JSDocTsdParser();
+		parser.parse(functionData);
+
+		let result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("function1");
+
+		let functionDeclaration: dom.FunctionDeclaration = result["function1"] as dom.FunctionDeclaration;
+		expect(functionDeclaration.parameters.length).to.eq(2);
+
+		let optionalParam = functionDeclaration.parameters[1];
+		expect(optionalParam.flags).to.eq(dom.ParameterFlags.Optional);
 	});
 });

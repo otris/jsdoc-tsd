@@ -164,7 +164,7 @@ export class JSDocTsdParser {
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
 			let jsdocItemParams: IDocletProp[] = jsdocItem.params || [];
 
-			// if a parameter has different types we have create multiple function declarations
+			// if a parameter has different types we have to create multiple function declarations
 			let paramsWithMultipleTypes = jsdocItem.params.filter((param) => {
 				return param.hasOwnProperty("type") && param.type.names.length > 1;
 			});
@@ -184,6 +184,10 @@ export class JSDocTsdParser {
 								domParam = dom.create.parameter(singleTypeParam.name, this.mapVariableType(singleTypeParam.type.names[0]));
 							}
 
+							if (singleTypeParam.optional) {
+								domParam.flags = dom.ParameterFlags.Optional;
+							}
+
 							functionParams.push(domParam);
 						});
 
@@ -198,12 +202,20 @@ export class JSDocTsdParser {
 				let params: dom.Parameter[] = [];
 
 				jsdocItem.params.forEach((param) => {
+					let domParam: dom.Parameter;
+
 					if (param.type) {
-						// We know that the parameter can only have on type
-						params.push(dom.create.parameter(param.name, this.mapVariableType(param.type.names[0])));
+						// We know that the parameter can only have one type
+						domParam = dom.create.parameter(param.name, this.mapVariableType(param.type.names[0]));
 					} else {
-						params.push(dom.create.parameter(param.name, dom.type.any));
+						domParam = dom.create.parameter(param.name, dom.type.any);
 					}
+
+					if (param.optional) {
+						domParam.flags = dom.ParameterFlags.Optional;
+					}
+
+					params.push(domParam);
 				});
 
 				for (let returnType of functionReturnValues) {
@@ -256,6 +268,11 @@ export class JSDocTsdParser {
 					for (let propertyType of property.type.names) {
 						let domProperty = dom.create.property(property.name, this.mapVariableType(propertyType));
 						domProperty.jsDocComment = this.cleanJSDocComment(property.description);
+
+						if (property.optional) {
+							domProperty.flags = dom.DeclarationFlags.Optional;
+						}
+
 						domInterface.members.push(domProperty);
 					}
 				}
