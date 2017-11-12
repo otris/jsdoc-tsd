@@ -421,6 +421,7 @@ export class JSDocTsdParser {
 
 								switch ((moduleMember as any).kind) {
 									case "member":
+									case "property":
 										let propertyDeclaration: any = moduleMember as any;
 										moduleMember = {
 											kind: "const",
@@ -431,10 +432,22 @@ export class JSDocTsdParser {
 										break;
 
 									case "function":
+									case "method":
 										let functionDeclaration: any = moduleMember as any;
-										functionDeclaration.flags = dom.DeclarationFlags.Export;
+										moduleMember = {
+											kind: "function",
+											name: functionDeclaration.name,
+											parameters: functionDeclaration.parameters,
+											returnType: functionDeclaration.returnType,
+											typeParameters: functionDeclaration.typeParameters,
+											flags: dom.DeclarationFlags.Export
+										};
 
-										functionDeclaration.jsDocComment = functionDeclaration.jsDocComment;
+										moduleMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+
+									default:
+										console.warn("Member " + (moduleMember as any).name + " with unexpected kind '" + (moduleMember as any).kind + "' in module " + parentItem.name);
 										break;
 								}
 
