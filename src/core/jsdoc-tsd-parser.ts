@@ -62,7 +62,11 @@ export class JSDocTsdParser {
 
 		let results = this.prepareResults();
 		Object.keys(results).forEach((key) => {
-			output += dom.emit(results[key]);
+			if (!results[key]) {
+				console.error("results undefined " + key);
+			} else {
+				output += dom.emit(results[key]);
+			}
 		});
 
 		return output;
