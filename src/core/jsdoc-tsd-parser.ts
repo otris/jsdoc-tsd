@@ -50,6 +50,11 @@ export class JSDocTsdParser {
 					this.parseClass(item as IClassDoclet);
 					break;
 
+				case "module":
+					console.info("module: " + item.longname);
+					this.parseModule(item as INamespaceDoclet);
+					break;
+
 				default:
 					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 					break;
@@ -241,6 +246,13 @@ export class JSDocTsdParser {
 		}
 	}
 
+	private parseModule(jsdocItem: INamespaceDoclet) {
+		let domModule: dom.ModuleDeclaration = dom.create.module(jsdocItem.name);
+		domModule.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+
+		this.resultItems[jsdocItem.longname].push(domModule);
+	}
+
 	private parseNamespace(jsdocItem: INamespaceDoclet) {
 		let domNamespace = dom.create.namespace(jsdocItem.name);
 		domNamespace.jsDocComment = this.cleanJSDocComment(jsdocItem.comment).replace(/@namespace[^\r\n]+\r?\n/, "");
@@ -354,6 +366,31 @@ export class JSDocTsdParser {
 								if (!foundItem) {
 									parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
 								}
+								break;
+
+							case "module":
+								let moduleMember = parsedItem as dom.ModuleMember;
+
+								switch ((moduleMember as any).kind) {
+									case "member":
+										let propertyDeclaration: any = moduleMember as any;
+										moduleMember = {
+											kind: "const",
+											name: propertyDeclaration.name,
+											type: propertyDeclaration.type,
+											flags: dom.DeclarationFlags.Export
+										};
+										break;
+
+									case "function":
+										let functionDeclaration: any = moduleMember as any;
+										functionDeclaration.flags = dom.DeclarationFlags.Export;
+
+										functionDeclaration.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+								}
+
+								(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
 								break;
 
 							default:
