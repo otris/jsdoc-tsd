@@ -91,6 +91,7 @@ export class JSDocTsdParser {
 		return domParams;
 	}
 
+	// tslint:disable-next-line:member-ordering
 	private cleanJSDocComment(comment: string | undefined): string {
 		let cleanLines = [];
 
@@ -266,6 +267,7 @@ export class JSDocTsdParser {
 		this.resultItems[jsdocItem.longname].push(domInterface);
 	}
 
+	// tslint:disable-next-line:member-ordering
 	public prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
 		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
@@ -340,7 +342,7 @@ export class JSDocTsdParser {
 								break;
 
 							case "enum":
-								// enum members can already exist	
+								// enum members can already exist
 								let foundItem = parentItem.members.filter((member) => {
 									return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
 								}).length > 0;
@@ -352,6 +354,7 @@ export class JSDocTsdParser {
 
 							default:
 								// missing the top level declaration
+								// tslint:disable-next-line:max-line-length
 								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
 
 								if (!domTopLevelDeclarations[jsdocItem.longname]) {
