@@ -51,8 +51,11 @@ export class JSDocTsdParser {
 					break;
 
 				case "module":
-					console.info("module: " + item.longname);
 					this.parseModule(item as INamespaceDoclet);
+					break;
+
+				case "interface":
+					this.parseInterface(item as IClassDoclet);
 					break;
 
 				default:
@@ -225,6 +228,13 @@ export class JSDocTsdParser {
 		this.resultItems[jsdocItem.longname].push(domFunction);
 	}
 
+	private parseInterface(jsdocItem: IClassDoclet) {
+		let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+		domInterface.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+
+		this.resultItems[jsdocItem.longname].push(domInterface);
+	}
+
 	private parseMember(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
@@ -366,6 +376,44 @@ export class JSDocTsdParser {
 								if (!foundItem) {
 									parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
 								}
+								break;
+
+							case "interface":
+								let objectTypeMember = parsedItem as dom.ObjectTypeMember;
+
+								switch ((objectTypeMember as any).kind) {
+									case "function":
+										let functionDeclaration: any = objectTypeMember as any;
+										objectTypeMember = {
+											kind: "method",
+											name: functionDeclaration.name,
+											parameters: functionDeclaration.parameters,
+											returnType: functionDeclaration.returnType,
+											typeParameters: functionDeclaration.typeParameters
+										};
+
+										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+
+									case "property":
+										// ok, nothing to change
+										break;
+
+									case "enum":
+										let propertyDeclaration: any = objectTypeMember as any;
+										objectTypeMember = {
+											kind: "property",
+											name: propertyDeclaration.name,
+											type: "number"
+										};
+										break;
+
+									default:
+										console.warn("Member " + (objectTypeMember as any).name + " with unexpected kind '" + (objectTypeMember as any).kind + "' in module " + parentItem.name);
+										break;
+								}
+
+								(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
 								break;
 
 							case "module":
