@@ -1,0 +1,94 @@
+[
+	{
+		"comment": "/**\n* @module myModule\n* @description My module description.\n**/",
+		"meta": {
+			"filename": "module.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\test",
+			"code": {}
+		},
+		"kind": "module",
+		"name": "myModule",
+		"description": "My module description.",
+		"longname": "module:myModule",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n* @memberof module:myModule\r\n* @description Module member description.\r\n* @member myModuleMember\r\n**/",
+		"meta": {
+			"filename": "modulemember.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\test",
+			"code": {}
+		},
+		"memberof": "module:myModule",
+		"description": "Module member description.",
+		"kind": "member",
+		"name": "myModuleMember",
+		"scope": "static",
+		"longname": "module:myModule.myModuleMember",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n* @memberof module:myModule\r\n* @function myModuleFunction\r\n* @description Module function description.\r\n* @param {string} param1 Description of param1.\r\n* @param {string} param2 Description of param2.\r\n* @returns {number} Description of return value.\r\n**/",
+		"meta": {
+			"filename": "modulemember.js",
+			"lineno": 6,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\test",
+			"code": {}
+		},
+		"memberof": "module:myModule",
+		"kind": "function",
+		"name": "myModuleFunction",
+		"description": "Module function description.",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Description of param1.",
+				"name": "param1"
+			},
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Description of param2.",
+				"name": "param2"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"description": "Description of return value."
+			}
+		],
+		"scope": "static",
+		"longname": "module:myModule.myModuleFunction",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\test\\module.js",
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\test\\modulemember.js"
+		],
+		"___id": "T000002R000005",
+		"___s": true
+	}
+]
