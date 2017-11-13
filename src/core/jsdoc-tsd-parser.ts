@@ -117,7 +117,7 @@ export class JSDocTsdParser {
 					.trim();
 
 				// ignore everything that is not part of the function description in tsd-files
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || !cleanedLine.startsWith("@"))) {
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || !cleanedLine.startsWith("@"))) {
 					cleanLines.push(cleanedLine);
 				}
 			}
