@@ -50,6 +50,14 @@ export class JSDocTsdParser {
 					this.parseClass(item as IClassDoclet);
 					break;
 
+				case "module":
+					this.parseModule(item as INamespaceDoclet);
+					break;
+
+				case "interface":
+					this.parseInterface(item as IClassDoclet);
+					break;
+
 				default:
 					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 					break;
@@ -62,7 +70,11 @@ export class JSDocTsdParser {
 
 		let results = this.prepareResults();
 		Object.keys(results).forEach((key) => {
-			output += dom.emit(results[key]);
+			if (!results[key]) {
+				console.error("results undefined " + key);
+			} else {
+				output += dom.emit(results[key]);
+			}
 		});
 
 		return output;
@@ -91,6 +103,7 @@ export class JSDocTsdParser {
 		return domParams;
 	}
 
+	// tslint:disable-next-line:member-ordering
 	private cleanJSDocComment(comment: string | undefined): string {
 		let cleanLines = [];
 
@@ -104,7 +117,7 @@ export class JSDocTsdParser {
 					.trim();
 
 				// ignore everything that is not part of the function description in tsd-files
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || !cleanedLine.startsWith("@"))) {
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || !cleanedLine.startsWith("@"))) {
 					cleanLines.push(cleanedLine);
 				}
 			}
@@ -215,6 +228,13 @@ export class JSDocTsdParser {
 		this.resultItems[jsdocItem.longname].push(domFunction);
 	}
 
+	private parseInterface(jsdocItem: IClassDoclet) {
+		let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+		domInterface.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+
+		this.resultItems[jsdocItem.longname].push(domInterface);
+	}
+
 	private parseMember(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
@@ -234,6 +254,13 @@ export class JSDocTsdParser {
 			propertyDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
 			this.resultItems[jsdocItem.longname].push(propertyDeclaration);
 		}
+	}
+
+	private parseModule(jsdocItem: INamespaceDoclet) {
+		let domModule: dom.ModuleDeclaration = dom.create.module(jsdocItem.name);
+		domModule.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
+
+		this.resultItems[jsdocItem.longname].push(domModule);
 	}
 
 	private parseNamespace(jsdocItem: INamespaceDoclet) {
@@ -266,6 +293,7 @@ export class JSDocTsdParser {
 		this.resultItems[jsdocItem.longname].push(domInterface);
 	}
 
+	// tslint:disable-next-line:member-ordering
 	public prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
 		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
@@ -340,7 +368,7 @@ export class JSDocTsdParser {
 								break;
 
 							case "enum":
-								// enum members can already exist	
+								// enum members can already exist
 								let foundItem = parentItem.members.filter((member) => {
 									return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
 								}).length > 0;
@@ -350,8 +378,87 @@ export class JSDocTsdParser {
 								}
 								break;
 
+							case "interface":
+								let objectTypeMember = parsedItem as dom.ObjectTypeMember;
+
+								switch ((objectTypeMember as any).kind) {
+									case "function":
+										let functionDeclaration: any = objectTypeMember as any;
+										objectTypeMember = {
+											kind: "method",
+											name: functionDeclaration.name,
+											parameters: functionDeclaration.parameters,
+											returnType: functionDeclaration.returnType,
+											typeParameters: functionDeclaration.typeParameters
+										};
+
+										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+
+									case "property":
+										// ok, nothing to change
+										break;
+
+									case "enum":
+										let propertyDeclaration: any = objectTypeMember as any;
+										objectTypeMember = {
+											kind: "property",
+											name: propertyDeclaration.name,
+											type: "number"
+										};
+										break;
+
+									default:
+										console.warn("Member " + (objectTypeMember as any).name + " with unexpected kind '" + (objectTypeMember as any).kind + "' in module " + parentItem.name);
+										break;
+								}
+
+								(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
+								break;
+
+							case "module":
+								let moduleMember = parsedItem as dom.ModuleMember;
+
+								switch ((moduleMember as any).kind) {
+									case "member":
+									case "property":
+										let propertyDeclaration: any = moduleMember as any;
+										moduleMember = {
+											kind: "const",
+											name: propertyDeclaration.name,
+											type: propertyDeclaration.type,
+											flags: dom.DeclarationFlags.Export
+										};
+
+										moduleMember.jsDocComment = propertyDeclaration.jsDocComment;
+										break;
+
+									case "function":
+									case "method":
+										let functionDeclaration: any = moduleMember as any;
+										moduleMember = {
+											kind: "function",
+											name: functionDeclaration.name,
+											parameters: functionDeclaration.parameters,
+											returnType: functionDeclaration.returnType,
+											typeParameters: functionDeclaration.typeParameters,
+											flags: dom.DeclarationFlags.Export
+										};
+
+										moduleMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+
+									default:
+										console.warn("Member " + (moduleMember as any).name + " with unexpected kind '" + (moduleMember as any).kind + "' in module " + parentItem.name);
+										break;
+								}
+
+								(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+								break;
+
 							default:
 								// missing the top level declaration
+								// tslint:disable-next-line:max-line-length
 								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
 
 								if (!domTopLevelDeclarations[jsdocItem.longname]) {

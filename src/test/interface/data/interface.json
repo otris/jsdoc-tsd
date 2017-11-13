@@ -1,0 +1,99 @@
+[
+	{
+		"comment": "/**\r\n* @interface MyInterface\r\n* @description My interface description\r\n**/",
+		"meta": {
+			"filename": "interface.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "interface",
+		"name": "MyInterface",
+		"description": "My interface description",
+		"longname": "MyInterface",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n* @memberof MyInterface\r\n* @description Interface member description\r\n* @member {string} myInterfaceMember\r\n**/",
+		"meta": {
+			"filename": "interface.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"memberof": "MyInterface",
+		"description": "Interface member description",
+		"kind": "member",
+		"name": "myInterfaceMember",
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"scope": "static",
+		"longname": "MyInterface.myInterfaceMember",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n* @memberof MyInterface\r\n* @description Interface function description\r\n* @function InterfaceFunction\r\n* @param {number} param1 First parameter description\r\n* @param {number} param2 Second parameter description\r\n* @returns {string} returnValue Function return value descripton\r\n**/",
+		"meta": {
+			"filename": "interface.js",
+			"lineno": 10,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"memberof": "MyInterface",
+		"description": "Interface function description",
+		"kind": "function",
+		"name": "InterfaceFunction",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"description": "First parameter description",
+				"name": "param1"
+			},
+			{
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"description": "Second parameter description",
+				"name": "param2"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "returnValue Function return value descripton"
+			}
+		],
+		"scope": "static",
+		"longname": "MyInterface.InterfaceFunction",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\interface.js"
+		],
+		"___id": "T000002R000005",
+		"___s": true
+	}
+]
