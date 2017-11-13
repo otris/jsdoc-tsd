@@ -429,6 +429,8 @@ export class JSDocTsdParser {
 											type: propertyDeclaration.type,
 											flags: dom.DeclarationFlags.Export
 										};
+
+										moduleMember.jsDocComment = propertyDeclaration.jsDocComment;
 										break;
 
 									case "function":
