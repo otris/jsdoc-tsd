@@ -16,43 +16,46 @@ export class JSDocTsdParser {
 	}
 
 	public parse(jsdocItems: TDoclet[]) {
-		this.jsdocItems = jsdocItems;
+		this.jsdocItems = [];
 
 		jsdocItems.forEach((item) => {
-			this.resultItems[item.longname] = [];
+			if (!item.ignore) {
+				this.jsdocItems.push(item);
+				this.resultItems[item.longname] = [];
 
-			switch (item.kind) {
-				case "function":
-					this.parseFunction(item as IFunctionDoclet);
-					break;
+				switch (item.kind) {
+					case "function":
+						this.parseFunction(item as IFunctionDoclet);
+						break;
 
-				case "member":
-					if (item.isEnum) {
-						this.parseEnum(item as IMemberDoclet);
-					} else {
-						this.parseMember(item as IMemberDoclet);
-					}
-					break;
+					case "member":
+						if (item.isEnum) {
+							this.parseEnum(item as IMemberDoclet);
+						} else {
+							this.parseMember(item as IMemberDoclet);
+						}
+						break;
 
-				case "namespace":
-					this.parseNamespace(item as INamespaceDoclet);
-					break;
+					case "namespace":
+						this.parseNamespace(item as INamespaceDoclet);
+						break;
 
-				case "typedef":
-					this.parseTypeDefinition(item as ITypedefDoclet);
-					break;
+					case "typedef":
+						this.parseTypeDefinition(item as ITypedefDoclet);
+						break;
 
-				case "file":
-					// suppress warnings for this type
-					break;
+					case "file":
+						// suppress warnings for this type
+						break;
 
-				case "class":
-					this.parseClass(item as IClassDoclet);
-					break;
+					case "class":
+						this.parseClass(item as IClassDoclet);
+						break;
 
-				default:
-					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
-					break;
+					default:
+						console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
+						break;
+				}
 			}
 		});
 	}
