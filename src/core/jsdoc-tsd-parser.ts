@@ -65,7 +65,11 @@ export class JSDocTsdParser {
 
 		let results = this.prepareResults();
 		Object.keys(results).forEach((key) => {
-			output += dom.emit(results[key]);
+			try {
+				output += dom.emit(results[key]);
+			} catch (err) {
+				console.error(`Unexpected error. Please report this error on github!\nCan't emit item ${key}: ${err}\n\n${JSON.stringify(results[key], null, "\t")}`);
+			}
 		});
 
 		return output;
