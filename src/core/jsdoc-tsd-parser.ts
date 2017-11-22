@@ -49,7 +49,13 @@ export class JSDocTsdParser {
 						break;
 
 					case "class":
+						// IClassDoclet with kind 'class'
 						this.parseClass(item as IClassDoclet);
+						break;
+
+					case "interface":
+						// IClassDoclet with kind 'interface'
+						this.parseInterface(item as IClassDoclet);
 						break;
 
 					default:
@@ -142,6 +148,35 @@ export class JSDocTsdParser {
 								if (!foundItem) {
 									parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
 								}
+								break;
+
+							case "interface":
+								let objectTypeMember = parsedItem as dom.ObjectTypeMember;
+
+								switch ((objectTypeMember as any).kind) {
+									case "function":
+										let functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
+										objectTypeMember = {
+											kind: "method",
+											name: functionDeclaration.name,
+											parameters: functionDeclaration.parameters,
+											returnType: functionDeclaration.returnType,
+											typeParameters: functionDeclaration.typeParameters
+										};
+
+										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+
+									case "property":
+										// ok, nothing to change
+										break;
+
+									default:
+										console.warn("Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parsedItem.kind}'");
+										break;
+								}
+
+								(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
 								break;
 
 							default:
@@ -338,6 +373,13 @@ export class JSDocTsdParser {
 
 		domFunction.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
 		this.resultItems[jsdocItem.longname].push(domFunction);
+	}
+
+	private parseInterface(jsdocItem: IClassDoclet) {
+		let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+		domInterface.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+
+		this.resultItems[jsdocItem.longname].push(domInterface);
 	}
 
 	private parseMember(jsdocItem: IMemberDoclet) {
