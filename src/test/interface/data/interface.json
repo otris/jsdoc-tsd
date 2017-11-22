@@ -1,0 +1,91 @@
+[
+	{
+		"comment": "/**\r\n * My test interface\r\n* @interface myTestInterface\r\n**/",
+		"meta": {
+			"filename": "myInterface.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"description": "My test interface",
+		"kind": "interface",
+		"name": "myTestInterface",
+		"longname": "myTestInterface",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * A simple number member\r\n * @memberof myTestInterface\r\n * @member {number|string} myNumberMember\r\n */",
+		"meta": {
+			"filename": "myInterface.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"description": "A simple number member",
+		"memberof": "myTestInterface",
+		"kind": "member",
+		"name": "myNumberMember",
+		"type": {
+			"names": [
+				"number",
+				"string"
+			]
+		},
+		"scope": "static",
+		"longname": "myTestInterface.myNumberMember",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * A simple function\r\n * @memberof myTestInterface\r\n * @function mySimpleFunction\r\n * @param {string} myParamter My string parameter\r\n * @returns {boolean} My return value\r\n */",
+		"meta": {
+			"filename": "myInterface.js",
+			"lineno": 10,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"description": "A simple function",
+		"memberof": "myTestInterface",
+		"kind": "function",
+		"name": "mySimpleFunction",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "My string parameter",
+				"name": "myParamter"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"boolean"
+					]
+				},
+				"description": "My return value"
+			}
+		],
+		"scope": "static",
+		"longname": "myTestInterface.mySimpleFunction",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\src\\myInterface.js"
+		],
+		"___id": "T000002R000005",
+		"___s": true
+	}
+]
