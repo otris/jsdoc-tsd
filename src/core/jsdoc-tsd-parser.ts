@@ -134,7 +134,7 @@ export class JSDocTsdParser {
 								break;
 
 							case "enum":
-								// enum members can already exist	
+								// enum members can already exists
 								let foundItem = parentItem.members.filter((member) => {
 									return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
 								}).length > 0;
@@ -146,6 +146,7 @@ export class JSDocTsdParser {
 
 							default:
 								// missing the top level declaration
+								// tslint:disable-next-line:max-line-length
 								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
 
 								if (!domTopLevelDeclarations[jsdocItem.longname]) {
