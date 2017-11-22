@@ -75,6 +75,28 @@ export class JSDocTsdParser {
 		return output;
 	}
 
+	private cleanJSDocComment(comment: string | undefined): string {
+		let cleanLines = [];
+
+		if (comment) {
+			for (let line of comment.split(/\r?\n/)) {
+				let cleanedLine = line.trim()
+					.replace(/^\/\*\*\s?/, "") // JSDoc-Header ("/**")
+					.replace(/\s*\*\/\s?$/, "") // JSDoc-Footer ("*/")
+					.replace(/^\*\s?/, "") // Line ("*")
+					.replace(/@param\s\{[^\}]+\}/g, "@param") // Parameter-Types
+					.trim();
+
+				// ignore everything that is not part of the function description in tsd-files
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || !cleanedLine.startsWith("@"))) {
+					cleanLines.push(cleanedLine);
+				}
+			}
+		}
+
+		return cleanLines.join("\n");
+	}
+
 	private createDomParams(params: IDocletProp[]): dom.Parameter[] {
 		let domParams: dom.Parameter[] = [];
 
@@ -96,28 +118,6 @@ export class JSDocTsdParser {
 		});
 
 		return domParams;
-	}
-
-	private cleanJSDocComment(comment: string | undefined): string {
-		let cleanLines = [];
-
-		if (comment) {
-			for (let line of comment.split(/\r?\n/)) {
-				let cleanedLine = line.trim()
-					.replace(/^\/\*\*\s?/, "") // JSDoc-Header ("/**")
-					.replace(/\s*\*\/\s?$/, "") // JSDoc-Footer ("*/")
-					.replace(/^\*\s?/, "") // Line ("*")
-					.replace(/@param\s\{[^\}]+\}/g, "@param") // Parameter-Types
-					.trim();
-
-				// ignore everything that is not part of the function description in tsd-files
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || !cleanedLine.startsWith("@"))) {
-					cleanLines.push(cleanedLine);
-				}
-			}
-		}
-
-		return cleanLines.join("\n");
 	}
 
 	private mapTypesToUnion(types: string[]): dom.UnionType {
