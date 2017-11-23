@@ -81,139 +81,96 @@ export class JSDocTsdParser {
 		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
 		for (let jsdocItem of this.jsdocItems) {
-			// is this item a member of any other item?
-			if (jsdocItem.memberof) {
-				// we have to find the parent item
-				let parentItem: dom.TopLevelDeclaration = {} as dom.TopLevelDeclaration;
+			let parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
 
-				let parentItemNames = jsdocItem.memberof.split(".");
-				parentItemNames.forEach((name, index) => {
+			if (parentItem) {
+				// add the items we parsed before as a member of the top level declaration
+				for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+					switch (parentItem.kind) {
+						case "namespace":
+							(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
+							break;
 
-					if (index < 1) {
-						parentItem = domTopLevelDeclarations[name];
+						case "class":
+							let classMember = parsedItem as dom.ClassMember;
 
-						if (!parentItem) {
-							if (this.resultItems[name]) {
-								domTopLevelDeclarations[name] = this.resultItems[name][0] as dom.TopLevelDeclaration;
-								parentItem = domTopLevelDeclarations[name];
+							switch ((classMember as any).kind) {
+								case "function":
+									let functionDeclaration: dom.FunctionDeclaration = classMember as any;
+									classMember = dom.create.method(
+										functionDeclaration.name,
+										functionDeclaration.parameters,
+										functionDeclaration.returnType,
+										functionDeclaration.flags
+									);
+
+									classMember.typeParameters = functionDeclaration.typeParameters;
+									classMember.comment = functionDeclaration.comment;
+									classMember.jsDocComment = functionDeclaration.jsDocComment;
+									break;
 							}
-						}
-					} else if (parentItem) {
-						let parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
-						let parentItemName = "";
-						for (let i = 0; i < index; i++) {
-							if (i > 0) {
-								parentItemName += ".";
+
+							(parentItem as dom.ClassDeclaration).members.push(classMember);
+							break;
+
+						case "enum":
+							// enum members can already exists
+							let foundItem = parentItem.members.filter((member) => {
+								return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
+							}).length > 0;
+
+							if (!foundItem) {
+								parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
+							}
+							break;
+
+						case "interface":
+							let objectTypeMember = parsedItem as dom.ObjectTypeMember;
+
+							switch ((objectTypeMember as any).kind) {
+								case "function":
+									let functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
+									objectTypeMember = dom.create.method(
+										functionDeclaration.name,
+										functionDeclaration.parameters,
+										functionDeclaration.returnType,
+										functionDeclaration.flags
+									);
+
+									objectTypeMember.typeParameters = functionDeclaration.typeParameters;
+									objectTypeMember.comment = functionDeclaration.comment;
+									objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
+									break;
+
+								case "property":
+									// ok, nothing to change
+									break;
+
+								default:
+									console.warn("Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parsedItem.kind}'");
+									break;
 							}
 
-							parentItemName += parentItemNames[i];
-						}
+							(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
+							break;
 
-						let itemFound = parentItemAsNamespace.members.some((item) => {
-							if (item.name === name) {
-								parentItem = item;
+						default:
+							// missing the top level declaration
+							// tslint:disable-next-line:max-line-length
+							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
 
-								return true;
-							} else {
-								return false;
+							if (!domTopLevelDeclarations[jsdocItem.longname]) {
+								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
 							}
-						});
-					}
-				}, this);
-
-				if (parentItem) {
-					// add the items we parsed before as a member of the top level declaration
-					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
-						switch (parentItem.kind) {
-							case "namespace":
-								(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
-								break;
-
-							case "class":
-								let classMember = parsedItem as dom.ClassMember;
-
-								switch ((classMember as any).kind) {
-									case "function":
-										let functionDeclaration: dom.FunctionDeclaration = classMember as any;
-										classMember = dom.create.method(
-											functionDeclaration.name,
-											functionDeclaration.parameters,
-											functionDeclaration.returnType,
-											functionDeclaration.flags
-										);
-
-										classMember.typeParameters = functionDeclaration.typeParameters;
-										classMember.comment = functionDeclaration.comment;
-										classMember.jsDocComment = functionDeclaration.jsDocComment;
-										break;
-								}
-
-								(parentItem as dom.ClassDeclaration).members.push(classMember);
-								break;
-
-							case "enum":
-								// enum members can already exists
-								let foundItem = parentItem.members.filter((member) => {
-									return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
-								}).length > 0;
-
-								if (!foundItem) {
-									parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
-								}
-								break;
-
-							case "interface":
-								let objectTypeMember = parsedItem as dom.ObjectTypeMember;
-
-								switch ((objectTypeMember as any).kind) {
-									case "function":
-										let functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
-										objectTypeMember = dom.create.method(
-											functionDeclaration.name,
-											functionDeclaration.parameters,
-											functionDeclaration.returnType,
-											functionDeclaration.flags
-										);
-
-										objectTypeMember.typeParameters = functionDeclaration.typeParameters;
-										objectTypeMember.comment = functionDeclaration.comment;
-										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
-										break;
-
-									case "property":
-										// ok, nothing to change
-										break;
-
-									default:
-										console.warn("Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parsedItem.kind}'");
-										break;
-								}
-
-								(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
-								break;
-
-							default:
-								// missing the top level declaration
-								// tslint:disable-next-line:max-line-length
-								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
-
-								if (!domTopLevelDeclarations[jsdocItem.longname]) {
-									domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
-								}
-								break;
-						}
-					}
-				} else {
-					// missing the top level declaration
-					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
-
-					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
-						if (!domTopLevelDeclarations[jsdocItem.longname]) {
-							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
-						}
+							break;
 					}
 				}
 			} else {
+				if (jsdocItem.memberof) {
+					// missing the top level declaration
+					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
+				}
+
 				// add this item as a top level declaration
 				for (let parsedItem of this.resultItems[jsdocItem.longname]) {
 					if (!domTopLevelDeclarations[jsdocItem.longname]) {
@@ -287,7 +244,51 @@ export class JSDocTsdParser {
 		return domParams;
 	}
 
-	private handleFlags(doclet: any, obj: dom.DeclarationBase|dom.Parameter) {
+	private findParentItem(jsdocItem: TDoclet, domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration }): dom.TopLevelDeclaration {
+		// we have to find the parent item
+		let parentItem: dom.TopLevelDeclaration = {} as dom.TopLevelDeclaration;
+
+		if (jsdocItem.memberof) {
+			let parentItemNames = jsdocItem.memberof.split(".");
+			parentItemNames.forEach((name, index) => {
+
+				if (index < 1) {
+					parentItem = domTopLevelDeclarations[name];
+
+					if (!parentItem) {
+						if (this.resultItems[name]) {
+							domTopLevelDeclarations[name] = this.resultItems[name][0] as dom.TopLevelDeclaration;
+							parentItem = domTopLevelDeclarations[name];
+						}
+					}
+				} else if (parentItem) {
+					let parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
+					let parentItemName = "";
+					for (let i = 0; i < index; i++) {
+						if (i > 0) {
+							parentItemName += ".";
+						}
+
+						parentItemName += parentItemNames[i];
+					}
+
+					let itemFound = parentItemAsNamespace.members.some((item) => {
+						if (item.name === name) {
+							parentItem = item;
+
+							return true;
+						} else {
+							return false;
+						}
+					});
+				}
+			}, this);
+		}
+
+		return parentItem;
+	}
+
+	private handleFlags(doclet: any, obj: dom.DeclarationBase | dom.Parameter) {
 		obj.flags = dom.DeclarationFlags.None;
 
 		obj.flags |= this.accessFlagMap[doclet.access];
@@ -388,7 +389,7 @@ export class JSDocTsdParser {
 				functionReturnValue = dom.type.any;
 			}
 		} else {
-			functionReturnValue =  dom.type.void;
+			functionReturnValue = dom.type.void;
 		}
 
 		let domFunction: dom.FunctionDeclaration;
