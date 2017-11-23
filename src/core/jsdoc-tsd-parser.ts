@@ -433,18 +433,16 @@ export class JSDocTsdParser {
 
 		if (jsdocItem.properties) {
 			for (let property of jsdocItem.properties) {
+				let propertyType: dom.Type = dom.type.any;
 				if (property.type) {
-					for (let propertyType of property.type.names) {
-						let domProperty = dom.create.property(property.name, this.mapVariableType(propertyType));
-						domProperty.jsDocComment = this.cleanJSDocComment(property.description);
-
-						if (property.optional) {
-							domProperty.flags = dom.DeclarationFlags.Optional;
-						}
-
-						domInterface.members.push(domProperty);
-					}
+					propertyType = this.mapTypesToUnion(property.type.names);
 				}
+
+				let domProperty = dom.create.property(property.name, propertyType);
+				domProperty.jsDocComment = this.cleanJSDocComment(property.comment) || property.description; // normally the property 'comment' is for these types empty
+				this.handleFlags(property, domProperty);
+
+				domInterface.members.push(domProperty);
 			}
 		}
 
