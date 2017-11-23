@@ -1,7 +1,13 @@
 import * as dom from "dts-dom";
+import { ParameterFlags } from "dts-dom";
 
 export class JSDocTsdParser {
 
+	private accessFlagMap: { [key: string]: dom.DeclarationFlags } = {
+		public: dom.DeclarationFlags.None,
+		private: dom.DeclarationFlags.Private,
+		protected: dom.DeclarationFlags.Protected,
+	};
 	private jsdocItems: TDoclet[];
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
@@ -267,10 +273,27 @@ export class JSDocTsdParser {
 				domParam.flags = dom.ParameterFlags.Optional;
 			}
 
+			this.handleFlags(param, domParam);
 			domParams.push(domParam);
 		});
 
 		return domParams;
+	}
+
+	private handleFlags(doclet: any, obj: dom.DeclarationBase|dom.Parameter) {
+		obj.flags = dom.DeclarationFlags.None;
+
+		obj.flags |= this.accessFlagMap[doclet.access];
+		obj.flags |= doclet.optional || doclet.defaultvalue !== undefined ? dom.ParameterFlags.Optional : dom.DeclarationFlags.None;
+		obj.flags |= doclet.variable ? dom.ParameterFlags.Rest : dom.DeclarationFlags.None;
+		obj.flags |= doclet.virtual ? dom.DeclarationFlags.Abstract : dom.DeclarationFlags.None;
+		obj.flags |= doclet.readonly ? dom.DeclarationFlags.ReadOnly : dom.DeclarationFlags.None;
+		obj.flags |= doclet.scope === "static" ? dom.DeclarationFlags.Static : dom.DeclarationFlags.None;
+
+		let cast = obj as any;
+		if (doclet.optional && cast.kind === "property" && cast.flags === ParameterFlags.Optional) {
+			obj.flags = dom.DeclarationFlags.Optional;
+		}
 	}
 
 	private mapTypesToUnion(types: string[]): dom.UnionType {
