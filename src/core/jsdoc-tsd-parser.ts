@@ -134,15 +134,16 @@ export class JSDocTsdParser {
 
 								switch ((classMember as any).kind) {
 									case "function":
-										let functionDeclaration: any = classMember as any;
-										classMember = {
-											kind: "method",
-											name: functionDeclaration.name,
-											parameters: functionDeclaration.parameters,
-											returnType: functionDeclaration.returnType,
-											typeParameters: functionDeclaration.typeParameters
-										};
+										let functionDeclaration: dom.FunctionDeclaration = classMember as any;
+										classMember = dom.create.method(
+											functionDeclaration.name,
+											functionDeclaration.parameters,
+											functionDeclaration.returnType,
+											functionDeclaration.flags
+										);
 
+										classMember.typeParameters = functionDeclaration.typeParameters;
+										classMember.comment = functionDeclaration.comment;
 										classMember.jsDocComment = functionDeclaration.jsDocComment;
 										break;
 								}
@@ -167,14 +168,15 @@ export class JSDocTsdParser {
 								switch ((objectTypeMember as any).kind) {
 									case "function":
 										let functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
-										objectTypeMember = {
-											kind: "method",
-											name: functionDeclaration.name,
-											parameters: functionDeclaration.parameters,
-											returnType: functionDeclaration.returnType,
-											typeParameters: functionDeclaration.typeParameters
-										};
+										objectTypeMember = dom.create.method(
+											functionDeclaration.name,
+											functionDeclaration.parameters,
+											functionDeclaration.returnType,
+											functionDeclaration.flags
+										);
 
+										objectTypeMember.typeParameters = functionDeclaration.typeParameters;
+										objectTypeMember.comment = functionDeclaration.comment;
 										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
 										break;
 
