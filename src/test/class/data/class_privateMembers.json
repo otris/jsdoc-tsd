@@ -1,0 +1,106 @@
+[
+	{
+		"comment": "/**\r\n * A class with a private members\r\n * @class\r\n */",
+		"meta": {
+			"range": [
+				56,
+				324
+			],
+			"filename": "class_privateMember.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+			"code": {
+				"id": "astnode100000002",
+				"name": "classWithPrivateMembers",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			},
+			"vars": {
+				"this.myNumberMember": "classWithPrivateMembers#myNumberMember",
+				"this.mySimpleFunction": "classWithPrivateMembers#mySimpleFunction",
+				"": null
+			}
+		},
+		"description": "A class with a private members",
+		"kind": "class",
+		"name": "classWithPrivateMembers",
+		"longname": "classWithPrivateMembers",
+		"scope": "global",
+		"params": [],
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A simple number member\r\n\t * @type {number|string}\r\n\t * @private\r\n\t */",
+		"meta": {
+			"range": [
+				176,
+				199
+			],
+			"filename": "class_privateMember.js",
+			"lineno": 11,
+			"columnno": 1,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+			"code": {
+				"id": "astnode100000006",
+				"name": "this.myNumberMember",
+				"type": "Literal",
+				"value": 0,
+				"paramnames": []
+			}
+		},
+		"description": "A simple number member",
+		"type": {
+			"names": [
+				"number",
+				"string"
+			]
+		},
+		"access": "private",
+		"name": "myNumberMember",
+		"longname": "classWithPrivateMembers#myNumberMember",
+		"kind": "member",
+		"memberof": "classWithPrivateMembers",
+		"scope": "instance",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n\t * A simple function\r\n\t * @private\r\n\t */",
+		"meta": {
+			"range": [
+				254,
+				321
+			],
+			"filename": "class_privateMember.js",
+			"lineno": 17,
+			"columnno": 1,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+			"code": {
+				"id": "astnode100000012",
+				"name": "this.mySimpleFunction",
+				"type": "FunctionExpression",
+				"paramnames": []
+			}
+		},
+		"description": "A simple function",
+		"access": "private",
+		"name": "mySimpleFunction",
+		"longname": "classWithPrivateMembers#mySimpleFunction",
+		"kind": "function",
+		"memberof": "classWithPrivateMembers",
+		"scope": "instance",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class\\class_privateMember.js"
+		],
+		"___id": "T000002R000005",
+		"___s": true
+	}
+]
