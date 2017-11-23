@@ -19,7 +19,7 @@
 			"tabs",
 			4
 		],
-		"newline-before-return": true,
+		"newline-before-return": false,
 		"ordered-imports": true,
 		"linebreak-style": [
 			true,
@@ -36,6 +36,7 @@
 				"alphabetize": true
 			}
 		},
-		"no-console": false
+		"no-console": false,
+		"no-bitwise": false,
 	}
 }

@@ -26,8 +26,11 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		expect(interfaceDeclarations[0].members.length).to.eq(typeData.properties.length);
 		let property: dom.PropertyDeclaration = interfaceDeclarations[0].members[0] as dom.PropertyDeclaration;
 		expect(property.name).to.eq(typeData.properties[0].name);
-		expect(property.type).to.eq(typeData.properties[0].type.names[0] as dom.Type);
 		expect(property.jsDocComment).to.eq(typeData.properties[0].description);
+
+		let unionType: dom.UnionType = property.type as dom.UnionType;
+		expect(unionType.members.length).to.eq(1);
+		expect(unionType.members[0]).to.eq(typeData.properties[0].type.names[0] as dom.Type);
 	});
 
 	it("should create an interface with an optional property", () => {
