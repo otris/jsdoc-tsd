@@ -228,8 +228,12 @@ export class JSDocTsdParser {
 		return output;
 	}
 
-	private cleanJSDocComment(comment: string | undefined): string {
+	private cleanJSDocComment(comment: string | undefined, addExample = false): string {
 		let cleanLines = [];
+		let descriptionLines: string[] = [];
+		let exampleLines: string[] = [];
+		let description = false;
+		let example = false;
 
 		if (comment) {
 			for (let line of comment.split(/\r?\n/)) {
@@ -241,13 +245,48 @@ export class JSDocTsdParser {
 					.trim();
 
 				// ignore everything that is not part of the function description in tsd-files
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || !cleanedLine.startsWith("@"))) {
-					cleanLines.push(cleanedLine);
+				// tslint:disable-next-line:max-line-length
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@example") || !cleanedLine.startsWith("@"))) {
+					if (cleanedLine.startsWith("@")) {
+						description = false;
+						example = false;
+					}
+					if (cleanedLine.startsWith("@description")) {
+						cleanedLine = cleanedLine.replace("@description ", "");
+						description = true;
+					} else if (cleanedLine.startsWith("@example")) {
+						example = true;
+					}
+
+					if (description) {
+						descriptionLines.push(cleanedLine);
+					} else if (example) {
+						exampleLines.push(cleanedLine);
+					} else {
+						cleanLines.push(cleanedLine);
+					}
 				}
 			}
 		}
 
-		return cleanLines.join("\n");
+		let lines = "";
+		if (descriptionLines.length > 0) {
+			lines = lines + descriptionLines.join("\n");
+		}
+		if (cleanLines.length > 0) {
+			if (lines !== "") {
+				lines = lines + "\n";
+			}
+			lines = lines + cleanLines.join("\n");
+		}
+		if (addExample && exampleLines.length > 0) {
+			if (lines !== "") {
+				lines = lines + "\n";
+			}
+			lines = lines + exampleLines.join("\n");
+		}
+
+		return lines;
 	}
 
 	private createDomParams(params: IDocletProp[]): dom.Parameter[] {
