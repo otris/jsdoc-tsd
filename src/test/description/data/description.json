@@ -1,0 +1,70 @@
+[
+	{
+		"comment": "/**\r\n * @class MyClass\r\n */",
+		"meta": {
+			"filename": "description.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "class",
+		"name": "MyClass",
+		"longname": "MyClass",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n* @function myFunction\r\n* @param {string} myParamter My string parameter\r\n* @returns {boolean} My return value\r\n* @memberof MyClass\r\n* @summary my summary should be ignored\r\n* @description My long description\r\n* first line\r\n* second line\r\n* third line\r\n* @example\r\n* my example first line\r\n* my example second line\r\n* my example third line\r\n**/",
+		"meta": {
+			"filename": "description.js",
+			"lineno": 4,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "function",
+		"name": "myFunction",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "My string parameter",
+				"name": "myParamter"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"boolean"
+					]
+				},
+				"description": "My return value"
+			}
+		],
+		"memberof": "MyClass",
+		"summary": "my summary should be ignored",
+		"description": "My long description\rfirst line\rsecond line\rthird line",
+		"examples": [
+			"my example first line\rmy example second line\rmy example third line"
+		],
+		"scope": "static",
+		"longname": "MyClass.myFunction",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\description.js"
+		],
+		"___id": "T000002R000004",
+		"___s": true
+	}
+]
