@@ -4,10 +4,10 @@ import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../core/jsdoc-tsd-parser";
 
-describe("JSDocTsdParser.parse.function", () => {
+describe("JSDocTsdParser.cleanJSDocComment", () => {
 	let classData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/description.json"), { encoding: "utf-8" }));
 	
-	it("should create a function with jsdoc comments", () => {
+	it("should handle multi line description and example", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classData);
 
