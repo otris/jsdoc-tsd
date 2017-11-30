@@ -41,6 +41,7 @@ $> jsdoc -d <target-dir>/<filename>.d.ts
 * @class
 * @member
 * @ignore
+* @interface
 
 ## Ignored Tags
 * @file
