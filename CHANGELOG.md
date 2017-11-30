@@ -1,5 +1,24 @@
 ## Changelog
 
+### v0.6.0
+New features in this release:
+ - Support for multiple parameter types
+ - The following tags are now supported
+   - @ignore
+   - @interface
+ - Declaration and parameter flags are now fully supported (public, private, protected...)
+ - You can pass the output path to jsdoc by passing the parameter "-d" to the cmd call
+   (the usage is described in the [README](README.md#Output-directory-/-file))
+
+Bugfixes:
+ - The emitting of the results could abort with an uncaught exception. We now catch all uncaught
+   exceptions and write the error to the console
+ - Tags with multiple lines in the jsdoc description were not correctly parsed
+
+Other changes:
+ - Function return values, parameters etc. which have multiple types will now be resolved to union
+   types
+
 ### v0.5.0
 New features in this release:
  - For classes the constructor will be added now

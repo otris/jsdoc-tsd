@@ -23,6 +23,14 @@ You can also add this template to your JSON configuration file:
 }
 ```
 
+## Output directory / file
+To determine the output directory and / or the output file name you can pass the path or the file name to the cmd call as follow:
+```
+$> jsdoc -d <target-dir>/<filename>.d.ts
+```
+
+**Important: If you want to change the file name of the result file your path has to end with the file ending ```d.ts```**
+
 ## Supported Tags
 * @enum
 * @function (implicitly)
@@ -32,6 +40,7 @@ You can also add this template to your JSON configuration file:
 * @typedef
 * @class
 * @member
+* @ignore
 
 ## Ignored Tags
 * @file
