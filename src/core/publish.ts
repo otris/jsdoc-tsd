@@ -1,4 +1,6 @@
 import * as fs from "fs";
+import * as path from "path";
+import * as shelljs from "shelljs";
 import { JSDocTsdParser } from "./jsdoc-tsd-parser";
 
 /**
@@ -18,9 +20,26 @@ export function publish(data: any, opts: any) {
 	parser.parse(jsdocResults);
 
 	// Write the output
-	if (!fs.existsSync("build")) {
-		fs.mkdirSync("build");
+	var outputDir, outputFilePath;
+	if (opts.destination.endsWith(".d.ts")) {
+		outputFilePath = opts.destination;
+		outputDir = path.dirname(outputFilePath);
+	} else {
+		outputDir = opts.destination;
+		outputFilePath = path.join(outputDir, "jsdoc-results.d.ts");
 	}
 
-	fs.writeFileSync("build/jsdoc-results.d.ts", parser.resolveResults());
+	if (!fs.existsSync(outputDir)) {
+		try {
+			shelljs.mkdir("-p", outputDir);
+		} catch (err) {
+			throw new Error("Can't create output directory '" + outputDir + "': " + err);
+		}
+	}
+
+	try {
+		fs.writeFileSync(outputFilePath, parser.resolveResults());
+	} catch (err) {
+		throw new Error("Can't write results to file '" + outputFilePath + "': " + err);
+	}
 }
