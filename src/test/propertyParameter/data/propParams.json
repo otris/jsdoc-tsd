@@ -1,0 +1,75 @@
+[
+	{
+		"comment": "/**\r\n * My test interface\r\n* @interface myTestInterface\r\n**/",
+		"meta": {
+			"filename": "interface.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"description": "My test interface",
+		"kind": "interface",
+		"name": "myTestInterface",
+		"longname": "myTestInterface",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * A simple function\r\n * @memberof myTestInterface\r\n * @function mySimpleFunction\r\n * @param {object} propertyParameter My parameter with properties\r\n * @param {string} propertyParameter.myProperty1 Description of myProperty1\r\n * @param {number} propertyParameter.myProperty2 Description of myProperty2\r\n */",
+		"meta": {
+			"filename": "interface.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"description": "A simple function",
+		"memberof": "myTestInterface",
+		"kind": "function",
+		"name": "mySimpleFunction",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"object"
+					]
+				},
+				"description": "My parameter with properties",
+				"name": "propertyParameter"
+			},
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Description of myProperty1",
+				"name": "propertyParameter.myProperty1"
+			},
+			{
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"description": "Description of myProperty2",
+				"name": "propertyParameter.myProperty2"
+			}
+		],
+		"scope": "static",
+		"longname": "myTestInterface.mySimpleFunction",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\interface.js"
+		],
+		"___id": "T000002R000004",
+		"___s": true
+	}
+]
