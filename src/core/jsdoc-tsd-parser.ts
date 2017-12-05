@@ -439,6 +439,9 @@ export class JSDocTsdParser {
 					variableType = "boolean";
 				}
 
+				if (variableType === "function") {
+					variableType = "Function";
+				}
 				return variableType as dom.Type;
 			}
 		}
