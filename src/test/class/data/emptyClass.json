@@ -1,0 +1,27 @@
+[
+	{
+		"comment": "/**\r\n * @class TestEmptyClass\r\n */",
+		"meta": {
+			"filename": "emptyClass.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"kind": "class",
+		"name": "TestEmptyClass",
+		"longname": "TestEmptyClass",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\emptyClass.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]

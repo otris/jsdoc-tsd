@@ -6,36 +6,61 @@ import { JSDocTsdParser } from "../../core/jsdoc-tsd-parser";
 import { parse } from "querystring";
 
 describe("JSDocTsdParser.parse.class", () => {
+	let emptyClassData = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/emptyClass.json"), { encoding: "utf-8" }))[0] as TDoclet;
+	let classConstructorStringParam = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/class_constructorStringParam.json"), { encoding: "utf-8" }))[0] as TDoclet;
 	let classData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/class.json"), { encoding: "utf-8" }));
 	expect(classData.length).to.eq(4);
 	let classDataPrivateMembers: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/class_privateMembers.json"), { encoding: "utf-8" }));
 
-	it("should parse a class definition", () => {
+	it("should parse a class definition with the correct name", () => {
 		let parser = new JSDocTsdParser();
-		parser.parse(classData);
+		parser.parse([emptyClassData]);
 		let results = parser.getResultItems();
-		let classDeclarations: dom.ClassDeclaration[] = results[classData[0].longname] as dom.ClassDeclaration[];
+		let classDeclarations: dom.ClassDeclaration[] = results[emptyClassData.longname] as dom.ClassDeclaration[];
 
 		expect(classDeclarations.length).to.eq(1);
 		let classDeclaration = classDeclarations[0];
-		expect(classDeclaration.jsDocComment).to.eq("My test class");
-		expect(classDeclaration.name).to.eq(classData[0].name);
+		expect(classDeclaration.name).to.eq(emptyClassData.name);
 	});
 
-	it("should create a function member of a class", () => {
+	it("should parse the jsdoc comment and add it to the class declaration", () => {
+		let comment = `/**
+		 * My Class
+		 * @param {string} myParam My param description
+		 * @class
+		 */`;
+		 let myClass = JSON.parse(JSON.stringify(emptyClassData));
+		 myClass.comment = comment;
+
 		let parser = new JSDocTsdParser();
-		parser.parse(classData);
+		parser.parse([myClass]);
 		let results = parser.getResultItems();
-		let classDeclarations: dom.ClassDeclaration[] = results[classData[0].longname] as dom.ClassDeclaration[];
+		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
+		expect(classDeclarations.jsDocComment).to.eq("My Class\n@param myParam My param description");
+	});
 
-		let result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestClass");
+	it("should add an constructor with no params to the class members", () => {
+		let parser = new JSDocTsdParser();
+		parser.parse([emptyClassData]);
+		let results = parser.getResultItems();
+		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
+		expect(classDeclarations.members.length).to.eq(1);
 
-		let parsedClass: dom.ClassDeclaration = result["myTestClass"] as dom.ClassDeclaration;
-		expect(parsedClass.members.length).to.eq(3);
+		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
+		expect(constr.parameters.length).to.eq(0);
+	});
 
-		let methodDeclaration: dom.MethodDeclaration = parsedClass.members[2] as dom.MethodDeclaration;
-		expect(methodDeclaration.jsDocComment).to.eq("A simple function");
+	it("should add an constructor with a string param to the class members", () => {
+		let parser = new JSDocTsdParser();
+		parser.parse([classConstructorStringParam]);
+		let results = parser.getResultItems();
+		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
+		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
+		expect(constr.parameters.length).to.eq(1);
+
+		let unionType: dom.UnionType = constr.parameters[0].type as dom.UnionType;
+		expect(unionType.members.length).to.eq(1);
+		expect(unionType.members[0]).to.eq(dom.type.string);
 	});
 
 	it("should create a private class member", () => {

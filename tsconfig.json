@@ -15,8 +15,5 @@
 		"node_modules/@types/**/*.ts",
 		"src/**/*",
 		"typings/**/*.ts"
-	],
-	"exclude": [
-		"src/test"
 	]
 }
