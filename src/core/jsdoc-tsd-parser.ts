@@ -217,6 +217,10 @@ export class JSDocTsdParser {
 				output += dom.emit(results[key]);
 			} catch (err) {
 				console.error(`Unexpected error. Please report this error on github!\nCan't emit item ${key}: ${err}\n\n${JSON.stringify(results[key], null, "\t")}`);
+				let jsdocItems = this.jsdocItems.filter((elem) => {
+					return (elem.hasOwnProperty("name") && elem.name.endsWith(key)) || (elem.hasOwnProperty("longname") && elem.longname === key);
+				});
+				console.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
 			}
 		});
 
