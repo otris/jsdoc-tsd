@@ -1,5 +1,5 @@
 import * as dom from "dts-dom";
-import { ParameterFlags } from "dts-dom";
+import { ParameterFlags, TypeParameter, InterfaceDeclaration } from "dts-dom";
 
 export class JSDocTsdParser {
 
@@ -259,26 +259,88 @@ export class JSDocTsdParser {
 		return lines;
 	}
 
-	private createDomParams(params: IDocletProp[]): dom.Parameter[] {
+
+	private createDomParams(params: IDocletProp[], functionName?: string): dom.Parameter[] {
 		let domParams: dom.Parameter[] = [];
+		let typeDef: ITypedefDoclet | undefined;
+		let propParam: IDocletProp | undefined;
 
-		params.forEach((param) => {
-			let domParam: dom.Parameter;
+		for (let i=0; i<params.length; i++) {
+			let param = params[i];
+			let paramIsProperty = (param.name.indexOf(".") > 0);
+			let nextParamIsProperty = (i+1 < params.length) && (params[i+1].name.indexOf(".") > 0);
+			let lastParam = (i+1 === params.length);
+			let domParam: dom.Parameter | undefined;
+			
+			// check the type of the parameter
+			if (!paramIsProperty && nextParamIsProperty) {
+				// the parameter is a parameter with properties
 
-			if (param.type && param.type.names.length > 0) {
+				// remember the parameter
+				propParam = param;
+
+				// create a new typedef
+				typeDef = {
+					kind: "typedef",
+					type: param.type,
+					meta: param.meta,
+					name: functionName + "_" + param.name,
+					scope: "",
+					longname: functionName + "_" + param.name,
+					properties: []
+				};
+				this.jsdocItems.push(typeDef);
+				
+			} else if (paramIsProperty) {
+				// the parameter is a property
+
+				if (!typeDef || !typeDef.properties) {
+					throw `Parent of property ${param.name} is missing or incorrect`;
+				}
+
+				// add the property to the typedef
+				let prop: IDocletProp = {
+					type: param.type,
+					name: param.name.substr(param.name.indexOf(".") + 1),
+					description: param.description,
+					comment: param.comment
+				};
+				typeDef.properties.push(prop);
+
+				if (lastParam || !nextParamIsProperty) {
+					// the parameter is the last property
+
+					if(!propParam) {
+						throw `Parent of property ${param.name} is missing or incorrect`;
+					}
+
+					// create an interface from the typedef
+					let domInterface: dom.InterfaceDeclaration = this.parseTypeDefinition(typeDef) as dom.InterfaceDeclaration;
+					this.resultItems[typeDef.longname] = [domInterface];
+
+					// create the parameter with the interface as type
+					let interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
+					domParam = dom.create.parameter(propParam.name, interfaceType);
+				}
+
+			} else if (param.type && param.type.names.length > 0) {
+				// the param has a simple type
 				domParam = dom.create.parameter(param.name, this.mapTypesToUnion(param.type.names));
+
 			} else {
 				// the param has no type => map to "any"
 				domParam = dom.create.parameter(param.name, dom.type.any);
 			}
 
-			if (param.optional) {
-				domParam.flags = dom.ParameterFlags.Optional;
+			if (domParam) {
+				if (param.optional) {
+					domParam.flags = dom.ParameterFlags.Optional;
+				}
+	
+				this.handleFlags(param, domParam);
+				domParams.push(domParam);
 			}
-
-			this.handleFlags(param, domParam);
-			domParams.push(domParam);
-		});
+		}
 
 		return domParams;
 	}
@@ -377,6 +439,9 @@ export class JSDocTsdParser {
 					variableType = "boolean";
 				}
 
+				if (variableType === "function") {
+					variableType = "Function";
+				}
 				return variableType as dom.Type;
 			}
 		}
@@ -433,7 +498,7 @@ export class JSDocTsdParser {
 
 		let domFunction: dom.FunctionDeclaration;
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
-			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params), functionReturnValue);
+			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params, jsdocItem.name), functionReturnValue);
 		} else {
 			// no params => create a single function declaration
 			domFunction = dom.create.function(jsdocItem.name, [], functionReturnValue);
