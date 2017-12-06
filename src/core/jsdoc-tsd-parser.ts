@@ -26,6 +26,7 @@ export class JSDocTsdParser {
 
 		jsdocItems.forEach((item) => {
 			if (!item.ignore) {
+				let addItem = true;
 				let parsedItem: dom.DeclarationBase = {};
 				this.jsdocItems.push(item);
 				this.resultItems[item.longname] = [];
@@ -66,13 +67,19 @@ export class JSDocTsdParser {
 						break;
 
 					default:
-						console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
+						if ((item as any).kind !== "package") {
+							console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
+						}
+
+						addItem = false;
 						break;
 				}
 
-				parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
-				this.handleFlags(item, parsedItem);
-				this.resultItems[item.longname].push(parsedItem);
+				if (addItem) {
+					parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
+					this.handleFlags(item, parsedItem);
+					this.resultItems[item.longname].push(parsedItem);
+				}
 			}
 		});
 	}
