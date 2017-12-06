@@ -8,13 +8,27 @@ export class JSDocTsdParser {
 		private: dom.DeclarationFlags.Private,
 		protected: dom.DeclarationFlags.Protected,
 	};
+	private config = {} as any;
 	private jsdocItems: TDoclet[];
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
 
-	constructor() {
+	constructor(config?: any) {
 		this.resultItems = {};
+		
+		if (config) {
+			this.config = config;
+		}
+
+		if (!this.config.ignoreScopes) {
+			this.config.ignoreScopes = [
+				"static",
+				"inner",
+				"global",
+				"instance"
+			];
+		}
 	}
 
 	public getResultItems() {
@@ -25,7 +39,10 @@ export class JSDocTsdParser {
 		this.jsdocItems = [];
 
 		jsdocItems.forEach((item) => {
-			if (!item.ignore) {
+			if (item.name === "defaultConfig") {
+				let a = 0;
+			}
+			if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1) {
 				let addItem = true;
 				let parsedItem: dom.DeclarationBase = {};
 				this.jsdocItems.push(item);

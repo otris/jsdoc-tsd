@@ -15,8 +15,14 @@ export function publish(data: any, opts: any) {
 	// get the jsdoc results
 	const jsdocResults = data().get();
 
+	let parser;
+	if (opts.configure) {
+		parser = new JSDocTsdParser(JSON.parse(fs.readFileSync(opts.configure, { encoding: "utf-8" })));
+	} else {
+		parser = new JSDocTsdParser();
+	}
+
 	// parse the results
-	let parser = new JSDocTsdParser();
 	parser.parse(jsdocResults);
 
 	// Write the output
