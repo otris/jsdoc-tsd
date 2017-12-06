@@ -347,7 +347,7 @@ export class JSDocTsdParser {
 
 	private findParentItem(jsdocItem: TDoclet, domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration }): dom.TopLevelDeclaration {
 		// we have to find the parent item
-		let parentItem: dom.TopLevelDeclaration = {} as dom.TopLevelDeclaration;
+		let parentItem: dom.TopLevelDeclaration = null as any;
 
 		if (jsdocItem.memberof) {
 			let parentItemNames = jsdocItem.memberof.split(".");
