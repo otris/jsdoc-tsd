@@ -172,7 +172,7 @@ export class JSDocTsdParser {
 									break;
 
 								default:
-									console.warn("Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parsedItem.kind}'");
+									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parentItem.kind}'`);
 									break;
 							}
 
@@ -182,7 +182,7 @@ export class JSDocTsdParser {
 						default:
 							// missing the top level declaration
 							// tslint:disable-next-line:max-line-length
-							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
+							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
 
 							if (!domTopLevelDeclarations[jsdocItem.longname]) {
 								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
