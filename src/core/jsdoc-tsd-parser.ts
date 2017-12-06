@@ -54,6 +54,7 @@ export class JSDocTsdParser {
 
 					case "file":
 						// suppress warnings for this type
+						addItem = false;
 						break;
 
 					case "class":
