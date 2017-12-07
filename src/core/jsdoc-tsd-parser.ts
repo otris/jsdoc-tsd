@@ -28,6 +28,40 @@ export class JSDocTsdParser {
 				"global",
 				"instance"
 			];
+
+		if (typeof this.config.versionComparator !== "string" && this.config.versionComparator !== "") {
+			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
+				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
+					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
+						let taggedVersionNo = parseInt(taggedVersion.replace(/[v\.]/gi, ""));
+						let latestVersionNo = parseInt(latestVersion.replace(/[v\.]/gi, ""));
+
+						return taggedVersionNo <= latestVersionNo;
+					} else {
+						return true;
+					}
+				} else {
+					return false;
+				}
+			}
+		} else {
+			let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
+			functionBody = functionBody.substr(0, functionBody.length - 1).trim();
+			this.config.versionComparator = new Function("param1", "param2", functionBody);
+
+			// test for errors
+			try {
+				var result = this.config.versionComparator("", "");
+				if (typeof result !== "boolean") {
+					throw new Error("The versionComparator-function has to return a boolean, instead got " + typeof result);
+				}
+			} catch (err) {
+				if (err instanceof ReferenceError || err instanceof SyntaxError || err instanceof TypeError) {
+					throw new Error("Invalid valueComparator-function: " + err);
+				}
+
+				console.log(err);
+			}
 		}
 	}
 
@@ -39,10 +73,7 @@ export class JSDocTsdParser {
 		this.jsdocItems = [];
 
 		jsdocItems.forEach((item) => {
-			if (item.name === "defaultConfig") {
-				let a = 0;
-			}
-			if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1) {
+			if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1 && this.evaluateSinceTag(item.since)) {
 				let addItem = true;
 				let parsedItem: dom.DeclarationBase = {};
 				this.jsdocItems.push(item);
@@ -372,6 +403,14 @@ export class JSDocTsdParser {
 		}
 
 		return domParams;
+	}
+
+	private evaluateSinceTag(sinceTag: string | undefined) {
+		if (typeof sinceTag === "string" && sinceTag !== "") {
+			return this.config.versionComparator(sinceTag, this.config.latestVersion);
+		} else {
+			return true;
+		}
 	}
 
 	private findParentItem(jsdocItem: TDoclet, domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration }): dom.TopLevelDeclaration {
