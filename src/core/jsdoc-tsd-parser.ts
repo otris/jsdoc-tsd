@@ -22,12 +22,8 @@ export class JSDocTsdParser {
 		}
 
 		if (!this.config.ignoreScopes) {
-			this.config.ignoreScopes = [
-				"static",
-				"inner",
-				"global",
-				"instance"
-			];
+			this.config.ignoreScopes = [];
+		}
 
 		if (typeof this.config.versionComparator !== "string" && this.config.versionComparator !== "") {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
