@@ -31,6 +31,30 @@ $> jsdoc -d <target-dir>/<filename>.d.ts
 
 **Important: If you want to change the file name of the result file your path has to end with the file ending ```d.ts```**
 
+## Options
+* **ignoreScopes** Array with scope names which should not be parsed. Possible values
+```
+[
+    "global",
+    "inner",
+    "instance",
+    "static"
+]
+```
+* **latestVersion** If this option is passed, the since tag will be evaluated. Only elements which has the same or a smaller version will be emitted
+* **versionComparator** String representation of a function to determine if an element should be emitted or not. This function can be used if the version informations for the ```@since``` annotation is not a valid semantic versioning tag. If the function is set and the ```@since``` tag is a valid semver tag, the comparator function will be used anyway.   
+The function has to have the following signature:
+```
+/**
+ * Determines if the tagged version is less or equal the latest version
+ * @param {string} taggedVersion The value of the @since tag
+ * @param {string} [latestVersion] The configured value, if passed
+ * @returns {boolean} true, if the item should be emitted, otherwise false
+ */
+function versionComparator(taggedVersion, latestVersion) {
+
+}
+```
 ## Supported Tags
 * @enum
 * @function (implicitly)
@@ -42,6 +66,7 @@ $> jsdoc -d <target-dir>/<filename>.d.ts
 * @member
 * @ignore
 * @interface
+* @since
 
 ## Ignored Tags
 * @file
