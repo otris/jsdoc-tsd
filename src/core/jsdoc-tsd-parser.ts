@@ -229,15 +229,15 @@ export class JSDocTsdParser {
 							switch ((moduleMember as any).kind) {
 
 								case "property":
-									let VariableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
+									let variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
 									if (parsedItem.flags === dom.DeclarationFlags.Static) {
-										VariableDeclaration.flags = dom.DeclarationFlags.Export;
+										variableDeclaration.flags = dom.DeclarationFlags.Export;
 									} else {
-										VariableDeclaration.flags = dom.DeclarationFlags.Private;
+										variableDeclaration.flags = dom.DeclarationFlags.Private;
 									}
-									VariableDeclaration.comment = moduleMember.comment;
-									VariableDeclaration.jsDocComment = moduleMember.jsDocComment;
-									(parentItem as dom.ModuleDeclaration).members.push(VariableDeclaration);
+									variableDeclaration.comment = moduleMember.comment;
+									variableDeclaration.jsDocComment = moduleMember.jsDocComment;
+									(parentItem as dom.ModuleDeclaration).members.push(variableDeclaration);
 									break;
 
 								case "function":
