@@ -1,0 +1,99 @@
+[
+	{
+		"comment": "/**\r\n * @memberof module:myModule\r\n * @member moduleMember {string}\r\n * @description my module member\r\n **/",
+		"meta": {
+			"filename": "modulemember.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"memberof": "module:myModule",
+		"kind": "member",
+		"name": "moduleMember",
+		"type": {
+			"names": [
+				"string"
+			]
+		},
+		"description": "my module member",
+		"scope": "static",
+		"longname": "module:myModule.moduleMember",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n* @memberof module:myModule\r\n* @function moduleFunction\r\n* @description my module function\r\n* @param {string} param1 first param\r\n* @param {number} param2 second param\r\n* @returns {boolean} function return value\r\n**/",
+		"meta": {
+			"filename": "modulemember.js",
+			"lineno": 6,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"memberof": "module:myModule",
+		"kind": "function",
+		"name": "moduleFunction",
+		"description": "my module function",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "first param",
+				"name": "param1"
+			},
+			{
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"description": "second param",
+				"name": "param2"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"boolean"
+					]
+				},
+				"description": "function return value"
+			}
+		],
+		"scope": "static",
+		"longname": "module:myModule.moduleFunction",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\n* @module myModule\n* @description my module\n*/",
+		"meta": {
+			"filename": "mymodule.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "module",
+		"name": "myModule",
+		"description": "my module",
+		"longname": "module:myModule",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\modulemember.js",
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\mymodule.js"
+		],
+		"___id": "T000002R000005",
+		"___s": true
+	}
+]
