@@ -25,7 +25,7 @@ export class JSDocTsdParser {
 			this.config.ignoreScopes = [];
 		}
 
-		if (typeof this.config.versionComparator !== "string" && this.config.versionComparator !== "") {
+		if (typeof this.config.versionComparator !== "function" && (typeof this.config.versionComparator !== "string" || this.config.versionComparator === "")) {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
 				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
 					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
@@ -39,6 +39,20 @@ export class JSDocTsdParser {
 				} else {
 					return false;
 				}
+			}
+		} else if (typeof this.config.versionComparator === "function") {
+			// test for errors
+			try {
+				var result = this.config.versionComparator("", "");
+				if (typeof result !== "boolean") {
+					throw new Error("The versionComparator-function has to return a boolean, instead got " + typeof result);
+				}
+			} catch (err) {
+				if (err instanceof ReferenceError || err instanceof SyntaxError || err instanceof TypeError) {
+					throw new Error("Invalid valueComparator-function: " + err);
+				}
+
+				console.log(err);
 			}
 		} else {
 			let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
