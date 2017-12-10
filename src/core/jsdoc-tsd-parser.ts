@@ -225,33 +225,33 @@ export class JSDocTsdParser {
 							break;
 
 						case "module":
-						let moduleMember = parsedItem as dom.ModuleMember;
-						switch ((moduleMember as any).kind) {
+							let moduleMember = parsedItem as dom.ModuleMember;
+							switch ((moduleMember as any).kind) {
 
-							case "property":
-								let VariableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
-								if (parsedItem.flags === dom.DeclarationFlags.Static) {
-									VariableDeclaration.flags = dom.DeclarationFlags.Export;
-								} else {
-									VariableDeclaration.flags = dom.DeclarationFlags.Private;
-								}
-								VariableDeclaration.comment = moduleMember.comment;
-								VariableDeclaration.jsDocComment = moduleMember.jsDocComment;
-								(parentItem as dom.ModuleDeclaration).members.push(VariableDeclaration);
-								break;
+								case "property":
+									let VariableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
+									if (parsedItem.flags === dom.DeclarationFlags.Static) {
+										VariableDeclaration.flags = dom.DeclarationFlags.Export;
+									} else {
+										VariableDeclaration.flags = dom.DeclarationFlags.Private;
+									}
+									VariableDeclaration.comment = moduleMember.comment;
+									VariableDeclaration.jsDocComment = moduleMember.jsDocComment;
+									(parentItem as dom.ModuleDeclaration).members.push(VariableDeclaration);
+									break;
 
-							case "function":
-								if (moduleMember.flags === dom.DeclarationFlags.Static) {
-									moduleMember.flags = dom.DeclarationFlags.Export;
-								} else {
-									moduleMember.flags = dom.DeclarationFlags.Private;
-								}
-								(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
-								break;
+								case "function":
+									if (moduleMember.flags === dom.DeclarationFlags.Static) {
+										moduleMember.flags = dom.DeclarationFlags.Export;
+									} else {
+										moduleMember.flags = dom.DeclarationFlags.Private;
+									}
+									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+									break;
 
-							default:
-								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
-								break;
+								default:
+									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
+									break;
 							}
 
 							break;
