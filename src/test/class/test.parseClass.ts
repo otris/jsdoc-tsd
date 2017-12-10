@@ -94,4 +94,4 @@ describe("JSDocTsdParser.parse.class", () => {
 		expect(methodDeclarations.length).to.eq(1);
 		expect(methodDeclarations[0].flags).to.eq(dom.DeclarationFlags.Private);
 	});
-})
+});

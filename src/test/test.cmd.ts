@@ -30,4 +30,4 @@ describe("Tests for different cmd calls", () => {
 
 		expect(fs.existsSync(targetFilePath));
 	});
-})
+});

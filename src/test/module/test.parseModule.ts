@@ -54,4 +54,4 @@ describe("JSDocTsdParser.parse.module", () => {
 		expect(unionType.members.length).to.eq(1);
 		expect(unionType.members[0]).to.eq(dom.type.string);
 	});
-})
+});
