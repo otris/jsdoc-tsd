@@ -13,4 +13,4 @@ describe("JSDocTsdParser.parse.exampleProject", () => {
 		let result = parser.resolveResults();
 		console.log(result);
 	});
-})
+});

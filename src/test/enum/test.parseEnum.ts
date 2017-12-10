@@ -48,4 +48,4 @@ describe("JSDocTsdParser.parse.enum", () => {
 		let enumDeclaration: dom.EnumDeclaration = result["myStupidEnum"] as dom.EnumDeclaration;
 		expect(enumDeclaration.members.length).to.eq(2);
 	});
-})
+});

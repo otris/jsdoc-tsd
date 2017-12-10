@@ -31,4 +31,4 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		let interfaceType = dom.create.typeParameter("mySimpleFunction_propertyParameter", paramInterface);
 		expect(parameters[0].type).to.eql(interfaceType);
 	});
-})
+});

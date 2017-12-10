@@ -55,4 +55,4 @@ describe("JSDocTsdParser.parse.interface", () => {
 		expect(unionType.members[0]).to.eq(dom.type.number);
 		expect(unionType.members[1]).to.eq(dom.type.string);
 	});
-})
+});
