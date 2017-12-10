@@ -126,7 +126,7 @@ export class JSDocTsdParser {
 						break;
 
 					case "module":
-						this.parseModule(item as INamespaceDoclet);
+						parsedItem = this.parseModule(item as INamespaceDoclet);
 						break;
 
 					default:
@@ -644,10 +644,7 @@ export class JSDocTsdParser {
 	}
 
 	private parseModule(jsdocItem: INamespaceDoclet) {
-		let domModule: dom.ModuleDeclaration = dom.create.module(jsdocItem.name);
-		domModule.jsDocComment = this.cleanJSDocComment(jsdocItem.description);
-
-		this.resultItems[jsdocItem.longname].push(domModule);
+		return dom.create.module(jsdocItem.name);
 	}
 
 	private parseNamespace(jsdocItem: INamespaceDoclet): dom.DeclarationBase {

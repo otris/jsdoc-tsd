@@ -16,7 +16,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		let results = parser.getResultItems();
 		let moduleDeclarations: dom.ModuleDeclaration[] = results[moduleData[2].longname] as dom.ModuleDeclaration[];
 
-		expect(moduleDeclarations.length).to.eq(2);
+		expect(moduleDeclarations.length).to.eq(1);
 		let moduleDeclaration = moduleDeclarations[0];
 		expect(moduleDeclaration.jsDocComment).to.eq("my module");
 		expect(moduleDeclaration.name).to.eq(moduleData[2].name);
