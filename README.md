@@ -67,6 +67,7 @@ function versionComparator(taggedVersion, latestVersion) {
 * @ignore
 * @interface
 * @since
+* @module (function and variable declarations)
 
 ## Ignored Tags
 * @file

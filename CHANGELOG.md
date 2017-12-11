@@ -1,5 +1,17 @@
 ## Changelog
 
+# v0.7.0
+New features in this release:
+ - Support for modules (only function and variable declarations)
+ - Option to ignore specific scopes (see (README)[README.md])
+ - Option to filter the output with the @since-Tag (see (README)[README.md])
+ - Support for type parameters (parameters with properties)
+
+Bugfixes:
+ - Items, which were annotated with @ignore were not ignored
+ - Fixed some log messages in error cases
+ - Type ```function``` will no be mapped to ```Function```
+
 ### v0.6.0
 New features in this release:
  - Support for multiple parameter types

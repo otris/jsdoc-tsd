@@ -1,6 +1,6 @@
 {
 	"name": "jsdoc-tsd",
-	"version": "0.6.2",
+	"version": "0.7.0",
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
 	"main": "./src-out/core/publish.js",
 	"scripts": {
@@ -19,7 +19,6 @@
 		"grunt": "^1.0.1",
 		"grunt-jsdoc": "^2.1.1",
 		"mocha": "^3.5.3",
-		"shelljs": "^0.7.8",
 		"ts-node": "^3.3.0",
 		"tslint": "^5.7.0"
 	},
@@ -27,6 +26,7 @@
 		"@types/node": "^8.0.29",
 		"@types/shelljs": "^0.7.6",
 		"dts-dom": "^0.1.22",
+		"shelljs": "^0.7.8",
 		"typescript": "^2.5.2"
 	},
 	"peerDependencies": {
