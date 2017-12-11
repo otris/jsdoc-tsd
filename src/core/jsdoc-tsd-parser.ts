@@ -230,10 +230,8 @@ export class JSDocTsdParser {
 
 								case "property":
 									let variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
-									if (parsedItem.flags === dom.DeclarationFlags.Static) {
+									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
 										variableDeclaration.flags = dom.DeclarationFlags.Export;
-									} else {
-										variableDeclaration.flags = dom.DeclarationFlags.Private;
 									}
 									variableDeclaration.comment = moduleMember.comment;
 									variableDeclaration.jsDocComment = moduleMember.jsDocComment;
@@ -241,10 +239,8 @@ export class JSDocTsdParser {
 									break;
 
 								case "function":
-									if (moduleMember.flags === dom.DeclarationFlags.Static) {
+									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
 										moduleMember.flags = dom.DeclarationFlags.Export;
-									} else {
-										moduleMember.flags = dom.DeclarationFlags.Private;
 									}
 									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
 									break;
