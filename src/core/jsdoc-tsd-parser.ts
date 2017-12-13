@@ -1,6 +1,7 @@
 import * as dom from "dts-dom";
 import { ParameterFlags, TypeParameter, InterfaceDeclaration } from "dts-dom";
-var compare = require('node-version-compare');
+import * as fs from "fs";
+var compare = require("node-version-compare");
 
 export class JSDocTsdParser {
 
@@ -53,9 +54,15 @@ export class JSDocTsdParser {
 				console.log(err);
 			}
 		} else {
-			let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
-			functionBody = functionBody.substr(0, functionBody.length - 1).trim();
-			this.config.versionComparator = new Function("param1", "param2", functionBody);
+			if(this.config.versionComparator.indexOf("{") > 0){
+				let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
+				functionBody = functionBody.substr(0, functionBody.length - 1).trim();
+				this.config.versionComparator = new Function("param1", "param2", functionBody);
+			} else if (fs.statSync(this.config.versionComparator).isFile()) {
+				this.config.versionComparator = require(this.config.versionComparator);
+			} else {
+				throw new Error("versionComparator must contain a valid path or a valid function as string");
+			}
 
 			// test for errors
 			try {
