@@ -1,5 +1,6 @@
 import * as dom from "dts-dom";
 import { ParameterFlags, TypeParameter, InterfaceDeclaration } from "dts-dom";
+var compare = require('node-version-compare');
 
 export class JSDocTsdParser {
 
@@ -29,10 +30,7 @@ export class JSDocTsdParser {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
 				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
 					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
-						let taggedVersionNo = parseInt(taggedVersion.replace(/[v\.]/gi, ""));
-						let latestVersionNo = parseInt(latestVersion.replace(/[v\.]/gi, ""));
-
-						return taggedVersionNo <= latestVersionNo;
+						return compare(taggedVersion, latestVersion);
 					} else {
 						return true;
 					}
