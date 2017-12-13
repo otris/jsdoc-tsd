@@ -76,6 +76,31 @@ describe("Test for parsing the since tag", () => {
 		expect(results).haveOwnPropertyDescriptor("MyTestClass");
 	});
 
+	it("should add the class definition if the tag is a valid semver tag with multi-digit numbers", () => {
+		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
+		myClass.since = "v1.0.0";
+		myClass.name = myClass.longname = "MyTestClass";
+
+		let parserConfig = {
+			latestVersion: "v1.1.0"
+		};
+		let parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		let results = parser.getResultItems();
+		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+
+		// same for other representation
+		myClass.since = "1.0.12";
+		myClass.name = myClass.longname = "MyTestClass";
+
+		parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		results = parser.getResultItems();
+		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+	});
+
 	it("should not add the class definition if the tag is not a valid semver tag and no custom comparator is set", () => {
 		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
 		myClass.since = "abc";
