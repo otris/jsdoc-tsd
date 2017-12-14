@@ -26,7 +26,6 @@
 		"@types/node": "^8.0.29",
 		"@types/shelljs": "^0.7.6",
 		"dts-dom": "^0.1.22",
-		"fs": "0.0.1-security",
 		"node-version-compare": "^1.0.1",
 		"shelljs": "^0.7.8",
 		"typescript": "^2.5.2"
