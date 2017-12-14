@@ -1,6 +1,7 @@
 import * as dom from "dts-dom";
 import { ParameterFlags, TypeParameter, InterfaceDeclaration } from "dts-dom";
 import * as fs from "fs";
+import * as path from "path";
 var compare = require("node-version-compare");
 
 export class JSDocTsdParser {
@@ -58,7 +59,14 @@ export class JSDocTsdParser {
 				let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
 				functionBody = functionBody.substr(0, functionBody.length - 1).trim();
 				this.config.versionComparator = new Function("param1", "param2", functionBody);
-			} else if (fs.statSync(this.config.versionComparator).isFile()) {
+			} else if (path.dirname(this.config.versionComparator)) {
+				if(path.extname(this.config.versionComparator) !== ".js") {
+					throw new Error(this.config.versionComparator + " must be a JavaScript file");
+				}
+				if (!fs.statSync(this.config.versionComparator).isFile()) {
+					// probably we should not get here
+					throw new Error(this.config.versionComparator + " is not a valid file");
+				}
 				this.config.versionComparator = require(this.config.versionComparator);
 			} else {
 				throw new Error("versionComparator must contain a valid path or a valid function as string");
