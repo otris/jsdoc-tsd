@@ -32,7 +32,8 @@ export class JSDocTsdParser {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
 				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
 					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
-						return compare(taggedVersion, latestVersion);
+						let result = compare(latestVersion, taggedVersion);
+						return result >= 0;
 					} else {
 						return true;
 					}

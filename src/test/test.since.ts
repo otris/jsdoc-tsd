@@ -53,6 +53,8 @@ describe("Test for parsing the since tag", () => {
 
 	it("should add the class definition if the tag is a valid semver tag and the latest tag is bigger than the since tag", () => {
 		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
+
+		// latest verion > since
 		myClass.since = "v1.0.0";
 		myClass.name = myClass.longname = "MyTestClass";
 
@@ -65,7 +67,20 @@ describe("Test for parsing the since tag", () => {
 		let results = parser.getResultItems();
 		expect(results).haveOwnPropertyDescriptor("MyTestClass");
 
-		// same for other representation
+		// latest verion < since
+		myClass.since = "v1.1.0";
+		myClass.name = myClass.longname = "MyTestClass";
+
+		parserConfig = {
+			latestVersion: "v1.0.0"
+		};
+		parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		results = parser.getResultItems();
+		expect(Object.keys(results).length).to.eq(0);
+		
+		// latest verion > since for other representation
 		myClass.since = "1.0.0";
 		myClass.name = myClass.longname = "MyTestClass";
 
