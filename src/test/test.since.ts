@@ -148,7 +148,7 @@ describe("Test for parsing the since tag", () => {
 		myClass.name = myClass.longname = "MyTestClass";
 
 		let parserConfig = {
-			versionComparator: "C:/projekte/jsdoc-tsd/src/test/versionComparators/versionComparatorFalse.js"
+			versionComparator: path.resolve(__dirname, "versionComparators/versionComparatorFalse.js")
 		};
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
@@ -158,7 +158,7 @@ describe("Test for parsing the since tag", () => {
 
 		// opposite test
 		parserConfig = {
-			versionComparator: "C:/projekte/jsdoc-tsd/src/test/versionComparators/versionComparatorTrue.js"
+			versionComparator: path.resolve(__dirname, "versionComparators/versionComparatorTrue.js")
 		};
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
