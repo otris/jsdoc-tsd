@@ -113,7 +113,7 @@ describe("Test for parsing the since tag", () => {
 		expect(Object.keys(results).length).to.eq(0);
 	});
 
-	it("should use the comparator function if it's passed", () => {
+	it("should use the comparator function if it's passed as function", () => {
 		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
 		myClass.since = "abc";
 		myClass.name = myClass.longname = "MyTestClass";
@@ -134,6 +134,31 @@ describe("Test for parsing the since tag", () => {
 			versionComparator: (taggedVersion: string, latestVersion: string): boolean => {
 				return true;
 			}
+		};
+		parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		results = parser.getResultItems();
+		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+	});
+
+	it("should use the comparator function if it's passed as JavaScript file", () => {
+		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
+		myClass.since = "abc";
+		myClass.name = myClass.longname = "MyTestClass";
+
+		let parserConfig = {
+			versionComparator: path.resolve(__dirname, "versionComparators/versionComparatorFalse.js")
+		};
+		let parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		let results = parser.getResultItems();
+		expect(Object.keys(results).length).to.eq(0);
+
+		// opposite test
+		parserConfig = {
+			versionComparator: path.resolve(__dirname, "versionComparators/versionComparatorTrue.js")
 		};
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
