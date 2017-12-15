@@ -32,7 +32,8 @@ export class JSDocTsdParser {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
 				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
 					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
-						return compare(taggedVersion, latestVersion);
+						let result = compare(latestVersion, taggedVersion);
+						return result >= 0;
 					} else {
 						return true;
 					}
@@ -59,13 +60,9 @@ export class JSDocTsdParser {
 				let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
 				functionBody = functionBody.substr(0, functionBody.length - 1).trim();
 				this.config.versionComparator = new Function("param1", "param2", functionBody);
-			} else if (path.dirname(this.config.versionComparator)) {
+			} else if (fs.existsSync(this.config.versionComparator)) {
 				if(path.extname(this.config.versionComparator) !== ".js") {
 					throw new Error(this.config.versionComparator + " must be a JavaScript file");
-				}
-				if (!fs.statSync(this.config.versionComparator).isFile()) {
-					// probably we should not get here
-					throw new Error(this.config.versionComparator + " is not a valid file");
 				}
 				this.config.versionComparator = require(this.config.versionComparator);
 			} else {
