@@ -23,7 +23,7 @@ describe("JSDocTsdParser.parse.class", () => {
 		expect(classDeclaration.name).to.eq(emptyClassData.name);
 	});
 
-	it("should parse the jsdoc comment and add it to the class declaration", () => {
+	it("should parse the jsdoc comment and add it to the constructor declaration", () => {
 		let comment = `/**
 		 * My Class
 		 * @param {string} myParam My param description
@@ -36,7 +36,10 @@ describe("JSDocTsdParser.parse.class", () => {
 		parser.parse([myClass]);
 		let results = parser.getResultItems();
 		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
-		expect(classDeclarations.jsDocComment).to.eq("My Class\n@param myParam My param description");
+
+		expect(classDeclarations.members.length).to.eq(1);
+		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
+		expect(constr.jsDocComment).to.eq("My Class\n@param myParam My param description");
 	});
 
 	it("should add an constructor with no params to the class members", () => {
