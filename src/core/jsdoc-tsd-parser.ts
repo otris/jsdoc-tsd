@@ -35,13 +35,13 @@ export class JSDocTsdParser {
 						let result = compare(latestVersion, taggedVersion);
 						return result >= 0;
 					} else {
-				return true;
+						return true;
+					}
+				} else {
+					return false;
+				}
 			}
-		} else {
-			return false;
-		}
-	}
-} else if (typeof this.config.versionComparator === "function") {
+		} else if (typeof this.config.versionComparator === "function") {
 			// test for errors
 			try {
 				var result = this.config.versionComparator("", "");
