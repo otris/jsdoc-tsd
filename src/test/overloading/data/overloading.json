@@ -1,0 +1,102 @@
+[
+	{
+		"comment": "/**\n* @class OverloadedClass\n* @classdesc Class description\n* @description Description of constructor with parameter\n* @param {string} constructorParam Description of the constructor parameter\n*/",
+		"meta": {
+			"filename": "overloading.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "class",
+		"name": "OverloadedClass",
+		"classdesc": "Class description",
+		"description": "Description of constructor with parameter",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Description of the constructor parameter",
+				"name": "constructorParam"
+			}
+		],
+		"longname": "OverloadedClass",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\n* @class OverloadedClass\n* @classdesc Class description\n* @description Description of constructor without parameter\n*/",
+		"meta": {
+			"filename": "overloading.js",
+			"lineno": 7,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "class",
+		"name": "OverloadedClass",
+		"classdesc": "Class description",
+		"description": "Description of constructor without parameter",
+		"longname": "OverloadedClass",
+		"scope": "global",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "/**\n* @memberof OverloadedClass\n* @function overloadedFunction\n* @param {boolean} param\n**/",
+		"meta": {
+			"filename": "overloading.js",
+			"lineno": 12,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"memberof": "OverloadedClass",
+		"kind": "function",
+		"name": "overloadedFunction",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"boolean"
+					]
+				},
+				"name": "param"
+			}
+		],
+		"scope": "static",
+		"longname": "OverloadedClass.overloadedFunction",
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"comment": "/**\n* @memberof OverloadedClass\n* @function overloadedFunction\n**/",
+		"meta": {
+			"filename": "overloading.js",
+			"lineno": 17,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"memberof": "OverloadedClass",
+		"kind": "function",
+		"name": "overloadedFunction",
+		"scope": "static",
+		"longname": "OverloadedClass.overloadedFunction",
+		"___id": "T000002R000005",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\overloading.js"
+		],
+		"___id": "T000002R000006",
+		"___s": true
+	}
+]

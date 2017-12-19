@@ -95,9 +95,16 @@ export class JSDocTsdParser {
 		jsdocItems.forEach((item) => {
 			if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1 && this.evaluateSinceTag(item.since)) {
 				let addItem = true;
+				let addJsDocComment = true;
 				let parsedItem: dom.DeclarationBase = {};
-				this.jsdocItems.push(item);
-				this.resultItems[item.longname] = [];
+				if (!this.resultItems[item.longname]) {
+					// only add overloaded items once to jsdocItems
+					// because of the two for-loops in prepareResults
+					this.jsdocItems.push(item);
+					// overloaded items are added to the same key
+					// in resultItems
+					this.resultItems[item.longname] = [];
+				}
 
 				switch (item.kind) {
 					case "function":
@@ -127,7 +134,22 @@ export class JSDocTsdParser {
 
 					case "class":
 						// IClassDoclet with kind 'class'
-						parsedItem = this.parseClass(item as IClassDoclet);
+						if (this.resultItems[item.longname].length === 1) {
+
+							// class is already created, only add the constructor to the class
+							parsedItem = this.parseClass(item as IClassDoclet, this.resultItems[item.longname][0] as dom.ClassDeclaration);
+
+							// class is already added
+							addItem = false;
+						} else {
+
+							// create new class
+							parsedItem = this.parseClass(item as IClassDoclet);
+						}
+
+						// jsDocComment is already added to the constructors
+						// @classdesc is alrady added to the class
+						addJsDocComment = false;
 						break;
 
 					case "interface":
@@ -149,7 +171,9 @@ export class JSDocTsdParser {
 				}
 
 				if (addItem) {
-					parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
+					if (addJsDocComment) {
+						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
+					}
 					this.handleFlags(item, parsedItem);
 					this.resultItems[item.longname].push(parsedItem);
 				}
@@ -316,6 +340,7 @@ export class JSDocTsdParser {
 		let exampleLines: string[] = [];
 		let description = false;
 		let example = false;
+		let classdesc = false;
 
 		if (comment) {
 			for (let line of comment.split(/\r?\n/)) {
@@ -328,22 +353,27 @@ export class JSDocTsdParser {
 
 				// ignore everything that is not part of the function description in tsd-files
 				// tslint:disable-next-line:max-line-length
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@example") || !cleanedLine.startsWith("@"))) {
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@classdesc") || cleanedLine.startsWith("@example") || !cleanedLine.startsWith("@"))) {
 					if (cleanedLine.startsWith("@")) {
 						description = false;
 						example = false;
+						classdesc = false;
 					}
 					if (cleanedLine.startsWith("@description")) {
 						cleanedLine = cleanedLine.replace("@description ", "");
 						description = true;
 					} else if (cleanedLine.startsWith("@example")) {
 						example = true;
+					} else if (cleanedLine.startsWith("@classdesc")) {
+						classdesc = true;
 					}
 
 					if (description) {
 						descriptionLines.push(cleanedLine);
 					} else if (example) {
 						exampleLines.push(cleanedLine);
+					} else if (classdesc) {
+						// the class-description is correctly added to the class already
 					} else {
 						cleanLines.push(cleanedLine);
 					}
@@ -567,8 +597,11 @@ export class JSDocTsdParser {
 		}
 	}
 
-	private parseClass(jsdocItem: IClassDoclet): dom.DeclarationBase {
-		let domClass: dom.ClassDeclaration = dom.create.class(jsdocItem.name);
+	private parseClass(jsdocItem: IClassDoclet, domClass?: dom.ClassDeclaration): dom.DeclarationBase {
+		if (!domClass) {
+			domClass = dom.create.class(jsdocItem.name);
+			domClass.jsDocComment = jsdocItem.classdesc;
+		}
 
 		// Add the constructor
 		let constructorDeclaration: dom.ConstructorDeclaration;
