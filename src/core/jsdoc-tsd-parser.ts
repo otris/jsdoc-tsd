@@ -16,6 +16,7 @@ export class JSDocTsdParser {
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
+	private rejectedItems: string[] = [];
 
 	constructor(config?: any) {
 		this.resultItems = {};
@@ -93,7 +94,9 @@ export class JSDocTsdParser {
 		this.jsdocItems = [];
 
 		jsdocItems.forEach((item) => {
-			if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1 && this.evaluateSinceTag(item.since)) {
+			if (!this.evaluateSinceTag(item.since)) {
+				this.rejectedItems.push(item.longname);
+			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1) {
 				let addItem = true;
 				let addJsDocComment = true;
 				let parsedItem: dom.DeclarationBase = {};
@@ -298,15 +301,20 @@ export class JSDocTsdParser {
 					}
 				}
 			} else {
-				if (jsdocItem.memberof) {
-					// missing the top level declaration
-					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
-				}
 
-				// add this item as a top level declaration
-				for (let parsedItem of this.resultItems[jsdocItem.longname]) {
-					if (!domTopLevelDeclarations[jsdocItem.longname]) {
-						domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+				// add this item as a top level declaration, if it has no parent or if the parent is missing
+				// do not add this item, if the parent was rejected by the since comparator
+				if (!jsdocItem.memberof || this.rejectedItems.indexOf(jsdocItem.memberof) < 0) {
+
+					if (jsdocItem.memberof) {
+						// missing the top level declaration
+						console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
+					}
+
+					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+						if (!domTopLevelDeclarations[jsdocItem.longname]) {
+							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+						}
 					}
 				}
 			}
