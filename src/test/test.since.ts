@@ -6,6 +6,8 @@ import { JSDocTsdParser } from "../core/jsdoc-tsd-parser";
 
 describe("Test for parsing the since tag", () => {
 	let emptyClassData = JSON.parse(fs.readFileSync(path.resolve(__dirname, "class/data/emptyClass.json"), { encoding: "utf-8" }))[0] as TDoclet;
+	let classData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "class/data/class.json"), { encoding: "utf-8" }));
+	expect(classData.length).to.eq(4);
 
 	it("should add the class definition if no since tag is set", () => {
 		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
@@ -89,6 +91,38 @@ describe("Test for parsing the since tag", () => {
 
 		results = parser.getResultItems();
 		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+	});
+
+	it("should add the class members if the tag is a valid semver tag and the latest tag is bigger than the since tag", () => {
+		let myClass: TDoclet[] = JSON.parse(JSON.stringify(classData));
+		expect(myClass.length).to.eq(4);
+
+		// latest version > since
+		myClass[0].since = "v1.0.0";
+
+		let parserConfig = {
+			latestVersion: "v1.1.0"
+		};
+		let parser = new JSDocTsdParser(parserConfig);
+		parser.parse(myClass);
+
+		let result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("myTestClass");
+		let classDeclaration: dom.ClassDeclaration = result["myTestClass"] as dom.ClassDeclaration;
+		expect(classDeclaration.members.length).to.eq(3);
+		
+
+		// latest version < since
+		myClass[0].since = "v1.1.0";
+
+		parserConfig = {
+			latestVersion: "v1.0.0"
+		};
+		parser = new JSDocTsdParser(parserConfig);
+		parser.parse(myClass);
+
+		result = parser.prepareResults();
+		expect(Object.keys(result).length).to.eq(0);
 	});
 
 	it("should add the class definition if the tag is a valid semver tag with multi-digit numbers", () => {
