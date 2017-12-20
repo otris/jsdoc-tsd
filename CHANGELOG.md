@@ -1,5 +1,16 @@
 ## Changelog
 
+# v0.8.0
+New features in this release:
+ - You can outsource the since tag comparator function to an external file and pass that file instead of the string representation of the function
+ - Constructors and functions can now be overloaded
+ - Added support for the ```@classdesc``` tag
+
+Bugfixes:
+ - Module members will be exported by default, if the private-tag is not set
+ - If the since-tag contains a two-digit number, the comparison was wrong. Now we use the module ```node-version-compare``` for the comparison
+ - If an item was omitted because of the since tag, the members were be added still to the global namespace (if it doesn't failed). Now, the members of an omitted element will be omitted too
+
 # v0.7.0
 New features in this release:
  - Support for modules (only function and variable declarations)

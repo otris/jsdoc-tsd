@@ -55,6 +55,12 @@ function versionComparator(taggedVersion, latestVersion) {
 
 }
 ```
+Alternatively you can pass a path to a javascript file which exports the comparator function like
+```
+module.exports = function(taggedVersion, latestVersion) {
+    // do what you need to
+}
+```
 ## Supported Tags
 * @enum
 * @function (implicitly)
@@ -63,6 +69,7 @@ function versionComparator(taggedVersion, latestVersion) {
 * @namespace
 * @typedef
 * @class
+* @classdesc
 * @member
 * @ignore
 * @interface
