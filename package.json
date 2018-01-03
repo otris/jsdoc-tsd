@@ -1,6 +1,6 @@
 {
-	"name": "jsdoc-tsd",
-	"version": "0.8.1",
+	"name": "@otris/jsdoc-tsd",
+	"version": "0.8.2",
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
 	"main": "./src-out/core/publish.js",
 	"scripts": {
