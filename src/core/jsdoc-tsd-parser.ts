@@ -195,8 +195,31 @@ export class JSDocTsdParser {
 				for (let parsedItem of this.resultItems[jsdocItem.longname]) {
 					switch (parentItem.kind) {
 						case "namespace":
-							(parentItem as dom.NamespaceDeclaration).members.push(parsedItem as dom.NamespaceMember);
-							break;
+							let namespaceMember = parsedItem as dom.NamespaceMember;
+							switch ((namespaceMember as any).kind) {
+
+								case "property":
+									let variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
+									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+										variableDeclaration.flags = dom.DeclarationFlags.Export;
+									}
+									variableDeclaration.comment = namespaceMember.comment;
+									variableDeclaration.jsDocComment = namespaceMember.jsDocComment;
+									(parentItem as dom.NamespaceDeclaration).members.push(variableDeclaration);
+									break;
+
+								case "function":
+									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+										namespaceMember.flags = dom.DeclarationFlags.Export;
+									}
+									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
+									break;
+
+								default:
+									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${namespaceMember.kind}'`);
+									break;
+							}
+						break;
 
 						case "class":
 							let classMember = parsedItem as dom.ClassMember;
