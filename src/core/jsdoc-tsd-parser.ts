@@ -188,6 +188,9 @@ export class JSDocTsdParser {
 		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
 		for (let jsdocItem of this.jsdocItems) {
+			if (jsdocItem.longname === "lcmContractTermHelper.ContractTermReminderConfiguration") {
+				let a = 0;
+			}
 			let parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
 
 			if (parentItem) {
@@ -215,8 +218,16 @@ export class JSDocTsdParser {
 									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
 									break;
 
+								case "interface":
+								case "class":
+								case "namespace":
+								case "const":
+								case "var":
+									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
+									break;
+
 								default:
-									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${namespaceMember.kind}'`);
+									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
 									break;
 							}
 						break;
@@ -302,6 +313,14 @@ export class JSDocTsdParser {
 									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
 										moduleMember.flags = dom.DeclarationFlags.Export;
 									}
+									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+									break;
+
+								case "interface":
+								case "class":
+								case "namespace":
+								case "const":
+								case "var":
 									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
 									break;
 
