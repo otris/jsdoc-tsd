@@ -1,5 +1,9 @@
 ## Changelog
 
+# v0.8.3
+Bugfixes:
+ - Not all supported items were added to their parent member
+
 # v0.8.0
 New features in this release:
  - You can outsource the since tag comparator function to an external file and pass that file instead of the string representation of the function
