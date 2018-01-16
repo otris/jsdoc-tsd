@@ -4,31 +4,33 @@
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
 	"main": "./src-out/core/publish.js",
 	"scripts": {
+		"prepublish": "rm -rf src-out && tsc -p ./",
 		"compile": "tsc -watch -p ./",
 		"parse-example": "move /Y src-out\\core\\publish.js src-out\\core\\publish.backup.js && copy /Y src-out\\core\\publish-example.js src-out\\core\\publish.js && jsdoc -r exampleProject -t src-out\\core && move /Y src-out\\core\\publish.backup.js src-out\\core\\publish.js",
 		"postinstall": "tsc -p ./",
 		"test": "mocha --compilers=ts:ts-node/register --no-timeouts src/test/**/test.*.ts",
-		"test-extension": "jsdoc -r exampleProject -t src-out/core"
+		"test-extension": "jsdoc -r exampleProject -t src-out/core",
+		"test-publish": "npm pack"
 	},
 	"author": "Maximilian Wehrstedt",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/chai": "^4.0.4",
 		"@types/mocha": "^2.2.43",
+		"@types/node": "^8.0.29",
+		"@types/shelljs": "^0.7.6",
 		"chai": "^4.1.2",
 		"grunt": "^1.0.1",
 		"grunt-jsdoc": "^2.1.1",
 		"mocha": "^3.5.3",
 		"ts-node": "^3.3.0",
-		"tslint": "^5.7.0"
+		"tslint": "^5.7.0",
+		"typescript": "^2.5.2"
 	},
 	"dependencies": {
-		"@types/node": "^8.0.29",
-		"@types/shelljs": "^0.7.6",
 		"dts-dom": "^0.1.22",
 		"node-version-compare": "^1.0.1",
-		"shelljs": "^0.7.8",
-		"typescript": "^2.5.2"
+		"shelljs": "^0.7.8"
 	},
 	"peerDependencies": {
 		"jsdoc": "^3.5.5"
