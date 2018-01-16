@@ -1,1 +1,14 @@
-src/test/
+.vscode/
+exampleProject/
+node_modules/
+src/
+src-out/core/publish-example.js
+src-out/test
+src-out/**/*.js.map
+src-out/**/*.d.ts
+typings/
+.editorconfig
+.travis.yml
+gruntfile.js
+tsconfig.json
+tslint.json
