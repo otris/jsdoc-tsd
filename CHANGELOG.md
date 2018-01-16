@@ -1,5 +1,10 @@
 ## Changelog
 
+# v0.8.6
+New features in this release:
+ - You can ignore private members by default by adding the property "ignorePrivateMembers"
+   to the jsconfig.json
+
 # v0.8.3
 Bugfixes:
  - Not all supported items were added to their parent member

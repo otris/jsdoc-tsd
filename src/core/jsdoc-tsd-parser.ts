@@ -29,6 +29,10 @@ export class JSDocTsdParser {
 			this.config.ignoreScopes = [];
 		}
 
+		if (typeof this.config.ignorePrivateMembers === "undefined") {
+			this.config.ignorePrivateMembers = false;
+		}
+
 		if (typeof this.config.versionComparator !== "function" && (typeof this.config.versionComparator !== "string" || this.config.versionComparator === "")) {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
 				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
@@ -96,7 +100,7 @@ export class JSDocTsdParser {
 		jsdocItems.forEach((item) => {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
-			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1 && (!item.access || item.access !== "private")) {
+			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1 && !(this.config.ignorePrivateMembers && item.access === "private")) {
 				let addItem = true;
 				let addJsDocComment = true;
 				let parsedItem: dom.DeclarationBase = {};
@@ -188,9 +192,6 @@ export class JSDocTsdParser {
 		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
 		for (let jsdocItem of this.jsdocItems) {
-			if (jsdocItem.longname === "lcmContractTermHelper.ContractTermReminderConfiguration") {
-				let a = 0;
-			}
 			let parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
 
 			if (parentItem) {
