@@ -1,8 +1,12 @@
 {
 	"name": "@otris/jsdoc-tsd",
-	"version": "0.8.3",
+	"version": "0.8.4",
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
-	"main": "./src-out/core/publish.js",
+	"main": "src-out/core/publish.js",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com:otris/jsdoc-tsd.git"
+	},
 	"scripts": {
 		"prepublish": "rm -rf src-out && tsc -p ./",
 		"compile": "tsc -watch -p ./",
