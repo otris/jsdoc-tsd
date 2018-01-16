@@ -39,7 +39,7 @@ export class JSDocTsdParser {
 						return true;
 					}
 				} else {
-					return false;
+					return true;
 				}
 			}
 		} else if (typeof this.config.versionComparator === "function") {
