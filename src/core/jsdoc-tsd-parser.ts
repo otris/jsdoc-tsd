@@ -96,7 +96,7 @@ export class JSDocTsdParser {
 		jsdocItems.forEach((item) => {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
-			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1) {
+			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1 && (!item.access || item.access !== "private")) {
 				let addItem = true;
 				let addJsDocComment = true;
 				let parsedItem: dom.DeclarationBase = {};
