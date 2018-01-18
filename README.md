@@ -5,20 +5,20 @@ This project is currently in development.
 ## Installation
 You can install this module from npm:
 ```
-$> npm install jsdoc-tsd
+$> npm install @otris/jsdoc-tsd
 ```
 
 ## Usage
 To use this module, simply specify this project as the template for your jsdoc output. To use this template from the command line, run
 ```
-$> jsdoc -t node_modules/jsdoc-tsd -r .
+$> jsdoc -t node_modules/@otris/jsdoc-tsd -r .
 ```
 
 You can also add this template to your JSON configuration file:
 ```
 {
     "opts": {
-        "template": "./node_modules/jsdoc-tsd"
+        "template": "./node_modules/@otris/jsdoc-tsd"
     }
 }
 ```
