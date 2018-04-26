@@ -1,0 +1,55 @@
+[
+	{
+		"comment": "/**\r\n  * Description of my callback\r\n  * @memberof myNamespace\r\n  * @callback myCallback\r\n  * @param {string} param1 Description of param1\r\n  * @returns {string} Description of the return value\r\n  */",
+		"meta": {
+			"filename": "callback.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"description": "Description of my callback",
+		"memberof": "myNamespace",
+		"kind": "typedef",
+		"name": "myCallback",
+		"type": {
+			"names": [
+				"function"
+			]
+		},
+		"params": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Description of param1",
+				"name": "param1"
+			}
+		],
+		"returns": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"description": "Description of the return value"
+			}
+		],
+		"scope": "static",
+		"longname": "myNamespace.myCallback",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\callback.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]
