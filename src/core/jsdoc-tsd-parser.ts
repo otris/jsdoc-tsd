@@ -20,7 +20,8 @@ export class JSDocTsdParser {
 
 	constructor(config?: any) {
 		this.resultItems = {};
-		
+		this.jsdocItems = [];
+
 		if (config) {
 			this.config = config;
 		}
@@ -224,6 +225,7 @@ export class JSDocTsdParser {
 								case "namespace":
 								case "const":
 								case "var":
+								case "alias":
 									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
 									break;
 
@@ -590,6 +592,23 @@ export class JSDocTsdParser {
 		return parentItem;
 	}
 
+	private getFunctionReturnValue(jsdocItem: IFunctionDoclet): dom.Type {
+		let functionReturnValue: dom.Type;
+
+		if (jsdocItem.returns && jsdocItem.returns.length > 0) {
+			if (jsdocItem.returns[0].type) {
+				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names);
+			} else {
+				// the jsdoc comment is incomplete, there is no type information for the return value
+				functionReturnValue = dom.type.any;
+			}
+		} else {
+			functionReturnValue = dom.type.void;
+		}
+
+		return functionReturnValue;
+	}
+
 	private handleFlags(doclet: any, obj: dom.DeclarationBase | dom.Parameter) {
 		obj.flags = dom.DeclarationFlags.None;
 
@@ -687,19 +706,7 @@ export class JSDocTsdParser {
 	}
 
 	private parseFunction(jsdocItem: IFunctionDoclet): dom.DeclarationBase {
-		let functionReturnValue: dom.Type;
-
-		if (jsdocItem.returns && jsdocItem.returns.length > 0) {
-			if (jsdocItem.returns[0].type) {
-				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names);
-			} else {
-				// the jsdoc comment is incomplete, there is no type information for the return value
-				functionReturnValue = dom.type.any;
-			}
-		} else {
-			functionReturnValue = dom.type.void;
-		}
-
+		let functionReturnValue: dom.Type = this.getFunctionReturnValue(jsdocItem);
 		let domFunction: dom.FunctionDeclaration;
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
 			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params, jsdocItem.name), functionReturnValue);
@@ -741,25 +748,50 @@ export class JSDocTsdParser {
 		return dom.create.namespace(jsdocItem.name);
 	}
 
-	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase {
-		let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
-
-		if (jsdocItem.properties) {
-			for (let property of jsdocItem.properties) {
-				let propertyType: dom.Type = dom.type.any;
-				if (property.type) {
-					propertyType = this.mapTypesToUnion(property.type.names);
-				}
-
-				let domProperty = dom.create.property(property.name, propertyType);
-				domProperty.jsDocComment = this.cleanJSDocComment(property.comment) || property.description; // normally the property 'comment' is for these types empty
-				this.handleFlags(property, domProperty);
-
-				domInterface.members.push(domProperty);
-			}
+	private parseTypeAliasDefinition(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration {
+		// get the type of our type definition
+		let type: dom.Type;
+		if (jsdocItem.params) {
+			// the type definition is a function type, so we have to create a function type
+			// with the dts-dom module
+			type = dom.create.functionType(
+				this.createDomParams(jsdocItem.params, jsdocItem.name),
+				this.getFunctionReturnValue(jsdocItem as any)
+			);
+		} else {
+			type = this.mapVariableType(jsdocItem.type.names[0]);
 		}
 
-		return domInterface;
+		return dom.create.alias(
+			jsdocItem.name,
+			type
+		);
+	}
+
+	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase {
+		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0 && jsdocItem.type.names[0] === "function") {
+			// if the jsdoc item has a property "type", we can be sure that it isn't a typedef
+			// which should be mapped to an interface. Instead we create a typeAlias-Declaration
+			return this.parseTypeAliasDefinition(jsdocItem);
+		} else {
+			let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+
+			if (jsdocItem.properties) {
+				for (let property of jsdocItem.properties) {
+					let propertyType: dom.Type = dom.type.any;
+					if (property.type) {
+						propertyType = this.mapTypesToUnion(property.type.names);
+					}
+
+					let domProperty = dom.create.property(property.name, propertyType);
+					domProperty.jsDocComment = this.cleanJSDocComment(property.comment) || property.description; // normally the property 'comment' is for these types empty
+					this.handleFlags(property, domProperty);
+
+					domInterface.members.push(domProperty);
+				}
+			}
+			return domInterface;
+		}
 	}
 
 }

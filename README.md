@@ -65,6 +65,7 @@ module.exports = function(taggedVersion, latestVersion) {
 ## Supported Tags
 * @enum
 * @function (implicitly)
+* @callback
 * @method
 * @memberof
 * @namespace
