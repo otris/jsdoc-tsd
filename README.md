@@ -79,6 +79,9 @@ module.exports = function(taggedVersion, latestVersion) {
 * @module (function and variable declarations)
 * @private (not completed yet)
 
+## Supported typscript tags
+* @template Note: You can write here any value you want, there will be no validation
+
 ## Ignored Tags
 * @file
 

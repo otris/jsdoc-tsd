@@ -183,6 +183,7 @@ export class JSDocTsdParser {
 						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
 					}
 					this.handleFlags(item, parsedItem);
+					this.handleTags(item, parsedItem);
 					this.resultItems[item.longname].push(parsedItem);
 				}
 			}
@@ -622,6 +623,26 @@ export class JSDocTsdParser {
 		let cast = obj as any;
 		if (doclet.optional && cast.kind === "property" && cast.flags === ParameterFlags.Optional) {
 			obj.flags = dom.DeclarationFlags.Optional;
+		}
+	}
+
+	private handleTags(doclet: IDocletBase, obj: any) {
+		// check the tags of the class
+		if (doclet.tags) {
+			for (var tag of doclet.tags) {
+				switch (tag.title) {
+					case "template":
+						if (obj.typeParameters) {
+							obj.typeParameters.push(
+								dom.create.typeParameter(tag.value)
+							);
+						}
+						break;
+
+					default:
+						break;
+				}
+			}
 		}
 	}
 
