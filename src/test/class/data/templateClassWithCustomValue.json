@@ -1,0 +1,71 @@
+[
+	{
+		"comment": "/**\r\n * @interface ITemplateInterface\r\n * @property {string} prop1\r\n */",
+		"meta": {
+			"filename": "template.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"kind": "interface",
+		"name": "ITemplateInterface",
+		"properties": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"name": "prop1"
+			}
+		],
+		"longname": "ITemplateInterface",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * @class\r\n * @template T extends keyof ITemplateInterface\r\n */",
+		"meta": {
+			"range": [
+				145,
+				176
+			],
+			"filename": "template.js",
+			"lineno": 10,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000002",
+				"name": "MyTemplateClass",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			}
+		},
+		"kind": "class",
+		"tags": [
+			{
+				"originalTitle": "template",
+				"title": "template",
+				"text": "T extends keyof ITemplateInterface",
+				"value": "T extends keyof ITemplateInterface"
+			}
+		],
+		"name": "MyTemplateClass",
+		"longname": "MyTemplateClass",
+		"scope": "global",
+		"params": [],
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\template.js"
+		],
+		"___id": "T000002R000004",
+		"___s": true
+	}
+]

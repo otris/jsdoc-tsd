@@ -1,0 +1,45 @@
+[
+	{
+		"comment": "/**\r\n * @class\r\n * @template T\r\n */",
+		"meta": {
+			"range": [
+				37,
+				68
+			],
+			"filename": "template.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000002",
+				"name": "MyTemplateClass",
+				"type": "FunctionDeclaration",
+				"paramnames": []
+			}
+		},
+		"kind": "class",
+		"tags": [
+			{
+				"originalTitle": "template",
+				"title": "template",
+				"text": "T",
+				"value": "T"
+			}
+		],
+		"name": "MyTemplateClass",
+		"longname": "MyTemplateClass",
+		"scope": "global",
+		"params": [],
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\template.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]

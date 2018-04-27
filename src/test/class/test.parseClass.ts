@@ -11,6 +11,8 @@ describe("JSDocTsdParser.parse.class", () => {
 	let classData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/class.json"), { encoding: "utf-8" }));
 	expect(classData.length).to.eq(4);
 	let classDataPrivateMembers: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/class_privateMembers.json"), { encoding: "utf-8" }));
+	let templateClassData = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/templateClass.json"), { encoding: "utf-8" }))[0] as TDoclet;
+	let templateClassWithCustomValueData = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/templateClassWithCustomValue.json"), { encoding: "utf-8" })) as TDoclet[];
 
 	it("should parse a class definition with the correct name", () => {
 		let parser = new JSDocTsdParser();
@@ -96,5 +98,34 @@ describe("JSDocTsdParser.parse.class", () => {
 		});
 		expect(methodDeclarations.length).to.eq(1);
 		expect(methodDeclarations[0].flags).to.eq(dom.DeclarationFlags.Private);
+	});
+
+	it("should create a generic template class", () => {
+		let parser = new JSDocTsdParser();
+		parser.parse([templateClassData]);
+		let results = parser.prepareResults();
+
+		expect(results).haveOwnPropertyDescriptor("MyTemplateClass");
+		let classDeclaration: dom.ClassDeclaration = results["MyTemplateClass"] as dom.ClassDeclaration;
+		expect(classDeclaration.typeParameters.length).to.eq(1);
+
+		let typeParameter = classDeclaration.typeParameters[0];
+		expect(typeParameter.name).to.eq("T");
+	});
+
+	it("should create a generic template class with custom value", () => {
+		let parser = new JSDocTsdParser();
+		parser.parse(templateClassWithCustomValueData);
+		let results = parser.prepareResults();
+
+		expect(results).haveOwnPropertyDescriptor("ITemplateInterface");
+		let interfaceDeclaration: dom.InterfaceDeclaration = results["ITemplateInterface"] as dom.InterfaceDeclaration;
+
+		expect(results).haveOwnPropertyDescriptor("MyTemplateClass");
+		let classDeclaration: dom.ClassDeclaration = results["MyTemplateClass"] as dom.ClassDeclaration;
+		expect(classDeclaration.typeParameters.length).to.eq(1);
+
+		let typeParameter = classDeclaration.typeParameters[0];
+		expect(typeParameter.name).to.eq(`T extends keyof ${interfaceDeclaration.name}`);
 	});
 });

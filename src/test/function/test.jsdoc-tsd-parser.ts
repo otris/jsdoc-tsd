@@ -470,4 +470,27 @@ describe("JSDocTsdParser.parse.function", () => {
 		let optionalParam = functionDeclaration.parameters[1];
 		expect(optionalParam.flags).to.eq(dom.ParameterFlags.Optional);
 	});
+
+	it("should create a template function", () => {
+		let functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/templateFunction.json"), { encoding: "utf-8" }));
+		let parser = new JSDocTsdParser();
+		parser.parse(functionData);
+
+		let result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("myTemplateFunction");
+
+		let functionDeclaration: dom.FunctionDeclaration = result["myTemplateFunction"] as dom.FunctionDeclaration;
+		expect(functionDeclaration.typeParameters.length).to.eq(1);
+
+		let typeParameter = functionDeclaration.typeParameters[0];
+		expect(typeParameter.name).to.eq("T extends keyof ITemplateInterface");
+
+		expect(functionDeclaration.parameters.length).to.eq(1);
+		let param = functionDeclaration.parameters[0];
+		expect(param.name).to.eq("prop");
+
+		let unionType: dom.UnionType = param.type as dom.UnionType;
+		expect(unionType.members.length).to.eq(1);
+		expect(unionType.members[0]).to.eq("T");
+	});
 });
