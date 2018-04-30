@@ -407,11 +407,12 @@ export class JSDocTsdParser {
 					.replace(/\s*\*\/\s?$/, "") // JSDoc-Footer ("*/")
 					.replace(/^\*\s?/, "") // Line ("*")
 					.replace(/@param\s\{[^\}]+\}/g, "@param") // Parameter-Types
+					.replace(/@returns?\s\{[^\}]+\}/g, "@returns") // Return values
 					.trim();
 
 				// ignore everything that is not part of the function description in tsd-files
 				// tslint:disable-next-line:max-line-length
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@classdesc") || cleanedLine.startsWith("@example") || !cleanedLine.startsWith("@"))) {
+				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@classdesc") || cleanedLine.startsWith("@example") || cleanedLine.startsWith("@return") || !cleanedLine.startsWith("@"))) {
 					if (cleanedLine.startsWith("@")) {
 						description = false;
 						example = false;
