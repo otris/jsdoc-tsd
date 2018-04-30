@@ -186,6 +186,9 @@ export class JSDocTsdParser {
 					this.handleTags(item, parsedItem);
 					this.resultItems[item.longname].push(parsedItem);
 				}
+			} else {
+				// item is ignored because of the @private-annotation or by it's scope
+				this.rejectedItems.push(item.longname);
 			}
 		});
 	}
@@ -350,7 +353,7 @@ export class JSDocTsdParser {
 			} else {
 
 				// add this item as a top level declaration, if it has no parent or if the parent is missing
-				// do not add this item, if the parent was rejected by the since comparator
+				// do not add this item, if the parent was rejected by the since comparator or the parent item should be ignored
 				if (!jsdocItem.memberof || this.rejectedItems.indexOf(jsdocItem.memberof) < 0) {
 
 					if (jsdocItem.memberof) {
