@@ -1,0 +1,201 @@
+[
+	{
+		"comment": "/** @namespace */",
+		"meta": {
+			"range": [
+				23,
+				191
+			],
+			"filename": "enum.js",
+			"lineno": 2,
+			"columnno": 4,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000003",
+				"name": "myNamespace",
+				"type": "CallExpression",
+				"value": ""
+			}
+		},
+		"kind": "namespace",
+		"name": "myNamespace",
+		"longname": "myNamespace",
+		"scope": "global",
+		"params": [],
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/** \r\n\t * Enum in a namespace\r\n\t * @enum {number}\r\n\t * @memberof myNamespace\r\n\t */",
+		"meta": {
+			"range": [
+				144,
+				182
+			],
+			"filename": "enum.js",
+			"lineno": 9,
+			"columnno": 5,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000009",
+				"name": "MyEnum",
+				"type": "ObjectExpression",
+				"value": "{\"VAL1\":1,\"VAL2\":2}"
+			}
+		},
+		"description": "Enum in a namespace",
+		"kind": "member",
+		"isEnum": true,
+		"type": {
+			"names": [
+				"number"
+			]
+		},
+		"memberof": "myNamespace",
+		"name": "MyEnum",
+		"longname": "myNamespace.MyEnum",
+		"scope": "static",
+		"params": [],
+		"properties": [
+			{
+				"comment": "",
+				"meta": {
+					"range": [
+						158,
+						165
+					],
+					"filename": "enum.js",
+					"lineno": 10,
+					"columnno": 2,
+					"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+					"code": {
+						"id": "astnode100000012",
+						"name": "VAL1",
+						"type": "Literal",
+						"value": 1
+					}
+				},
+				"name": "VAL1",
+				"longname": "myNamespace.MyEnum.VAL1",
+				"kind": "member",
+				"memberof": "myNamespace.MyEnum",
+				"scope": "static",
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"defaultvalue": 1,
+				"___id": "T000002R000004",
+				"___s": true
+			},
+			{
+				"comment": "",
+				"meta": {
+					"range": [
+						170,
+						177
+					],
+					"filename": "enum.js",
+					"lineno": 11,
+					"columnno": 2,
+					"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+					"code": {
+						"id": "astnode100000014",
+						"name": "VAL2",
+						"type": "Literal",
+						"value": 2
+					}
+				},
+				"name": "VAL2",
+				"longname": "myNamespace.MyEnum.VAL2",
+				"kind": "member",
+				"memberof": "myNamespace.MyEnum",
+				"scope": "static",
+				"type": {
+					"names": [
+						"number"
+					]
+				},
+				"defaultvalue": 2,
+				"___id": "T000002R000005",
+				"___s": true
+			}
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"comment": "",
+		"meta": {
+			"range": [
+				158,
+				165
+			],
+			"filename": "enum.js",
+			"lineno": 10,
+			"columnno": 2,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000012",
+				"name": "VAL1",
+				"type": "Literal",
+				"value": 1
+			}
+		},
+		"name": "VAL1",
+		"longname": "myNamespace.MyEnum.VAL1",
+		"kind": "member",
+		"memberof": "myNamespace.MyEnum",
+		"scope": "static",
+		"type": {
+			"names": [
+				"number"
+			]
+		},
+		"defaultvalue": 1,
+		"___id": "T000002R000004",
+		"___s": true
+	},
+	{
+		"comment": "",
+		"meta": {
+			"range": [
+				170,
+				177
+			],
+			"filename": "enum.js",
+			"lineno": 11,
+			"columnno": 2,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000014",
+				"name": "VAL2",
+				"type": "Literal",
+				"value": 2
+			}
+		},
+		"name": "VAL2",
+		"longname": "myNamespace.MyEnum.VAL2",
+		"kind": "member",
+		"memberof": "myNamespace.MyEnum",
+		"scope": "static",
+		"type": {
+			"names": [
+				"number"
+			]
+		},
+		"defaultvalue": 2,
+		"___id": "T000002R000005",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\enum.js"
+		],
+		"___id": "T000002R000006",
+		"___s": true
+	}
+]
