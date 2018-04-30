@@ -227,6 +227,7 @@ export class JSDocTsdParser {
 								case "const":
 								case "var":
 								case "alias":
+								case "enum":
 									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
 									break;
 
