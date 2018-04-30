@@ -433,7 +433,8 @@ export class JSDocTsdParser {
 						exampleLines.push(cleanedLine);
 					} else if (classdesc) {
 						// the class-description is correctly added to the class already
-					} else {
+					} else if (/^@[^\s]+\s/.test(cleanedLine)) {
+						// add this line only if the annotation value is not empty
 						cleanLines.push(cleanedLine);
 					}
 				}
