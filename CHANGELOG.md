@@ -1,5 +1,15 @@
 ## Changelog
 
+# v0.8.7
+New features in this release:
+ - New annotations: @callback, @template
+ - The @return(s) annotation will no longer be omitted
+
+Bugfixes:
+ - Enums were not added to namespaces
+ - Childrens of ignored or private members were not ignored
+ - Annotations with no value will be skipped
+
 # v0.8.6
 New features in this release:
  - You can ignore private members by default by adding the property "ignorePrivateMembers"
