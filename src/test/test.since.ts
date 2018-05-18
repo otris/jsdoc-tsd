@@ -150,7 +150,7 @@ describe("Test for parsing the since tag", () => {
 		expect(results).haveOwnPropertyDescriptor("MyTestClass");
 	});
 
-	it("should not add the class definition if the tag is not a valid semver tag and no custom comparator is set", () => {
+	it("should add the class definition if the tag is not a valid semver tag and no custom comparator is set", () => {
 		let myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
 		myClass.since = "abc";
 		myClass.name = myClass.longname = "MyTestClass";
@@ -159,7 +159,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getResultItems();
-		expect(Object.keys(results).length).to.eq(0);
+		expect(Object.keys(results).length).to.eq(1);
 	});
 
 	it("should use the comparator function if it's passed as function", () => {

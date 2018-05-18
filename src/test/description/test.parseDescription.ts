@@ -20,6 +20,6 @@ describe("JSDocTsdParser.cleanJSDocComment", () => {
 		// parsedClass.members[0] is constructor
 		let methodDeclaration: dom.MethodDeclaration = parsedClass.members[1] as dom.MethodDeclaration;
 		// description should be at the beginning
-		expect(methodDeclaration.jsDocComment).to.eq("My long description\nfirst line\nsecond line\nthird line\n@param myParamter My string parameter");
+		expect(methodDeclaration.jsDocComment).to.eq("My long description\nfirst line\nsecond line\nthird line\n@param myParamter My string parameter\n@returns My return value");
 	});
 });

@@ -33,7 +33,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		expect(parsedModule.members.length).to.eq(2);
 
 		let functionDeclaration: dom.FunctionDeclaration = parsedModule.members[1] as dom.FunctionDeclaration;
-		expect(functionDeclaration.jsDocComment).to.eq("my module function\n@param param1 first param\n@param param2 second param");
+		expect(functionDeclaration.jsDocComment).to.eq("my module function\n@param param1 first param\n@param param2 second param\n@returns function return value");
 	});
 
 	it("should create a number member of an module", () => {
