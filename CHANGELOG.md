@@ -1,5 +1,10 @@
 ## Changelog
 
+# v0.8.8
+Bugfixes:
+ - You can now use the template with grunt or simply use the module path as for the template parameter for jsdoc (https://github.com/otris/jsdoc-tsd/issues/1)
+ - The description of an jsdoc item was not added if the @description-annotation was omitted
+
 # v0.8.7
 New features in this release:
  - New annotations: @callback, @template
