@@ -1,6 +1,6 @@
 {
 	"name": "@otris/jsdoc-tsd",
-	"version": "0.8.7",
+	"version": "0.8.8",
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
 	"main": "src-out/core/publish.js",
 	"repository": {
@@ -8,7 +8,7 @@
 		"url": "git+ssh://git@github.com:otris/jsdoc-tsd.git"
 	},
 	"scripts": {
-		"prepublish": "rm -rf src-out && tsc -p ./",
+		"prepublish": "rm -rf src-out && tsc -p ./ && cp src-out/core/*.js ./",
 		"compile": "tsc -watch -p ./",
 		"parse-example": "move /Y src-out\\core\\publish.js src-out\\core\\publish.backup.js && copy /Y src-out\\core\\publish-example.js src-out\\core\\publish.js && jsdoc -r exampleProject -t src-out\\core && move /Y src-out\\core\\publish.backup.js src-out\\core\\publish.js",
 		"test": "mocha --compilers=ts:ts-node/register --no-timeouts src/test/**/test.*.ts",

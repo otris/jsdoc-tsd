@@ -2,13 +2,11 @@
 exampleProject/
 node_modules/
 src/
-src-out/core/publish-example.js
-src-out/test
-src-out/**/*.js.map
-src-out/**/*.d.ts
+src-out/
 typings/
 .editorconfig
 .travis.yml
 gruntfile.js
+publish-example.js
 tsconfig.json
 tslint.json

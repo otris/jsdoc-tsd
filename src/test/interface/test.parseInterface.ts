@@ -33,7 +33,7 @@ describe("JSDocTsdParser.parse.interface", () => {
 		expect(parsedInterface.members.length).to.eq(2);
 
 		let methodDeclaration: dom.MethodDeclaration = parsedInterface.members[1] as dom.MethodDeclaration;
-		expect(methodDeclaration.jsDocComment).to.eq("A simple function\n@param myParamter My string parameter");
+		expect(methodDeclaration.jsDocComment).to.eq("A simple function\n@param myParamter My string parameter\n@returns My return value");
 	});
 
 	it("should create a number member of an interface", () => {
