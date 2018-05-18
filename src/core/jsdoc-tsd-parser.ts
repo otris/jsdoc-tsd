@@ -180,7 +180,7 @@ export class JSDocTsdParser {
 
 				if (addItem) {
 					if (addJsDocComment) {
-						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
+						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment, item.description);
 					}
 					this.handleFlags(item, parsedItem);
 					this.handleTags(item, parsedItem);
@@ -392,13 +392,19 @@ export class JSDocTsdParser {
 		return output;
 	}
 
-	private cleanJSDocComment(comment: string | undefined, addExample = false): string {
+	/**
+	 * Creates the comment for the jsdoc item
+	 * @param comment The complete comment text of the item
+	 * @param description The description (@description) of the item
+	 * @param addExample Indicates if examples should be omitted or not
+	 */
+	private cleanJSDocComment(comment: string | undefined, description:string = "", addExample = false): string {
 		let cleanLines = [];
 		let descriptionLines: string[] = [];
 		let exampleLines: string[] = [];
-		let description = false;
-		let example = false;
-		let classdesc = false;
+		let isDescription = false;
+		let isExample = false;
+		let isClassdesc = false;
 
 		if (comment) {
 			for (let line of comment.split(/\r?\n/)) {
@@ -414,24 +420,24 @@ export class JSDocTsdParser {
 				// tslint:disable-next-line:max-line-length
 				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@classdesc") || cleanedLine.startsWith("@example") || cleanedLine.startsWith("@return") || !cleanedLine.startsWith("@"))) {
 					if (cleanedLine.startsWith("@")) {
-						description = false;
-						example = false;
-						classdesc = false;
+						isDescription = false;
+						isExample = false;
+						isClassdesc = false;
 					}
-					if (cleanedLine.startsWith("@description")) {
+					if (cleanedLine.startsWith("@description") || cleanedLine === description) {
 						cleanedLine = cleanedLine.replace("@description ", "");
-						description = true;
+						isDescription = true;
 					} else if (cleanedLine.startsWith("@example")) {
-						example = true;
+						isExample = true;
 					} else if (cleanedLine.startsWith("@classdesc")) {
-						classdesc = true;
+						isClassdesc = true;
 					}
 
-					if (description) {
+					if (isDescription) {
 						descriptionLines.push(cleanedLine);
-					} else if (example) {
+					} else if (isExample) {
 						exampleLines.push(cleanedLine);
-					} else if (classdesc) {
+					} else if (isClassdesc) {
 						// the class-description is correctly added to the class already
 					} else if (/^@[^\s]+\s/.test(cleanedLine)) {
 						// add this line only if the annotation value is not empty
@@ -709,7 +715,7 @@ export class JSDocTsdParser {
 			constructorDeclaration = dom.create.constructor([]);
 		}
 
-		constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+		constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment, jsdocItem.description);
 		domClass.members.push(constructorDeclaration);
 
 		return domClass;
@@ -724,7 +730,7 @@ export class JSDocTsdParser {
 		if (jsdocItem.properties) {
 			for (let property of jsdocItem.properties) {
 				let domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, property.defaultvalue);
-				domEnumMember.jsDocComment = this.cleanJSDocComment(property.description);
+				domEnumMember.jsDocComment = this.cleanJSDocComment(property.comment, property.description);
 				domEnum.members.push(domEnumMember);
 			}
 		}
@@ -811,7 +817,7 @@ export class JSDocTsdParser {
 					}
 
 					let domProperty = dom.create.property(property.name, propertyType);
-					domProperty.jsDocComment = this.cleanJSDocComment(property.comment) || property.description; // normally the property 'comment' is for these types empty
+					domProperty.jsDocComment = this.cleanJSDocComment(property.description, property.description);
 					this.handleFlags(property, domProperty);
 
 					domInterface.members.push(domProperty);
