@@ -12,7 +12,7 @@ export class JSDocTsdParser {
 		protected: dom.DeclarationFlags.Protected,
 	};
 	private config = {} as any;
-	private jsdocItems: TDoclet[];
+	private jsdocItems: TDoclet[] = [];
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
