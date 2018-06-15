@@ -12,7 +12,7 @@ export class JSDocTsdParser {
 		protected: dom.DeclarationFlags.Protected,
 	};
 	private config = {} as any;
-	private jsdocItems: TDoclet[];
+	private jsdocItems: TDoclet[] = [];
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
@@ -527,7 +527,14 @@ export class JSDocTsdParser {
 					this.resultItems[typeDef.longname] = [domInterface];
 
 					// create the parameter with the interface as type
-					let interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
+					let interfaceType;
+					let matchArray = typeDef.type.names[0].match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
+					if (matchArray) {
+						interfaceType = dom.create.array(domInterface);
+					} else {
+						interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
+					}
+					
 					domParam = dom.create.parameter(propParam.name, interfaceType);
 				}
 
