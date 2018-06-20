@@ -1,5 +1,24 @@
 ## Changelog
 
+# v0.9.1
+Bugfixes:
+ - There were some issues parsing the jsdoc comments (especially for multi line comments).
+   We fixed that by using "comment-parser" for parsing the jsdoc comment. Now the following
+   tags will be displayed, everything else will be omitted:
+    - author
+    - copyright
+    - deprecated
+    - example
+    - returns
+    - see
+    - throws
+    - todo
+    - param
+    - tutorial
+    - variation
+    - version
+    - license
+
 # v0.9.0
 New features in this release:
  - Support for constants in namespaces

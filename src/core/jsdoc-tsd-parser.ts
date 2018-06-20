@@ -2,7 +2,9 @@ import * as dom from "dts-dom";
 import { ParameterFlags, TypeParameter, InterfaceDeclaration } from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
+
 var compare = require("node-version-compare");
+var jsdocCommentParser = require("comment-parser");
 
 export class JSDocTsdParser {
 
@@ -184,7 +186,7 @@ export class JSDocTsdParser {
 
 				if (addItem) {
 					if (addJsDocComment) {
-						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment, item.description);
+						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
 					}
 					this.handleFlags(item, parsedItem);
 					this.handleTags(item, parsedItem);
@@ -408,76 +410,65 @@ export class JSDocTsdParser {
 	/**
 	 * Creates the comment for the jsdoc item
 	 * @param comment The complete comment text of the item
-	 * @param description The description (@description) of the item
 	 * @param addExample Indicates if examples should be omitted or not
 	 */
-	private cleanJSDocComment(comment: string | undefined, description:string = "", addExample = false): string {
-		let cleanLines = [];
-		let descriptionLines: string[] = [];
-		let exampleLines: string[] = [];
-		let isDescription = false;
-		let isExample = false;
-		let isClassdesc = false;
+	private cleanJSDocComment(comment: string | undefined, addExample = false): string {
+		const tagsToPass = new Map([
+			["author", true],
+			["copyright", true],
+			["deprecated", true],
+			["example", addExample],
+			["returns", true],
+			["see", true],
+			["throws", true],
+			["todo", true],
+			["param", true],
+			["tutorial", true],
+			["variation", true],
+			["version", true],
+			["license", true]
+		]);
 
-		if (comment) {
-			for (let line of comment.split(/\r?\n/)) {
-				let cleanedLine = line.trim()
-					.replace(/^\/\*\*\s?/, "") // JSDoc-Header ("/**")
-					.replace(/\s*\*\/\s?$/, "") // JSDoc-Footer ("*/")
-					.replace(/^\*\s?/, "") // Line ("*")
-					.replace(/@param\s\{[^\}]+\}/g, "@param") // Parameter-Types
-					.replace(/@returns?\s\{[^\}]+\}/g, "@returns") // Return values
-					.trim();
+		let cleanedComment = "";
+		const parsedComments = jsdocCommentParser(comment);
+		if (parsedComments.length > 0) { // This should be maximum 1 element (except you pass more than one jsdoc comment, which is here never the case)
+			const parsedComment = parsedComments[0];
 
-				// ignore everything that is not part of the function description in tsd-files
-				// tslint:disable-next-line:max-line-length
-				if (cleanedLine && (cleanedLine.startsWith("@param") || cleanedLine.startsWith("@throws") || cleanedLine.startsWith("@description") || cleanedLine.startsWith("@classdesc") || cleanedLine.startsWith("@example") || cleanedLine.startsWith("@return") || !cleanedLine.startsWith("@"))) {
-					if (cleanedLine.startsWith("@")) {
-						isDescription = false;
-						isExample = false;
-						isClassdesc = false;
-					}
-					if (cleanedLine.startsWith("@description") || cleanedLine === description) {
-						cleanedLine = cleanedLine.replace("@description ", "");
-						isDescription = true;
-					} else if (cleanedLine.startsWith("@example")) {
-						isExample = true;
-					} else if (cleanedLine.startsWith("@classdesc")) {
-						isClassdesc = true;
-					}
+			// First, add the description
+			// The comment parser removes the " * " by line breaks, so we have to add these again
+			let itemDescription = "";
+			if (parsedComment.description.length > 0) {
+				itemDescription = parsedComment.description;
+			}
 
-					if (isDescription) {
-						descriptionLines.push(cleanedLine);
-					} else if (isExample) {
-						exampleLines.push(cleanedLine);
-					} else if (isClassdesc) {
-						// the class-description is correctly added to the class already
-					} else if (/^@[^\s]+\s/.test(cleanedLine)) {
-						// add this line only if the annotation value is not empty
-						cleanLines.push(cleanedLine);
+			// Then add all tags as we receive them
+			for (const annotation of parsedComment.tags) {
+				if (tagsToPass.has(annotation.tag) && tagsToPass.get(annotation.tag)) {
+					cleanedComment += "\n@" + annotation.tag;
+
+					const tagValue = (annotation.name + " " + annotation.description).trim();
+					if (tagValue.length > 0) {
+						// The comment parser removes the " * " by line breaks, so we have to add these again
+						// The format everything well, we insert as much spaces as the annotation name + 2, because
+						// of the "@" char and a white space
+						let spacesToInsert = annotation.tag.length + 2;
+						if (annotation.name === "param") {
+							spacesToInsert += annotation.name.length;
+						}
+
+						cleanedComment += " " + tagValue.replace(/\r?\n/g, "\n" + " ".repeat(spacesToInsert));
 					}
+				} else if (annotation.tag === "description") {
+					itemDescription = annotation.name + " " + annotation.description;
 				}
 			}
+
+			if (itemDescription.length > 0) {
+				cleanedComment = itemDescription.replace(/\r?\n/g, "\n") + cleanedComment;
+			}
 		}
 
-		let lines = "";
-		if (descriptionLines.length > 0) {
-			lines = lines + descriptionLines.join("\n");
-		}
-		if (cleanLines.length > 0) {
-			if (lines !== "") {
-				lines = lines + "\n";
-			}
-			lines = lines + cleanLines.join("\n");
-		}
-		if (addExample && exampleLines.length > 0) {
-			if (lines !== "") {
-				lines = lines + "\n";
-			}
-			lines = lines + exampleLines.join("\n");
-		}
-
-		return lines;
+		return cleanedComment;
 	}
 
 
@@ -735,7 +726,7 @@ export class JSDocTsdParser {
 			constructorDeclaration = dom.create.constructor([]);
 		}
 
-		constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment, jsdocItem.description);
+		constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
 		domClass.members.push(constructorDeclaration);
 
 		return domClass;
@@ -750,7 +741,7 @@ export class JSDocTsdParser {
 		if (jsdocItem.properties) {
 			for (let property of jsdocItem.properties) {
 				let domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, property.defaultvalue);
-				domEnumMember.jsDocComment = this.cleanJSDocComment(property.comment, property.description);
+				domEnumMember.jsDocComment = this.cleanJSDocComment(property.comment);
 				domEnum.members.push(domEnumMember);
 			}
 		}
@@ -845,7 +836,7 @@ export class JSDocTsdParser {
 					}
 
 					let domProperty = dom.create.property(property.name, propertyType);
-					domProperty.jsDocComment = this.cleanJSDocComment(property.description, property.description);
+					domProperty.jsDocComment = property.description;
 					this.handleFlags(property, domProperty);
 
 					domInterface.members.push(domProperty);
