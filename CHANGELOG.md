@@ -1,5 +1,21 @@
 ## Changelog
 
+# v0.9.0
+New features in this release:
+ - Support for constants in namespaces
+ - Support for type annotations for objects of array-parameters, e.g.
+   ```
+   /**
+    * Assign the project to a list of employees
+    * @param employees - The employees who are responsible for the project
+    * @param employees[].name - The name of an employee
+    * @param employees[].department - The employee's department
+    */
+   ```
+
+Bugfixes:
+ - The description of the return value will no longer be omitted
+
 # v0.8.8
 Bugfixes:
  - You can now use the template with grunt or simply use the module path as for the template parameter for jsdoc (https://github.com/otris/jsdoc-tsd/issues/1)
