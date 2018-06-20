@@ -41,7 +41,7 @@ describe("JSDocTsdParser.parse.class", () => {
 
 		expect(classDeclarations.members.length).to.eq(1);
 		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
-		expect(constr.jsDocComment).to.eq("@param myParam My param description");
+		expect(constr.jsDocComment).to.eq("My Class\n@param myParam My param description");
 	});
 
 	it("should add an constructor with no params to the class members", () => {

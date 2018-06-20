@@ -416,7 +416,7 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		expect(functionDeclarations.length).to.equals(1);
 		let functionDeclaration = functionDeclarations[0];
-		functionDescription = `A function\n@param bla blub\n@returns bla\n@throws {string} error`;
+		functionDescription = `A function\n@param bla blub\n@returns bla\n@throws error`;
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 
@@ -454,7 +454,7 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		expect(functionDeclarations.length).to.equals(1);
 		let functionDeclaration = functionDeclarations[0];
-		functionDescription = `A function\n@param bla blub\n@returns bla\n@throws {string} error`;
+		functionDescription = `A function\n@param bla blub\n@returns bla\n@throws error`;
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 
