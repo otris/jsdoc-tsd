@@ -119,6 +119,10 @@ export class JSDocTsdParser {
 						parsedItem = this.parseFunction(item as IFunctionDoclet);
 						break;
 
+					case "constant":
+						parsedItem = this.parseConstant(item as IMemberDoclet);
+						break;
+			
 					case "member":
 						if (item.isEnum) {
 							parsedItem = this.parseEnum(item as IMemberDoclet);
@@ -207,6 +211,16 @@ export class JSDocTsdParser {
 							let namespaceMember = parsedItem as dom.NamespaceMember;
 							switch ((namespaceMember as any).kind) {
 
+								case "const":
+									let constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
+									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+										constDeclaration.flags = dom.DeclarationFlags.Export;
+									}
+									constDeclaration.comment = namespaceMember.comment;
+									constDeclaration.jsDocComment = namespaceMember.jsDocComment;
+									(parentItem as dom.NamespaceDeclaration).members.push(constDeclaration);
+									break;
+					
 								case "property":
 									let variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
 									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
@@ -227,7 +241,6 @@ export class JSDocTsdParser {
 								case "interface":
 								case "class":
 								case "namespace":
-								case "const":
 								case "var":
 								case "alias":
 								case "enum":
@@ -762,6 +775,19 @@ export class JSDocTsdParser {
 		return dom.create.interface(jsdocItem.name);
 	}
 
+	private parseConstant(jsdocItem: IMemberDoclet) {
+		if (jsdocItem.isEnum) {
+			throw new Error(`item ${jsdocItem.longname} is an enum`);
+		}
+
+		let propertyType: dom.Type = dom.type.any;
+		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
+		}
+
+		return dom.create.const(jsdocItem.name, propertyType);
+	}
+
 	private parseMember(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
@@ -769,12 +795,7 @@ export class JSDocTsdParser {
 
 		let propertyType: dom.Type = dom.type.any;
 		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
-			let domTypes: dom.Type[] = [];
-			jsdocItem.type.names.forEach((typeName) => {
-				domTypes.push(this.mapVariableType(typeName));
-			});
-
-			propertyType = dom.create.union(domTypes);
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
 		}
 
 		return dom.create.property(jsdocItem.name, propertyType);

@@ -1,16 +1,49 @@
-{
-	"comment": "/**\r\n * @namespace myModule\r\n */",
-	"meta": {
-		"filename": "myModule.js",
-		"lineno": 1,
-		"columnno": 0,
-		"path": "e:\\jsdoc2tsd\\exampleProject\\src\\core",
-		"code": {}
+[
+	{
+		"comment": "/**\n * @namespace myModule\n */",
+		"meta": {
+			"filename": "namespace.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"kind": "namespace",
+		"name": "myModule",
+		"longname": "myModule",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
 	},
-	"kind": "namespace",
-	"name": "myModule",
-	"longname": "myModule",
-	"scope": "global",
-	"___id": "T000002R000002",
-	"___s": true
-}
+	{
+		"comment": "/**\n * @memberof myModule\n * @constant {number} CONSTANT1\n */",
+		"meta": {
+			"filename": "namespace.js",
+			"lineno": 4,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"memberof": "myModule",
+		"kind": "constant",
+		"name": "CONSTANT1",
+		"type": {
+			"names": [
+				"number"
+			]
+		},
+		"scope": "static",
+		"longname": "myModule.CONSTANT1",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\src\\namespace.js"
+		],
+		"___id": "T000002R000004",
+		"___s": true
+	}
+]
