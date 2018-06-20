@@ -782,12 +782,7 @@ export class JSDocTsdParser {
 
 		let propertyType: dom.Type = dom.type.any;
 		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
-			let domTypes: dom.Type[] = [];
-			jsdocItem.type.names.forEach((typeName) => {
-				domTypes.push(this.mapVariableType(typeName));
-			});
-
-			propertyType = dom.create.union(domTypes);
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
 		}
 
 		return dom.create.const(jsdocItem.name, propertyType);
@@ -800,12 +795,7 @@ export class JSDocTsdParser {
 
 		let propertyType: dom.Type = dom.type.any;
 		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
-			let domTypes: dom.Type[] = [];
-			jsdocItem.type.names.forEach((typeName) => {
-				domTypes.push(this.mapVariableType(typeName));
-			});
-
-			propertyType = dom.create.union(domTypes);
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
 		}
 
 		return dom.create.property(jsdocItem.name, propertyType);
