@@ -1,0 +1,27 @@
+[
+	{
+		"comment": "/**\n * @function topLevelFunction\n */",
+		"meta": {
+			"filename": "function_topLevel.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "C:\\projekte\\jsdoc-tsd\\exampleProject",
+			"code": {}
+		},
+		"kind": "function",
+		"name": "topLevelFunction",
+		"longname": "topLevelFunction",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"C:\\projekte\\jsdoc-tsd\\exampleProject\\function_topLevel.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]
