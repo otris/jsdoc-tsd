@@ -351,26 +351,29 @@ export class JSDocTsdParser {
 							break;
 
 						default:
-							// missing the parent declaration
+							// parent type not supported
 							// tslint:disable-next-line:max-line-length
-							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'. Check the @memberof tag of this member`);
+							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`);
 							break;
 					}
 				}
 			} else {
+				// parent of the item not found, there are different possible reasons...
 
-				// add this item as a top level declaration, if it has no parent or if the parent is missing
-				// do not add this item, if the parent was rejected by the since comparator or the parent item should be ignored
-				if (!jsdocItem.memberof || this.rejectedItems.indexOf(jsdocItem.memberof) < 0) {
-
-					if (jsdocItem.memberof) {
-						// missing the top level declaration
-						console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
-					} else {
-						for (let parsedItem of this.resultItems[jsdocItem.longname]) {
-							if (!domTopLevelDeclarations[jsdocItem.longname]) {
-								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
-							}
+				if (jsdocItem.memberof && this.rejectedItems.indexOf(jsdocItem.memberof) >= 0) {
+					// parent was rejected by the since comparator
+					// so do not add the item
+				} else if(jsdocItem.memberof) {
+					// item has a parent but the parent was not found, possible reasons:
+					// + a typo in the @memberof tag
+					// + the parent is a private class that extends a public class
+					// do not add the item, but show warning
+					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'.");
+				} else if (!jsdocItem.memberof) {
+					// member has no parent, add the item as top-level declaration
+					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+						if (!domTopLevelDeclarations[jsdocItem.longname]) {
+							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
 						}
 					}
 				}
