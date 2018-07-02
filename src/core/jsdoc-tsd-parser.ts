@@ -351,13 +351,9 @@ export class JSDocTsdParser {
 							break;
 
 						default:
-							// missing the top level declaration
+							// missing the parent declaration
 							// tslint:disable-next-line:max-line-length
-							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'. Insert this item as a top level declaration`);
-
-							if (!domTopLevelDeclarations[jsdocItem.longname]) {
-								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
-							}
+							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'. Check the @memberof tag of this member`);
 							break;
 					}
 				}
