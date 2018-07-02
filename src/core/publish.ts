@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as shelljs from "shelljs";
 import { JSDocTsdParser } from "./jsdoc-tsd-parser";
+import * as helper from "jsdoc/util/templateHelper";
 
 /**
  * Entry-Point of jsdoc. Gets called by the jsdoc-module to generate the docs.
@@ -11,6 +12,9 @@ import { JSDocTsdParser } from "./jsdoc-tsd-parser";
 export function publish(data: any, opts: any) {
 	// remove undocumented stuff.
 	data({ undocumented: true }).remove();
+
+	// remove members that will not be included in the output
+	data = helper.prune(data);
 
 	// get the jsdoc results
 	const jsdocResults = data().get();
