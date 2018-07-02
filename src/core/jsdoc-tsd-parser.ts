@@ -366,11 +366,11 @@ export class JSDocTsdParser {
 					if (jsdocItem.memberof) {
 						// missing the top level declaration
 						console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'. Insert this member as a top level declaration.");
-					}
-
-					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
-						if (!domTopLevelDeclarations[jsdocItem.longname]) {
-							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+					} else {
+						for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+							if (!domTopLevelDeclarations[jsdocItem.longname]) {
+								domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+							}
 						}
 					}
 				}
