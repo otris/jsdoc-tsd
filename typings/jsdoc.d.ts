@@ -17,6 +17,18 @@ declare module 'jsdoc/env' {
 
 declare module 'jsdoc/util/templateHelper' {
     export function find(data: TDocletDb, query: any): (TDoclet | IPackageDoclet)[];
+    /**
+     * Remove members that will not be included in the output, including:
+     * + Undocumented members.
+     * + Members tagged `@ignore`.
+     * + Members of anonymous classes.
+     * + Members tagged `@private`, unless the `private` option is enabled.
+     * + Members tagged with anything other than specified by the `access` options.
+     *
+     * @param data The TaffyDB database to prune.
+     * @returns The pruned database.
+     */
+    export function prune(data: TDocletDb): TDocletDb;
 }
 
 
