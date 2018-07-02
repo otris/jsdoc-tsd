@@ -32,7 +32,6 @@ $> jsdoc -d <target-dir>/<filename>.d.ts
 **Important: If you want to change the file name of the result file your path has to end with the file ending ```d.ts```**
 
 ## Options
-* **ignorePrivateMembers** Determines if private members should be omitted or not
 * **ignoreScopes** Array with scope names which should not be parsed. Possible values
 ```
 [
