@@ -1,5 +1,17 @@
 ## Changelog
 
+# v1.0.0
+New features in this release:
+ - The config property `ignorePrivateMembers` was removed. Instead we use jsdoc provided functionality to
+   identify if private members should be omitted or not. More concretely: Private members will be now 
+   omitted by default unless you pass the parameter `--private` to your jsdoc call. An example call could 
+   look like
+   ```
+   $> jsdoc -r src -t node_modules/@otris/jsdoc-tsd --private 
+   ```
+ - When the parent item of an item was missing (e.g. because of a typo), the item was added as a top level
+   declaration. We decided to omit such items and display a warning instead 
+
 # v0.9.1
 Bugfixes:
  - There were some issues parsing the jsdoc comments (especially for multi line comments).
