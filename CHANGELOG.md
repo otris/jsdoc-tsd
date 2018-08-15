@@ -1,5 +1,10 @@
 ## Changelog
 
+# v1.0.1
+Bugfixes:
+ - Nested arrays were not mapped correctly, e.g.
+ - Arrays with union types were not mapped correctly
+
 # v1.0.0
 New features in this release:
  - The config property `ignorePrivateMembers` was removed. Instead we use jsdoc provided functionality to
