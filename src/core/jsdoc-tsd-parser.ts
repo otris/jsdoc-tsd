@@ -678,23 +678,24 @@ export class JSDocTsdParser {
 		// resolve array types
 		// jsdoc will provide arrays always as "Array.<>" if it's typed or as "Array" if it's not typed
 		let resultType: dom.Type = dom.type.any;
-		while (/^Array/.test(variableType)) {
+		while (/^Array/i.test(variableType)) {
 			// it's an array, check if it's typed
-			let arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\))?>/); // @todo: can contain namepaths
+			let arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\)?)>/i); // @todo: can contain namepaths
 			if (arrayTypeMatches && !!arrayTypeMatches[1]) {
 				const arrayTypeString: string = arrayTypeMatches[1];
-				const arrayType = (arrayTypeString === "Array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString)
+				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString)
 				resultType = (resultType === dom.type.any)
 					? dom.type.array(arrayType)
 					: dom.type.array(resultType); // nested array
 
 				// remove the string from the variable type (nested arrays)
-				variableType = variableType.replace(`Array.<${arrayTypeString}>`, ""); // + 3 because of ".<>"
+				const regExp = new RegExp(`Array.<${arrayTypeString.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}>`, "i");
+				variableType = variableType.replace(regExp, "");
 			} else {
 				resultType = dom.type.array(resultType);
 
 				// remove the array keyword
-				variableType = variableType.replace(/^Array(\.<)?/, "");
+				variableType = variableType.replace(/^Array(\.<)?/i, "");
 			}
 		}
 
@@ -706,7 +707,6 @@ export class JSDocTsdParser {
 	}
 
 	private mapVariableTypeString(variableType: string): dom.Type {
-		variableType = variableType.toLowerCase();
 		if (variableType === "bool") {
 			variableType = "boolean";
 		}
