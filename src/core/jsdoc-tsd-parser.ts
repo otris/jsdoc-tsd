@@ -211,7 +211,7 @@ export class JSDocTsdParser {
 
 								case "const":
 									let constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
-									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										constDeclaration.flags = dom.DeclarationFlags.Export;
 									}
 									constDeclaration.comment = namespaceMember.comment;
@@ -221,7 +221,7 @@ export class JSDocTsdParser {
 					
 								case "property":
 									let variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
-									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										variableDeclaration.flags = dom.DeclarationFlags.Export;
 									}
 									variableDeclaration.comment = namespaceMember.comment;
@@ -320,7 +320,7 @@ export class JSDocTsdParser {
 
 								case "property":
 									let variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
-									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										variableDeclaration.flags = dom.DeclarationFlags.Export;
 									}
 									variableDeclaration.comment = moduleMember.comment;
@@ -329,7 +329,8 @@ export class JSDocTsdParser {
 									break;
 
 								case "function":
-									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
+								case "alias":
+									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										moduleMember.flags = dom.DeclarationFlags.Export;
 									}
 									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
