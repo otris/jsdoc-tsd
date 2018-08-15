@@ -680,8 +680,8 @@ export class JSDocTsdParser {
 		let resultType: dom.Type = dom.type.any;
 		while (/^Array/.test(variableType)) {
 			// it's an array, check if it's typed
-			let arrayTypeMatches = variableType.match(/Array\.<(\w+)>/); // @todo: can contain namepaths
-			if (arrayTypeMatches) {
+			let arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\))?>/); // @todo: can contain namepaths
+			if (arrayTypeMatches && !!arrayTypeMatches[1]) {
 				const arrayTypeString: string = arrayTypeMatches[1];
 				const arrayType = (arrayTypeString === "Array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString)
 				resultType = (resultType === dom.type.any)
@@ -719,7 +719,14 @@ export class JSDocTsdParser {
 			variableType = "any";
 		}
 
-		return variableType as dom.Type;
+		// check if it's a union type
+		let resultType: dom.Type = variableType as dom.Type;
+		if (variableType.indexOf("|") > -1) {
+			variableType = variableType.replace(/\(|\)/g, "");
+			resultType = this.mapTypesToUnion(variableType.split("|"));
+		}
+
+		return resultType;
 	}
 
 	private parseClass(jsdocItem: IClassDoclet, domClass?: dom.ClassDeclaration): dom.DeclarationBase {
