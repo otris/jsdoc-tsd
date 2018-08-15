@@ -675,35 +675,58 @@ export class JSDocTsdParser {
 	}
 
 	private mapVariableType(variableType: string) {
-		let matches = variableType.match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
+		// resolve array types
+		// jsdoc will provide arrays always as "Array.<>" if it's typed or as "Array" if it's not typed
+		let resultType: dom.Type = dom.type.any;
+		while (/^Array/i.test(variableType)) {
+			// it's an array, check if it's typed
+			let arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\)?)>/i); // @todo: can contain namepaths
+			if (arrayTypeMatches && !!arrayTypeMatches[1]) {
+				const arrayTypeString: string = arrayTypeMatches[1];
+				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString)
+				resultType = (resultType === dom.type.any)
+					? dom.type.array(arrayType)
+					: dom.type.array(resultType); // nested array
 
-		if (matches) {
-			let type = matches[1] || matches[2];
-
-			if (type === "*" || type === "") {
-				// wrong type definition
-				return dom.type.any;
+				// remove the string from the variable type (nested arrays)
+				const regExp = new RegExp(`Array.<${arrayTypeString.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}>`, "i");
+				variableType = variableType.replace(regExp, "");
 			} else {
-				if (type === "bool") {
-					type = "boolean";
-				}
+				resultType = dom.type.array(resultType);
 
-				return dom.type.array(type as dom.Type);
-			}
-		} else {
-			if (variableType.match(/array/i) || variableType === "*") {
-				return dom.type.any;
-			} else {
-				if (variableType === "bool") {
-					variableType = "boolean";
-				}
-
-				if (variableType === "function") {
-					variableType = "Function";
-				}
-				return variableType as dom.Type;
+				// remove the array keyword
+				variableType = variableType.replace(/^Array(\.<)?/i, "");
 			}
 		}
+
+		if (resultType === dom.type.any) {
+			resultType = this.mapVariableTypeString(variableType);
+		}
+
+		return resultType;
+	}
+
+	private mapVariableTypeString(variableType: string): dom.Type {
+		if (variableType === "bool") {
+			variableType = "boolean";
+		}
+
+		if (variableType === "function") {
+			variableType = "Function";
+		}
+
+		if (variableType === "*") {
+			variableType = "any";
+		}
+
+		// check if it's a union type
+		let resultType: dom.Type = variableType as dom.Type;
+		if (variableType.indexOf("|") > -1) {
+			variableType = variableType.replace(/\(|\)/g, "");
+			resultType = this.mapTypesToUnion(variableType.split("|"));
+		}
+
+		return resultType;
 	}
 
 	private parseClass(jsdocItem: IClassDoclet, domClass?: dom.ClassDeclaration): dom.DeclarationBase {

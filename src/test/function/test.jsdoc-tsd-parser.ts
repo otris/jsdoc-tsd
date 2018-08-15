@@ -222,6 +222,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		expect(functionData.returns[0].type.names.length).to.equal(1);
 
 		// add different array parameters to the function
+		// be sure that the types passed below are a valid return value of jsdoc, e.g. JSDoc transforms string[] to Array.<string>
 		functionData.params = [
 			{
 				name: "param1",
@@ -229,11 +230,9 @@ describe("JSDocTsdParser.parse.function", () => {
 					names: [
 						"Array.<string>",
 						"array.<boolean>",
-						"object[]",
+						"Array.<object>",
 						"array",
 						"Array",
-						"[]",
-						"*[]",
 						"Array.<*>",
 						"array.<*>"
 					]
@@ -252,7 +251,7 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		// ensure that every type is mapped correctly
 		let union = functionDeclarations[0].parameters[0].type as dom.UnionType;
-		expect(union.members.length).to.eq(9);
+		expect(union.members.length).to.eq(7);
 
 		expect((union.members[0] as any).kind).to.eq("array");
 		expect((union.members[0] as any).type).to.eq(dom.type.string);
@@ -260,12 +259,12 @@ describe("JSDocTsdParser.parse.function", () => {
 		expect((union.members[1] as any).type).to.eq(dom.type.boolean);
 		expect((union.members[2] as any).kind).to.eq("array");
 		expect((union.members[2] as any).type).to.eq(dom.type.object);
-		expect(union.members[3]).to.eq(dom.type.any);
-		expect(union.members[4]).to.eq(dom.type.any);
-		expect(union.members[5]).to.eq(dom.type.any);
-		expect(union.members[6]).to.eq(dom.type.any);
-		expect(union.members[7]).to.eq(dom.type.any);
-		expect(union.members[8]).to.eq(dom.type.any);
+
+		const anyArray = dom.type.array(dom.type.any);
+		expect(union.members[3]).to.deep.eq(anyArray);
+		expect(union.members[4]).to.deep.eq(anyArray);
+		expect(union.members[5]).to.deep.eq(anyArray);
+		expect(union.members[6]).to.deep.eq(anyArray);
 		
 	});
 
@@ -287,8 +286,8 @@ describe("JSDocTsdParser.parse.function", () => {
 					names: [
 						"bool",
 						"boolean",
-						"bool[]",
-						"boolean[]"
+						"Array.<bool>",
+						"Array.<boolean>"
 					]
 				},
 				comment: "..",
@@ -360,7 +359,6 @@ describe("JSDocTsdParser.parse.function", () => {
 					description: "..",
 					type: {
 						names: [
-							primitiveTypeValue + "[]",
 							"Array.<" + primitiveTypeValue + ">"
 						]
 					}
@@ -374,11 +372,9 @@ describe("JSDocTsdParser.parse.function", () => {
 			expect(functionDeclarations.length).to.eq(1);
 
 			let union = functionDeclarations[0].returnType as dom.UnionType;
-			expect(union.members.length).to.eq(2);
+			expect(union.members.length).to.eq(1);
 			expect((union.members[0] as any).kind).to.eq("array");
 			expect((union.members[0] as any).type).to.eq(primitiveTypeValue);
-			expect((union.members[1] as any).kind).to.eq("array");
-			expect((union.members[1] as any).type).to.eq(primitiveTypeValue);
 		}
 	});
 
