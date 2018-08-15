@@ -10,6 +10,7 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	const threeDimensionalUntypedArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/threeDimensionalUntypedArray.json"), { encoding: "utf-8" }));
 	const singleStringArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/singleStringArray.json"), { encoding: "utf-8" }));
 	const fourDimensionalStringArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/fourDimensionalStringArray.json"), { encoding: "utf-8" }));
+	const twoDimensionalUnionTypeArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/twoDimensionalUnionTypeArray.json"), { encoding: "utf-8" }));
 
 	it("should map single untyped arrays", () => {
 		const parser = new JSDocTsdParser();
@@ -66,5 +67,14 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		expect(functionParamType).to.deep.eq(expectedParmType);
 	});
 
-	it("should map ")
+	it("should map two dimensional typed arrays with union types", () => {
+		const parser = new JSDocTsdParser();
+		parser.parse(twoDimensionalUnionTypeArray);
+		const resultItems = parser.getResultItems();
+
+		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
+		const expectedParmType = dom.type.array(dom.type.array(dom.create.union([dom.type.string, dom.type.number])));
+		expect(functionParamType).to.deep.eq(expectedParmType);
+	});
 });
