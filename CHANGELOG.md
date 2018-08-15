@@ -1,5 +1,10 @@
 ## Changelog
 
+# v1.0.2
+Bugfixes:
+  - Modules can now contain unexported members. You can use the @inner and @static annotation
+    to control the scope of module members
+
 # v1.0.1
 Bugfixes:
  - Nested arrays were not mapped correctly, e.g.
