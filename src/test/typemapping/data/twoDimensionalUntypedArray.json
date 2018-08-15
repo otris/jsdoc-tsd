@@ -1,0 +1,50 @@
+[
+	{
+		"comment": "/**\r\n * @param {Array.<Array>} [field] ...\r\n */",
+		"meta": {
+			"range": [
+				49,
+				78
+			],
+			"filename": "test.js",
+			"lineno": 4,
+			"columnno": 0,
+			"path": "e:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000002",
+				"name": "myFunction",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"field"
+				]
+			}
+		},
+		"params": [
+			{
+				"type": {
+					"names": [
+						"Array.<Array>"
+					]
+				},
+				"optional": true,
+				"description": "...",
+				"name": "field"
+			}
+		],
+		"name": "myFunction",
+		"longname": "myFunction",
+		"kind": "function",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"e:\\jsdoc-tsd\\exampleProject\\src\\test.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]
