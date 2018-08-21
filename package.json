@@ -11,6 +11,7 @@
 		"prepublish": "rm -rf src-out && tsc -p ./ && cp src-out/core/*.js ./",
 		"beautify": "npm run lint -- --fix",
 		"compile": "tsc -watch -p ./",
+		"lint": "tslint -c src/test/tslint.json -p src/test/tsconfig.json",
 		"parse-example": "move /Y src-out\\core\\publish.js src-out\\core\\publish.backup.js && copy /Y src-out\\core\\publish-example.js src-out\\core\\publish.js && jsdoc -r exampleProject -t src-out\\core && move /Y src-out\\core\\publish.backup.js src-out\\core\\publish.js",
 		"test": "mocha --compilers=ts:ts-node/register --no-timeouts --forbid-only src/test/**/test.*.ts",
 		"test-extension": "jsdoc -r exampleProject -t src-out/core",
