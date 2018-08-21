@@ -1,42 +1,47 @@
 {
-	"extends": "tslint:recommended",
+	"extends": [
+	  "tslint:recommended"
+	],
 	"rules": {
-		"max-line-length": {
-			"options": [
-				180
-			]
-		},
-		"quotemark": [
-			true,
-			"double"
-		],
-		"object-literal-sort-keys": true,
-		"arrow-parens": true,
-		"trailing-comma": false,
-		"eofline": true,
-		"indent": [
-			true,
-			"tabs",
-			4
-		],
-		"newline-before-return": false,
-		"ordered-imports": true,
-		"linebreak-style": [
-			true,
-			"CRLF"
-		],
-		"interface-name": [
-			true,
-			"never-prefix"
-		],
-		"prefer-const": false,
-		"member-ordering": {
-			"options": {
-				"order":"fields-first",
-				"alphabetize": true
-			}
-		},
-		"no-console": false,
-		"no-bitwise": false,
+	  "quotemark": [
+		true, 
+		"double"
+	  ],
+	  "indent": [true, "tabs", 4],
+	  "no-console": [
+		false
+	  ],
+	  "no-bitwise": false,
+	  "object-literal-sort-keys": true,
+	  "arrow-parens": true,
+	  "only-arrow-functions": [
+		false
+	  ],
+	  "no-consecutive-blank-lines": [
+		true
+	  ],
+	  "max-line-length": [
+		true,
+		180
+	  ],
+	  "ordered-imports": [
+		true,
+		{
+		  "import-sources-order": "case-insensitive",
+		  "named-imports-order": "case-insensitive"
+		}
+	  ],
+	  "member-ordering": [
+		true,
+		{
+		  "order": "fields-first",
+		  "alphabetize": true
+		}
+	  ],
+	  "variable-name": [
+		true,
+		"allow-leading-underscore"
+	  ],
+	  "no-empty-interface": false
 	}
-}
+  }

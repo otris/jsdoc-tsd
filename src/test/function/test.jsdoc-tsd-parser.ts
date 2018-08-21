@@ -6,17 +6,17 @@ import { JSDocTsdParser } from "../../core/jsdoc-tsd-parser";
 
 describe("JSDocTsdParser.parse.function", () => {
 	it("should create a function dom object", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
-		let parser = new JSDocTsdParser();
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
+		const parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
-		let result = parser.getResultItems();
+		const result = parser.getResultItems();
 		expect(result).haveOwnProperty(functionData.longname);
 
-		let functionDeclarations = result[functionData.longname];
+		const functionDeclarations = result[functionData.longname];
 		expect(functionDeclarations.length).to.equals(1);
 
-		let functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
+		const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
 		expect(functionDeclaration.kind).to.equals("function");
 		expect(functionDeclaration.name).to.equals(functionData.name);
 
@@ -28,23 +28,23 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should create one single dom function declaration", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
 		if (functionData.params) {
 			expect(functionData.params.length).to.equals(1);
 			expect(functionData.params[0].type.names.length).to.equals(1);
 
-			let parser = new JSDocTsdParser();
+			const parser = new JSDocTsdParser();
 			parser.parse([functionData]);
 
-			let result = parser.getResultItems();
-			let functionDeclarations = result[functionData.longname];
+			const result = parser.getResultItems();
+			const functionDeclarations = result[functionData.longname];
 			expect(functionDeclarations.length).to.equals(1);
 
-			let functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
+			const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
 			expect(functionDeclaration.parameters.length).to.eq(1);
 
-			let unionParam = functionDeclaration.parameters[0].type as dom.UnionType;
+			const unionParam = functionDeclaration.parameters[0].type as dom.UnionType;
 			expect(unionParam.members.length).to.eq(1);
 			expect(unionParam.members[0]).to.equals(functionData.params[0].type.names[0]);
 		} else {
@@ -53,23 +53,23 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should create 2 dom function declarations", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
 
 		if (functionData.params) {
 			expect(functionData.params.length).to.eq(1);
 			expect(functionData.params[0].type.names.length).eq(2);
 
-			let parser = new JSDocTsdParser();
+			const parser = new JSDocTsdParser();
 			parser.parse([functionData]);
 
-			let result = parser.getResultItems();
-			let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+			const result = parser.getResultItems();
+			const functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.equal(1);
 
-			let functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
+			const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
 			expect(functionDeclaration.parameters.length).to.eq(1);
 
-			let unionParam = functionDeclaration.parameters[0].type as dom.UnionType;
+			const unionParam = functionDeclaration.parameters[0].type as dom.UnionType;
 			expect(unionParam.members.length).to.eq(2);
 			expect(unionParam.members[0]).to.eq(functionData.params[0].type.names[0]);
 			expect(unionParam.members[1]).to.eq(functionData.params[0].type.names[1]);
@@ -79,7 +79,7 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should create a single dom function declaration with return value 'void'", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
 		expect(functionData.returns).to.be.undefined;
 
 		let parser = new JSDocTsdParser();
@@ -93,15 +93,15 @@ describe("JSDocTsdParser.parse.function", () => {
 		// add a parameter to the function
 		functionData.params = [
 			{
+				comment: "..",
+				description: "..",
 				name: "myParam",
 				type: {
 					names: [
-						"string"
-					]
+						"string",
+					],
 				},
-				comment: "..",
-				description: ".."
-			}
+			},
 		];
 
 		parser = new JSDocTsdParser();
@@ -114,7 +114,7 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should create a single dom function declaration with return value 'string'", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
 		if (!functionData.returns) {
 			throw new Error("The function data has no return value");
@@ -138,15 +138,15 @@ describe("JSDocTsdParser.parse.function", () => {
 		// add a parameter to the function
 		functionData.params = [
 			{
+				comment: "..",
+				description: "..",
 				name: "myParam",
 				type: {
 					names: [
-						"string"
-					]
+						"string",
+					],
 				},
-				comment: "..",
-				description: ".."
-			}
+			},
 		];
 
 		parser = new JSDocTsdParser();
@@ -162,7 +162,7 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should create a single dom function declaration with return value 'string'", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
 		if (!functionData.returns) {
 			throw new Error("The function data has no return value");
@@ -188,15 +188,15 @@ describe("JSDocTsdParser.parse.function", () => {
 		// add a parameter to the function
 		functionData.params = [
 			{
+				comment: "..",
+				description: "..",
 				name: "myParam",
 				type: {
 					names: [
-						"string"
-					]
+						"string",
+					],
 				},
-				comment: "..",
-				description: ".."
-			}
+			},
 		];
 
 		parser = new JSDocTsdParser();
@@ -212,7 +212,7 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("Should handle multiple represantations of type 'array'", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
 		if (!functionData.returns) {
 			throw new Error("The function data has no return value");
@@ -225,6 +225,8 @@ describe("JSDocTsdParser.parse.function", () => {
 		// be sure that the types passed below are a valid return value of jsdoc, e.g. JSDoc transforms string[] to Array.<string>
 		functionData.params = [
 			{
+				comment: "..",
+				description: "..",
 				name: "param1",
 				type: {
 					names: [
@@ -234,23 +236,21 @@ describe("JSDocTsdParser.parse.function", () => {
 						"array",
 						"Array",
 						"Array.<*>",
-						"array.<*>"
-					]
+						"array.<*>",
+					],
 				},
-				comment: "..",
-				description: ".."
-			}
+			},
 		];
 
-		let parser = new JSDocTsdParser();
+		const parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
-		let result = parser.getResultItems();
-		let functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		const result = parser.getResultItems();
+		const functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		// ensure that every type is mapped correctly
-		let union = functionDeclarations[0].parameters[0].type as dom.UnionType;
+		const union = functionDeclarations[0].parameters[0].type as dom.UnionType;
 		expect(union.members.length).to.eq(7);
 
 		expect((union.members[0] as any).kind).to.eq("array");
@@ -265,11 +265,11 @@ describe("JSDocTsdParser.parse.function", () => {
 		expect(union.members[4]).to.deep.eq(anyArray);
 		expect(union.members[5]).to.deep.eq(anyArray);
 		expect(union.members[6]).to.deep.eq(anyArray);
-		
+
 	});
 
 	it("Should handle multiple represantations of type 'boolean'", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_singleParamType.json"), { encoding: "utf-8" }));
 
 		if (!functionData.returns) {
 			throw new Error("The function data has no return value");
@@ -281,29 +281,29 @@ describe("JSDocTsdParser.parse.function", () => {
 		// add different boolean parameters to the function
 		functionData.params = [
 			{
+				comment: "..",
+				description: "..",
 				name: "param1",
 				type: {
 					names: [
 						"bool",
 						"boolean",
 						"Array.<bool>",
-						"Array.<boolean>"
-					]
+						"Array.<boolean>",
+					],
 				},
-				comment: "..",
-				description: ".."
-			}
+			},
 		];
 
-		let parser = new JSDocTsdParser();
+		const parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
-		let result = parser.getResultItems();
-		let functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		const result = parser.getResultItems();
+		const functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		// ensure that every type is mapped correctly
-		let union = functionDeclarations[0].parameters[0].type as dom.UnionType;
+		const union = functionDeclarations[0].parameters[0].type as dom.UnionType;
 		expect(union.members.length).to.eq(4);
 		expect(union.members[0]).to.eq(dom.type.boolean);
 		expect(union.members[1]).to.eq(dom.type.boolean);
@@ -314,9 +314,9 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should map array values to dom.type.array-Values", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function.json"), { encoding: "utf-8" }));
 
-		let primitiveTypeValues = [
+		const primitiveTypeValues = [
 			"string",
 			"number",
 			"boolean",
@@ -326,52 +326,52 @@ describe("JSDocTsdParser.parse.function", () => {
 			"null",
 			"undefined",
 			"true",
-			"false"
+			"false",
 		];
 
-		for (let primitiveTypeValue of primitiveTypeValues) {
+		for (const primitiveTypeValue of primitiveTypeValues) {
 			functionData.returns = [
 				{
 					description: "..",
 					type: {
 						names: [
-							primitiveTypeValue
-						]
-					}
-				}
+							primitiveTypeValue,
+						],
+					},
+				},
 			];
 
-			let parser = new JSDocTsdParser();
+			const parser = new JSDocTsdParser();
 			parser.parse([functionData]);
 
-			let functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
+			const functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.eq(1);
 
-			let union = functionDeclarations[0].returnType as dom.UnionType;
+			const union = functionDeclarations[0].returnType as dom.UnionType;
 			expect(union.members.length).to.eq(1);
 			expect(union.members[0]).to.eq(primitiveTypeValue as dom.Type);
 		}
 
 		// do the same with arrays
-		for (let primitiveTypeValue of primitiveTypeValues) {
+		for (const primitiveTypeValue of primitiveTypeValues) {
 			functionData.returns = [
 				{
 					description: "..",
 					type: {
 						names: [
-							"Array.<" + primitiveTypeValue + ">"
-						]
-					}
-				}
+							"Array.<" + primitiveTypeValue + ">",
+						],
+					},
+				},
 			];
 
-			let parser = new JSDocTsdParser();
+			const parser = new JSDocTsdParser();
 			parser.parse([functionData]);
 
-			let functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
+			const functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.eq(1);
 
-			let union = functionDeclarations[0].returnType as dom.UnionType;
+			const union = functionDeclarations[0].returnType as dom.UnionType;
 			expect(union.members.length).to.eq(1);
 			expect((union.members[0] as any).kind).to.eq("array");
 			expect((union.members[0] as any).type).to.eq(primitiveTypeValue);
@@ -379,7 +379,7 @@ describe("JSDocTsdParser.parse.function", () => {
 	});
 
 	it("should create a function with jsdoc comments", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
 		let parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
@@ -411,13 +411,13 @@ describe("JSDocTsdParser.parse.function", () => {
 		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 
 		expect(functionDeclarations.length).to.equals(1);
-		let functionDeclaration = functionDeclarations[0];
+		const functionDeclaration = functionDeclarations[0];
 		functionDescription = `A function\n@param bla blub\n@returns bla\n@throws error`;
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 
 	it("should create a function with jsdoc comments", () => {
-		let functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
+		const functionData: IFunctionDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_multipleParamTypes.json"), { encoding: "utf-8" }));
 		let parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
@@ -449,45 +449,45 @@ describe("JSDocTsdParser.parse.function", () => {
 		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
 
 		expect(functionDeclarations.length).to.equals(1);
-		let functionDeclaration = functionDeclarations[0];
+		const functionDeclaration = functionDeclarations[0];
 		functionDescription = `A function\n@param bla blub\n@returns bla\n@throws error`;
 		expect(functionDeclaration.jsDocComment).to.equals(functionDescription);
 	});
 
 	it("should create a function with one optional parameter", () => {
-		let functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_twoParamsSecondOptional.json"), { encoding: "utf-8" }));
-		let parser = new JSDocTsdParser();
+		const functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/function_twoParamsSecondOptional.json"), { encoding: "utf-8" }));
+		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		let result = parser.prepareResults();
+		const result = parser.prepareResults();
 		expect(result).haveOwnPropertyDescriptor("function1");
 
-		let functionDeclaration: dom.FunctionDeclaration = result["function1"] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = result.function1 as dom.FunctionDeclaration;
 		expect(functionDeclaration.parameters.length).to.eq(2);
 
-		let optionalParam = functionDeclaration.parameters[1];
+		const optionalParam = functionDeclaration.parameters[1];
 		expect(optionalParam.flags).to.eq(dom.ParameterFlags.Optional);
 	});
 
 	it("should create a template function", () => {
-		let functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/templateFunction.json"), { encoding: "utf-8" }));
-		let parser = new JSDocTsdParser();
+		const functionData: IFunctionDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/templateFunction.json"), { encoding: "utf-8" }));
+		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		let result = parser.prepareResults();
+		const result = parser.prepareResults();
 		expect(result).haveOwnPropertyDescriptor("myTemplateFunction");
 
-		let functionDeclaration: dom.FunctionDeclaration = result["myTemplateFunction"] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = result.myTemplateFunction as dom.FunctionDeclaration;
 		expect(functionDeclaration.typeParameters.length).to.eq(1);
 
-		let typeParameter = functionDeclaration.typeParameters[0];
+		const typeParameter = functionDeclaration.typeParameters[0];
 		expect(typeParameter.name).to.eq("T extends keyof ITemplateInterface");
 
 		expect(functionDeclaration.parameters.length).to.eq(1);
-		let param = functionDeclaration.parameters[0];
+		const param = functionDeclaration.parameters[0];
 		expect(param.name).to.eq("prop");
 
-		let unionType: dom.UnionType = param.type as dom.UnionType;
+		const unionType: dom.UnionType = param.type as dom.UnionType;
 		expect(unionType.members.length).to.eq(1);
 		expect(unionType.members[0]).to.eq("T");
 	});
