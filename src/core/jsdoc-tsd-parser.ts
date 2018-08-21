@@ -1,24 +1,27 @@
 import * as dom from "dts-dom";
-import { ParameterFlags, TypeParameter, InterfaceDeclaration } from "dts-dom";
+import { InterfaceDeclaration, ParameterFlags, TypeParameter } from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 
-var compare = require("node-version-compare");
-var jsdocCommentParser = require("comment-parser");
+/* tslint:disable:no-var-requires */
+// These modules only exports a function, so require is necessary here
+const compare = require("node-version-compare");
+const jsdocCommentParser = require("comment-parser");
+/* tslint:enable:no-var-requires */
 
 export class JSDocTsdParser {
 
 	private accessFlagMap: { [key: string]: dom.DeclarationFlags } = {
-		public: dom.DeclarationFlags.None,
 		private: dom.DeclarationFlags.Private,
 		protected: dom.DeclarationFlags.Protected,
+		public: dom.DeclarationFlags.None,
 	};
 	private config = {} as any;
 	private jsdocItems: TDoclet[] = [];
+	private rejectedItems: string[] = [];
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
-	private rejectedItems: string[] = [];
 
 	constructor(config?: any) {
 		this.resultItems = {};
@@ -36,7 +39,7 @@ export class JSDocTsdParser {
 			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
 				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
 					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
-						let result = compare(latestVersion, taggedVersion);
+						const result = compare(latestVersion, taggedVersion);
 						return result >= 0;
 					} else {
 						return true;
@@ -44,11 +47,11 @@ export class JSDocTsdParser {
 				} else {
 					return true;
 				}
-			}
+			};
 		} else if (typeof this.config.versionComparator === "function") {
 			// test for errors
 			try {
-				var result = this.config.versionComparator("", "");
+				const result = this.config.versionComparator("", "");
 				if (typeof result !== "boolean") {
 					throw new Error("The versionComparator-function has to return a boolean, instead got " + typeof result);
 				}
@@ -60,12 +63,12 @@ export class JSDocTsdParser {
 				console.log(err);
 			}
 		} else {
-			if(this.config.versionComparator.indexOf("{") > 0){
+			if (this.config.versionComparator.indexOf("{") > 0) {
 				let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
 				functionBody = functionBody.substr(0, functionBody.length - 1).trim();
 				this.config.versionComparator = new Function("param1", "param2", functionBody);
 			} else if (fs.existsSync(this.config.versionComparator)) {
-				if(path.extname(this.config.versionComparator) !== ".js") {
+				if (path.extname(this.config.versionComparator) !== ".js") {
 					throw new Error(this.config.versionComparator + " must be a JavaScript file");
 				}
 				this.config.versionComparator = require(this.config.versionComparator);
@@ -75,7 +78,7 @@ export class JSDocTsdParser {
 
 			// test for errors
 			try {
-				var result = this.config.versionComparator("", "");
+				const result = this.config.versionComparator("", "");
 				if (typeof result !== "boolean") {
 					throw new Error("The versionComparator-function has to return a boolean, instead got " + typeof result);
 				}
@@ -120,7 +123,7 @@ export class JSDocTsdParser {
 					case "constant":
 						parsedItem = this.parseConstant(item as IMemberDoclet);
 						break;
-			
+
 					case "member":
 						if (item.isEnum) {
 							parsedItem = this.parseEnum(item as IMemberDoclet);
@@ -196,21 +199,21 @@ export class JSDocTsdParser {
 	}
 
 	public prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
-		let domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
+		const domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
 
-		for (let jsdocItem of this.jsdocItems) {
-			let parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
+		for (const jsdocItem of this.jsdocItems) {
+			const parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
 
 			if (parentItem) {
 				// add the items we parsed before as a member of the top level declaration
-				for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+				for (const parsedItem of this.resultItems[jsdocItem.longname]) {
 					switch (parentItem.kind) {
 						case "namespace":
-							let namespaceMember = parsedItem as dom.NamespaceMember;
+							const namespaceMember = parsedItem as dom.NamespaceMember;
 							switch ((namespaceMember as any).kind) {
 
 								case "const":
-									let constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
+									const constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
 									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										constDeclaration.flags = dom.DeclarationFlags.Export;
 									}
@@ -218,9 +221,9 @@ export class JSDocTsdParser {
 									constDeclaration.jsDocComment = namespaceMember.jsDocComment;
 									(parentItem as dom.NamespaceDeclaration).members.push(constDeclaration);
 									break;
-					
+
 								case "property":
-									let variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
+									const variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
 									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										variableDeclaration.flags = dom.DeclarationFlags.Export;
 									}
@@ -249,19 +252,19 @@ export class JSDocTsdParser {
 									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
 									break;
 							}
-						break;
+						 break;
 
 						case "class":
 							let classMember = parsedItem as dom.ClassMember;
 
 							switch ((classMember as any).kind) {
 								case "function":
-									let functionDeclaration: dom.FunctionDeclaration = classMember as any;
+									const functionDeclaration: dom.FunctionDeclaration = classMember as any;
 									classMember = dom.create.method(
 										functionDeclaration.name,
 										functionDeclaration.parameters,
 										functionDeclaration.returnType,
-										functionDeclaration.flags
+										functionDeclaration.flags,
 									);
 
 									classMember.typeParameters = functionDeclaration.typeParameters;
@@ -275,7 +278,7 @@ export class JSDocTsdParser {
 
 						case "enum":
 							// enum members can already exists
-							let foundItem = parentItem.members.filter((member) => {
+							const foundItem = parentItem.members.filter((member) => {
 								return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
 							}).length > 0;
 
@@ -289,12 +292,12 @@ export class JSDocTsdParser {
 
 							switch ((objectTypeMember as any).kind) {
 								case "function":
-									let functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
+									const functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
 									objectTypeMember = dom.create.method(
 										functionDeclaration.name,
 										functionDeclaration.parameters,
 										functionDeclaration.returnType,
-										functionDeclaration.flags
+										functionDeclaration.flags,
 									);
 
 									objectTypeMember.typeParameters = functionDeclaration.typeParameters;
@@ -315,11 +318,11 @@ export class JSDocTsdParser {
 							break;
 
 						case "module":
-							let moduleMember = parsedItem as dom.ModuleMember;
+							const moduleMember = parsedItem as dom.ModuleMember;
 							switch ((moduleMember as any).kind) {
 
 								case "property":
-									let variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
+									const variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
 									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
 										variableDeclaration.flags = dom.DeclarationFlags.Export;
 									}
@@ -364,7 +367,7 @@ export class JSDocTsdParser {
 				if (jsdocItem.memberof && this.rejectedItems.indexOf(jsdocItem.memberof) >= 0) {
 					// parent was rejected by the since comparator
 					// so do not add the item
-				} else if(jsdocItem.memberof) {
+				} else if (jsdocItem.memberof) {
 					// item has a parent but the parent was not found, possible reasons:
 					// + a typo in the @memberof tag
 					// + the parent is a private class that extends a public class
@@ -372,7 +375,7 @@ export class JSDocTsdParser {
 					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'.");
 				} else if (!jsdocItem.memberof) {
 					// member has no parent, add the item as top-level declaration
-					for (let parsedItem of this.resultItems[jsdocItem.longname]) {
+					for (const parsedItem of this.resultItems[jsdocItem.longname]) {
 						if (!domTopLevelDeclarations[jsdocItem.longname]) {
 							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
 						}
@@ -387,13 +390,13 @@ export class JSDocTsdParser {
 	public resolveResults(): string {
 		let output = "";
 
-		let results = this.prepareResults();
+		const results = this.prepareResults();
 		Object.keys(results).forEach((key) => {
 			try {
 				output += dom.emit(results[key]);
 			} catch (err) {
 				console.error(`Unexpected error. Please report this error on github!\nCan't emit item ${key}: ${err}\n\n${JSON.stringify(results[key], null, "\t")}`);
-				let jsdocItems = this.jsdocItems.filter((elem) => {
+				const jsdocItems = this.jsdocItems.filter((elem) => {
 					return (elem.hasOwnProperty("name") && elem.name.endsWith(key)) || (elem.hasOwnProperty("longname") && elem.longname === key);
 				});
 				console.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
@@ -422,7 +425,7 @@ export class JSDocTsdParser {
 			["tutorial", true],
 			["variation", true],
 			["version", true],
-			["license", true]
+			["license", true],
 		]);
 
 		let cleanedComment = "";
@@ -467,19 +470,18 @@ export class JSDocTsdParser {
 		return cleanedComment;
 	}
 
-
 	private createDomParams(params: IDocletProp[], functionName?: string): dom.Parameter[] {
-		let domParams: dom.Parameter[] = [];
+		const domParams: dom.Parameter[] = [];
 		let typeDef: ITypedefDoclet | undefined;
 		let propParam: IDocletProp | undefined;
 
-		for (let i=0; i<params.length; i++) {
-			let param = params[i];
-			let paramIsProperty = (param.name.indexOf(".") > 0);
-			let nextParamIsProperty = (i+1 < params.length) && (params[i+1].name.indexOf(".") > 0);
-			let lastParam = (i+1 === params.length);
+		for (let i = 0; i < params.length; i++) {
+			const param = params[i];
+			const paramIsProperty = (param.name.indexOf(".") > 0);
+			const nextParamIsProperty = (i + 1 < params.length) && (params[i + 1].name.indexOf(".") > 0);
+			const lastParam = (i + 1 === params.length);
 			let domParam: dom.Parameter | undefined;
-			
+
 			// check the type of the parameter
 			if (!paramIsProperty && nextParamIsProperty) {
 				// the parameter is a parameter with properties
@@ -490,51 +492,51 @@ export class JSDocTsdParser {
 				// create a new typedef
 				typeDef = {
 					kind: "typedef",
-					type: param.type,
+					longname: functionName + "_" + param.name,
 					meta: param.meta,
 					name: functionName + "_" + param.name,
+					properties: [],
 					scope: "",
-					longname: functionName + "_" + param.name,
-					properties: []
+					type: param.type,
 				};
 				this.jsdocItems.push(typeDef);
-				
+
 			} else if (paramIsProperty) {
 				// the parameter is a property
 
 				if (!typeDef || !typeDef.properties) {
-					throw `Parent of property ${param.name} is missing or incorrect`;
+					throw new Error(`Parent of property ${param.name} is missing or incorrect`);
 				}
 
 				// add the property to the typedef
-				let prop: IDocletProp = {
-					type: param.type,
-					name: param.name.substr(param.name.indexOf(".") + 1),
+				const prop: IDocletProp = {
+					comment: param.comment,
 					description: param.description,
-					comment: param.comment
+					name: param.name.substr(param.name.indexOf(".") + 1),
+					type: param.type,
 				};
 				typeDef.properties.push(prop);
 
 				if (lastParam || !nextParamIsProperty) {
 					// the parameter is the last property
 
-					if(!propParam) {
-						throw `Parent of property ${param.name} is missing or incorrect`;
+					if (!propParam) {
+						throw new Error(`Parent of property ${param.name} is missing or incorrect`);
 					}
 
 					// create an interface from the typedef
-					let domInterface: dom.InterfaceDeclaration = this.parseTypeDefinition(typeDef) as dom.InterfaceDeclaration;
+					const domInterface: dom.InterfaceDeclaration = this.parseTypeDefinition(typeDef) as dom.InterfaceDeclaration;
 					this.resultItems[typeDef.longname] = [domInterface];
 
 					// create the parameter with the interface as type
 					let interfaceType;
-					let matchArray = typeDef.type.names[0].match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
+					const matchArray = typeDef.type.names[0].match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
 					if (matchArray) {
 						interfaceType = dom.create.array(domInterface);
 					} else {
 						interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
 					}
-					
+
 					domParam = dom.create.parameter(propParam.name, interfaceType);
 				}
 
@@ -551,7 +553,7 @@ export class JSDocTsdParser {
 				if (param.optional) {
 					domParam.flags = dom.ParameterFlags.Optional;
 				}
-	
+
 				this.handleFlags(param, domParam);
 				domParams.push(domParam);
 			}
@@ -573,7 +575,7 @@ export class JSDocTsdParser {
 		let parentItem: dom.TopLevelDeclaration = null as any;
 
 		if (jsdocItem.memberof) {
-			let parentItemNames = jsdocItem.memberof.split(".");
+			const parentItemNames = jsdocItem.memberof.split(".");
 			parentItemNames.forEach((name, index) => {
 
 				if (index < 1) {
@@ -586,7 +588,7 @@ export class JSDocTsdParser {
 						}
 					}
 				} else if (parentItem) {
-					let parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
+					const parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
 					let parentItemName = "";
 					for (let i = 0; i < index; i++) {
 						if (i > 0) {
@@ -596,7 +598,7 @@ export class JSDocTsdParser {
 						parentItemName += parentItemNames[i];
 					}
 
-					let itemFound = parentItemAsNamespace.members.some((item) => {
+					const itemFound = parentItemAsNamespace.members.some((item) => {
 						if (item.name === name) {
 							parentItem = item;
 
@@ -639,7 +641,7 @@ export class JSDocTsdParser {
 		obj.flags |= doclet.readonly ? dom.DeclarationFlags.ReadOnly : dom.DeclarationFlags.None;
 		obj.flags |= doclet.scope === "static" ? dom.DeclarationFlags.Static : dom.DeclarationFlags.None;
 
-		let cast = obj as any;
+		const cast = obj as any;
 		if (doclet.optional && cast.kind === "property" && cast.flags === ParameterFlags.Optional) {
 			obj.flags = dom.DeclarationFlags.Optional;
 		}
@@ -648,12 +650,12 @@ export class JSDocTsdParser {
 	private handleTags(doclet: IDocletBase, obj: any) {
 		// check the tags of the class
 		if (doclet.tags) {
-			for (var tag of doclet.tags) {
+			for (const tag of doclet.tags) {
 				switch (tag.title) {
 					case "template":
 						if (obj.typeParameters) {
 							obj.typeParameters.push(
-								dom.create.typeParameter(tag.value)
+								dom.create.typeParameter(tag.value),
 							);
 						}
 						break;
@@ -666,7 +668,7 @@ export class JSDocTsdParser {
 	}
 
 	private mapTypesToUnion(types: string[]): dom.UnionType {
-		let domTypes: dom.Type[] = [];
+		const domTypes: dom.Type[] = [];
 
 		types.forEach((type) => {
 			domTypes.push(this.mapVariableType(type));
@@ -681,16 +683,16 @@ export class JSDocTsdParser {
 		let resultType: dom.Type = dom.type.any;
 		while (/^Array/i.test(variableType)) {
 			// it's an array, check if it's typed
-			let arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\)?)>/i); // @todo: can contain namepaths
+			const arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\)?)>/i); // @todo: can contain namepaths
 			if (arrayTypeMatches && !!arrayTypeMatches[1]) {
 				const arrayTypeString: string = arrayTypeMatches[1];
-				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString)
+				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString);
 				resultType = (resultType === dom.type.any)
 					? dom.type.array(arrayType)
 					: dom.type.array(resultType); // nested array
 
 				// remove the string from the variable type (nested arrays)
-				const regExp = new RegExp(`Array.<${arrayTypeString.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}>`, "i");
+				const regExp = new RegExp(`Array.<${arrayTypeString.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")}>`, "i");
 				variableType = variableType.replace(regExp, "");
 			} else {
 				resultType = dom.type.array(resultType);
@@ -730,11 +732,11 @@ export class JSDocTsdParser {
 		// check if it's a type parameter
 		// e.g. "Promise.<*>" (JSDoc always separate the type with a dot)
 		const typeParameterMatches = variableType.match(/^([^<.]+)\.<([^>]+)>$/);
-        if (typeParameterMatches && typeParameterMatches.length === 3) {
+  if (typeParameterMatches && typeParameterMatches.length === 3) {
 			// it's not a pretty nice solution, but it works for now
-            resultType = dom.create.typeParameter(
-                `${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`
-            );
+			resultType = dom.create.typeParameter(
+				`${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`,
+			);
 		}
 
 		return resultType;
@@ -761,15 +763,28 @@ export class JSDocTsdParser {
 		return domClass;
 	}
 
+	private parseConstant(jsdocItem: IMemberDoclet) {
+		if (jsdocItem.isEnum) {
+			throw new Error(`item ${jsdocItem.longname} is an enum`);
+		}
+
+		let propertyType: dom.Type = dom.type.any;
+		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
+		}
+
+		return dom.create.const(jsdocItem.name, propertyType);
+	}
+
 	private parseEnum(jsdocItem: IMemberDoclet): dom.DeclarationBase {
 		if (!jsdocItem.isEnum) {
 			throw new Error(`item ${jsdocItem.longname} is not an enum`);
 		}
 
-		let domEnum: dom.EnumDeclaration = dom.create.enum(jsdocItem.name, (jsdocItem.kind === "constant"));
+		const domEnum: dom.EnumDeclaration = dom.create.enum(jsdocItem.name, (jsdocItem.kind === "constant"));
 		if (jsdocItem.properties) {
-			for (let property of jsdocItem.properties) {
-				let domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, property.defaultvalue);
+			for (const property of jsdocItem.properties) {
+				const domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, property.defaultvalue);
 				domEnumMember.jsDocComment = this.cleanJSDocComment(property.comment);
 				domEnum.members.push(domEnumMember);
 			}
@@ -779,7 +794,7 @@ export class JSDocTsdParser {
 	}
 
 	private parseFunction(jsdocItem: IFunctionDoclet): dom.DeclarationBase {
-		let functionReturnValue: dom.Type = this.getFunctionReturnValue(jsdocItem);
+		const functionReturnValue: dom.Type = this.getFunctionReturnValue(jsdocItem);
 		let domFunction: dom.FunctionDeclaration;
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
 			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params, jsdocItem.name), functionReturnValue);
@@ -793,19 +808,6 @@ export class JSDocTsdParser {
 
 	private parseInterface(jsdocItem: IClassDoclet) {
 		return dom.create.interface(jsdocItem.name);
-	}
-
-	private parseConstant(jsdocItem: IMemberDoclet) {
-		if (jsdocItem.isEnum) {
-			throw new Error(`item ${jsdocItem.longname} is an enum`);
-		}
-
-		let propertyType: dom.Type = dom.type.any;
-		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
-			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
-		}
-
-		return dom.create.const(jsdocItem.name, propertyType);
 	}
 
 	private parseMember(jsdocItem: IMemberDoclet) {
@@ -837,7 +839,7 @@ export class JSDocTsdParser {
 			// with the dts-dom module
 			type = dom.create.functionType(
 				this.createDomParams(jsdocItem.params, jsdocItem.name),
-				this.getFunctionReturnValue(jsdocItem as any)
+				this.getFunctionReturnValue(jsdocItem as any),
 			);
 		} else {
 			type = this.mapVariableType(jsdocItem.type.names[0]);
@@ -845,7 +847,7 @@ export class JSDocTsdParser {
 
 		return dom.create.alias(
 			jsdocItem.name,
-			type
+			type,
 		);
 	}
 
@@ -855,16 +857,16 @@ export class JSDocTsdParser {
 			// which should be mapped to an interface. Instead we create a typeAlias-Declaration
 			return this.parseTypeAliasDefinition(jsdocItem);
 		} else {
-			let domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+			const domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
 
 			if (jsdocItem.properties) {
-				for (let property of jsdocItem.properties) {
+				for (const property of jsdocItem.properties) {
 					let propertyType: dom.Type = dom.type.any;
 					if (property.type) {
 						propertyType = this.mapTypesToUnion(property.type.names);
 					}
 
-					let domProperty = dom.create.property(property.name, propertyType);
+					const domProperty = dom.create.property(property.name, propertyType);
 					domProperty.jsDocComment = property.description;
 					this.handleFlags(property, domProperty);
 

@@ -5,19 +5,19 @@ import * as path from "path";
 import { JSDocTsdParser } from "../../core/jsdoc-tsd-parser";
 
 describe("JSDocTsdParser.parse.enum", () => {
-	let enumData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enum.json"), { encoding: "utf-8" }));
+	const enumData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enum.json"), { encoding: "utf-8" }));
 	expect(enumData.length).to.eq(3);
-	let enumInNamespaceData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enumInNamespace.json"), { encoding: "utf-8" }));
+	const enumInNamespaceData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enumInNamespace.json"), { encoding: "utf-8" }));
 
 	it("Should should create an enum declartation", () => {
 
-		let parser = new JSDocTsdParser();
+		const parser = new JSDocTsdParser();
 		parser.parse(enumData);
-		let results = parser.getResultItems();
-		let enumDeclarations: dom.EnumDeclaration[] = results[enumData[0].longname] as dom.EnumDeclaration[];
+		const results = parser.getResultItems();
+		const enumDeclarations: dom.EnumDeclaration[] = results[enumData[0].longname] as dom.EnumDeclaration[];
 
 		expect(enumDeclarations.length).to.eq(1);
-		let enumDeclaration = enumDeclarations[0];
+		const enumDeclaration = enumDeclarations[0];
 		expect(enumDeclaration.constant).to.eq((enumData[0].kind === "constant"));
 		expect(enumDeclaration.jsDocComment).to.eq("Stupid enum member");
 		expect(enumDeclaration.members.length).to.eq(2);
@@ -35,32 +35,32 @@ describe("JSDocTsdParser.parse.enum", () => {
 	});
 
 	it("should add the enum member only once", () => {
-		let enumMembers = enumData.filter((data) => {
+		const enumMembers = enumData.filter((data) => {
 			return !(data as any).isEnum;
 		});
 		expect(enumMembers.length).to.eq(2);
 
-		let parser = new JSDocTsdParser();
+		const parser = new JSDocTsdParser();
 		parser.parse(enumData);
 
-		let result = parser.prepareResults();
+		const result = parser.prepareResults();
 		expect(result).haveOwnPropertyDescriptor("myStupidEnum");
 
-		let enumDeclaration: dom.EnumDeclaration = result["myStupidEnum"] as dom.EnumDeclaration;
+		const enumDeclaration: dom.EnumDeclaration = result.myStupidEnum as dom.EnumDeclaration;
 		expect(enumDeclaration.members.length).to.eq(2);
 	});
 
 	it("should add the enum member to a namespace", () => {
-		let parser = new JSDocTsdParser();
+		const parser = new JSDocTsdParser();
 		parser.parse(enumInNamespaceData);
 
-		let result = parser.prepareResults();
+		const result = parser.prepareResults();
 		expect(result).haveOwnPropertyDescriptor("myNamespace");
 
-		let namespace = result.myNamespace as dom.NamespaceDeclaration;
+		const namespace = result.myNamespace as dom.NamespaceDeclaration;
 		expect(namespace.members.length).to.eq(1);
 
-		let enumMember:dom.EnumDeclaration = namespace.members[0] as any;
+		const enumMember: dom.EnumDeclaration = namespace.members[0] as any;
 		expect(enumMember.name).to.eq("MyEnum");
 		expect(enumMember.members.length).to.eq(2);
 		expect(enumMember.members[0].name).to.eq("VAL1");
