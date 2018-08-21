@@ -727,6 +727,16 @@ export class JSDocTsdParser {
 			resultType = this.mapTypesToUnion(variableType.split("|"));
 		}
 
+		// check if it's a type parameter
+		// e.g. "Promise.<*>" (JSDoc always separate the type with a dot)
+		const typeParameterMatches = variableType.match(/^([^<.]+)\.<([^>]+)>$/);
+        if (typeParameterMatches && typeParameterMatches.length === 3) {
+			// it's not a pretty nice solution, but it works for now
+            resultType = dom.create.typeParameter(
+                `${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`
+            );
+		}
+
 		return resultType;
 	}
 
