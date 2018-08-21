@@ -1,0 +1,53 @@
+[
+	{
+		"comment": "/**\r\n * My function\r\n * @param {Promise.<*>} p a promise with unspecified type\r\n */",
+		"meta": {
+			"range": [
+				85,
+				141
+			],
+			"filename": "test.js",
+			"lineno": 5,
+			"columnno": 0,
+			"path": "e:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000002",
+				"name": "f1",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"p"
+				]
+			},
+			"vars": {
+				"": null
+			}
+		},
+		"description": "My function",
+		"params": [
+			{
+				"type": {
+					"names": [
+						"Promise.<*>"
+					]
+				},
+				"description": "a promise with unspecified type",
+				"name": "p"
+			}
+		],
+		"name": "f1",
+		"longname": "f1",
+		"kind": "function",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"e:\\jsdoc-tsd\\exampleProject\\src\\test.js"
+		],
+		"___id": "T000002R000003",
+		"___s": true
+	}
+]

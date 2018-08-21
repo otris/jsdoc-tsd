@@ -11,6 +11,8 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	const singleStringArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/singleStringArray.json"), { encoding: "utf-8" }));
 	const fourDimensionalStringArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/fourDimensionalStringArray.json"), { encoding: "utf-8" }));
 	const twoDimensionalUnionTypeArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/twoDimensionalUnionTypeArray.json"), { encoding: "utf-8" }));
+	const functionWithGenericReturnValue: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/functionWithGenericReturnValue.json"), { encoding: "utf-8" }));
+	const functionWithGenericParameter: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/functionWithGenericParameter.json"), { encoding: "utf-8" }));
 
 	it("should map single untyped arrays", () => {
 		const parser = new JSDocTsdParser();
@@ -75,6 +77,28 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.array(dom.create.union([dom.type.string, dom.type.number])));
+		expect(functionParamType).to.deep.eq(expectedParmType);
+	});
+
+	it("should map generic types for function return values", () => {
+		const parser = new JSDocTsdParser();
+		parser.parse(functionWithGenericReturnValue);
+		const resultItems = parser.getResultItems();
+
+		const functionDeclaration: dom.FunctionDeclaration = resultItems.f1[0] as dom.FunctionDeclaration;
+		const functionReturnType: dom.Type = (functionDeclaration.returnType as dom.UnionType).members[0];
+		const expectedReturnType = dom.create.typeParameter("Promise<any>");
+		expect(functionReturnType).to.deep.eq(expectedReturnType);
+	});
+
+	it("should map generic types for function parameters", () => {
+		const parser = new JSDocTsdParser();
+		parser.parse(functionWithGenericParameter);
+		const resultItems = parser.getResultItems();
+
+		const functionDeclaration: dom.FunctionDeclaration = resultItems.f1[0] as dom.FunctionDeclaration;
+		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
+		const expectedParmType = dom.create.typeParameter("Promise<any>");
 		expect(functionParamType).to.deep.eq(expectedParmType);
 	});
 });
