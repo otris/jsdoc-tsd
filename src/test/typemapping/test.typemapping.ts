@@ -13,6 +13,7 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	const twoDimensionalUnionTypeArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/twoDimensionalUnionTypeArray.json"), { encoding: "utf-8" }));
 	const functionWithGenericReturnValue: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/functionWithGenericReturnValue.json"), { encoding: "utf-8" }));
 	const functionWithGenericParameter: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/functionWithGenericParameter.json"), { encoding: "utf-8" }));
+	const objectKeyAndPropertyDescription: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/objectKeyAndPropertyDescription.json"), { encoding: "utf-8" }));
 
 	it("should map single untyped arrays", () => {
 		const parser = new JSDocTsdParser();
@@ -99,6 +100,17 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const functionDeclaration: dom.FunctionDeclaration = resultItems.f1[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.create.typeParameter("Promise<any>");
+		expect(functionParamType).to.deep.eq(expectedParmType);
+	});
+
+	it("should transform object key and property descriptions", () => {
+		const parser = new JSDocTsdParser();
+		parser.parse(objectKeyAndPropertyDescription);
+		const resultItems = parser.getResultItems();
+
+		const functionDeclaration: dom.FunctionDeclaration = resultItems.test[0] as dom.FunctionDeclaration;
+		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
+		const expectedParmType = "{ [key: string]: myCustomType }";
 		expect(functionParamType).to.deep.eq(expectedParmType);
 	});
 });

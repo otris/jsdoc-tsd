@@ -1,0 +1,80 @@
+[
+	{
+		"comment": "/**\r\n * @typedef {object} myCustomType\r\n * @property {string} myProp\r\n */",
+		"meta": {
+			"filename": "test.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"kind": "typedef",
+		"name": "myCustomType",
+		"type": {
+			"names": [
+				"object"
+			]
+		},
+		"properties": [
+			{
+				"type": {
+					"names": [
+						"string"
+					]
+				},
+				"name": "myProp"
+			}
+		],
+		"longname": "myCustomType",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	},
+	{
+		"comment": "/**\r\n * @param {Object<string, myCustomType>} myParam Description\r\n */",
+		"meta": {
+			"range": [
+				149,
+				176
+			],
+			"filename": "test.js",
+			"lineno": 9,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {
+				"id": "astnode100000002",
+				"name": "test",
+				"type": "FunctionDeclaration",
+				"paramnames": [
+					"myParam"
+				]
+			}
+		},
+		"params": [
+			{
+				"type": {
+					"names": [
+						"Object.<string, myCustomType>"
+					]
+				},
+				"description": "Description",
+				"name": "myParam"
+			}
+		],
+		"name": "test",
+		"longname": "test",
+		"kind": "function",
+		"scope": "global",
+		"___id": "T000002R000003",
+		"___s": true
+	},
+	{
+		"kind": "package",
+		"longname": "package:undefined",
+		"files": [
+			"E:\\jsdoc-tsd\\exampleProject\\src\\test.js"
+		],
+		"___id": "T000002R000004",
+		"___s": true
+	}
+]
