@@ -1,5 +1,23 @@
 ## Changelog
 
+# v1.0.3
+New features in this release:
+  - Support for object key and property description (see [#25](https://github.com/otris/jsdoc-tsd/issues/25))
+
+Bugfixes:
+  - Generic types were not mapped correctly, e.g.
+    ```js
+    /**
+     * @function f1
+     * @param {Promise<*>} myParam
+     */
+    ```
+    were mapped to
+    ```ts
+    f1(myParam: Promise.<*>)
+    ```
+    which is not valid typescript (see [#38](https://github.com/otris/jsdoc-tsd/issues/38))
+
 # v1.0.2
 Bugfixes:
   - Modules can now contain unexported members. You can use the @inner and @static annotation
