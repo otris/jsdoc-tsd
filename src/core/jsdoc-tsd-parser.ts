@@ -703,7 +703,13 @@ export class JSDocTsdParser {
 		}
 
 		if (resultType === dom.type.any) {
-			resultType = this.mapVariableTypeString(variableType);
+			// check if it's an object type (Object.<string, number>)
+			const objectTypeMatches = variableType.match(/^Object\.<([^,]+),\s?([^>]+)>$/);
+			if (objectTypeMatches && objectTypeMatches.length === 3) {
+				resultType = `{ [key: ${objectTypeMatches[1]}]: ${objectTypeMatches[2]} }` as dom.Type;
+			} else {
+				resultType = this.mapVariableTypeString(variableType);
+			}
 		}
 
 		return resultType;
