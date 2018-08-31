@@ -7,13 +7,12 @@
 			"es6"
 		],
 		"sourceMap": true,
-		"rootDir": "./src",
+		"rootDir": ".",
 		"strict": true,
 		"declaration": true
 	},
 	"include": [
-		"node_modules/@types/**/*.ts",
-		"src/**/*",
-		"typings/**/*.ts"
+		"src",
+		"typings"
 	]
 }

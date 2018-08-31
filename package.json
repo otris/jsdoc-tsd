@@ -8,40 +8,42 @@
 		"url": "git+ssh://git@github.com:otris/jsdoc-tsd.git"
 	},
 	"scripts": {
-		"prepublish": "npm run re-compile && cp src-out/core/*.js ./ && npm run generate-package-lock",
+		"prepublish": "npm run re-compile && cp src-out/src/core/*.js ./ && npm run generate-package-lock",
 		"beautify": "npm run lint -- --fix",
 		"compile": "tsc -p ./",
+		"compile-tests": "tsc -p ./test/tsconfig.json && copyfiles \"test/**\" src-out --exclude \"**/test.*.ts\"",
 		"compile-watch": "npm run compile -- --watch",
 		"generate-package-lock": "node -e \"var fs = require('fs'); if (fs.existsSync('package-lock.json')) fs.unlinkSync('package-lock.json')\" && synp --source-file yarn.lock",
-		"lint": "tslint -c src/test/tslint.json -p src/test/tsconfig.json",
-		"parse-example": "move /Y src-out\\core\\publish.js src-out\\core\\publish.backup.js && copy /Y src-out\\core\\publish-example.js src-out\\core\\publish.js && jsdoc -r exampleProject -t src-out\\core && move /Y src-out\\core\\publish.backup.js src-out\\core\\publish.js",
+		"lint": "tslint -c test/tslint.json -p test/tsconfig.json",
+		"parse-example": "move /Y src-out\\src\\core\\publish.js src-out\\src\\core\\publish.backup.js && copy /Y src-out\\src\\core\\publish-example.js src-out\\src\\core\\publish.js && jsdoc -r exampleProject -t src-out\\src\\core && move /Y src-out\\src\\core\\publish.backup.js src-out\\src\\core\\publish.js",
 		"re-compile": "rimraf src-out && npm run compile",
-		"test": "mocha --compilers=ts:ts-node/register --no-timeouts --forbid-only src/test/**/test.*.ts",
-		"test-extension": "jsdoc -r exampleProject -t src-out/core",
+		"test": "npm run compile-tests && mocha --no-timeouts --forbid-only src-out/test/**/test.*.js",
+		"test-extension": "jsdoc -r exampleProject -t src-out/src/core",
 		"test-publish": "npm pack"
 	},
 	"author": "Maximilian Wehrstedt",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/chai": "^4.0.4",
-		"@types/mocha": "^2.2.43",
-		"@types/node": "^8.0.29",
-		"@types/shelljs": "^0.7.6",
+		"@types/mocha": "^5.2.5",
+		"@types/node": "^10.9.4",
+		"@types/shelljs": "^0.8.0",
 		"chai": "^4.1.2",
 		"grunt": "^1.0.1",
 		"grunt-jsdoc": "^2.1.1",
-		"mocha": "^3.5.3",
+		"mocha": "^5.2.0",
 		"rimraf": "^2.6.2",
 		"synp": "^1.3.0",
-		"ts-node": "^3.3.0",
+		"ts-node": "^7.0.1",
 		"tslint": "^5.7.0",
-		"typescript": "^2.5.2"
+		"typescript": "^3.0.3"
 	},
 	"dependencies": {
 		"comment-parser": "^0.5.0",
+		"copyfiles": "^2.0.0",
 		"dts-dom": "^3.1.0",
 		"node-version-compare": "^1.0.1",
-		"shelljs": "^0.7.8"
+		"shelljs": "^0.8.2"
 	},
 	"peerDependencies": {
 		"jsdoc": "^3.5.5"
