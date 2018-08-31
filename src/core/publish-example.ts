@@ -14,5 +14,5 @@ export function publish(data: any, opts: any) {
 	const jsdocResults = data().get();
 
 	// Write the results to the example folder
-	fs.writeFileSync(path.resolve(__dirname, "../../exampleProject/jsdoc-results.json"), JSON.stringify(jsdocResults, null, "\t"));
+	fs.writeFileSync(path.resolve(__dirname, "../../../exampleProject/jsdoc-results.json"), JSON.stringify(jsdocResults, null, "\t"));
 }
