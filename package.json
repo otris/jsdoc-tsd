@@ -39,7 +39,7 @@
 	},
 	"dependencies": {
 		"comment-parser": "^0.5.0",
-		"dts-dom": "^0.1.22",
+		"dts-dom": "^3.1.0",
 		"node-version-compare": "^1.0.1",
 		"shelljs": "^0.7.8"
 	},

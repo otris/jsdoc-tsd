@@ -260,9 +260,9 @@ diff@^3.1.0, diff@^3.2.0:
   version "3.5.0"
   resolved "https://registry.npmjs.org/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
 
-dts-dom@^0.1.22:
-  version "0.1.25"
-  resolved "https://registry.npmjs.org/dts-dom/-/dts-dom-0.1.25.tgz#799a24abfcd588d8e449b5609ece193195ef5df4"
+dts-dom@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/dts-dom/-/dts-dom-3.1.0.tgz#7f53cf58305180bfd9475d294ea028136162626c"
 
 eol@^0.9.1:
   version "0.9.1"
