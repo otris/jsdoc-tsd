@@ -1,6 +1,4 @@
 # jsdoc-tsd
-## Warning
-This project is currently in development.
 
 ## Installation
 You can install this module from npm:

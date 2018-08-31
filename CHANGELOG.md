@@ -1,5 +1,9 @@
 ## Changelog
 
+# v1.0.4
+Bugfixes
+ - We updated [dts-dom](https://github.com/RyanCavanaugh/dts-dom) to fix [#49](https://github.com/otris/jsdoc-tsd/issues/49)
+
 # v1.0.3
 New features in this release:
   - Support for object key and property description (see [#25](https://github.com/otris/jsdoc-tsd/issues/25))
