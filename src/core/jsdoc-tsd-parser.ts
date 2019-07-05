@@ -105,7 +105,7 @@ export class JSDocTsdParser {
 			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1) {
 				let addItem = true;
 				let addJsDocComment = true;
-				let parsedItem: dom.DeclarationBase = {};
+				let parsedItem: dom.DeclarationBase | null = {};
 				if (!this.resultItems[item.longname]) {
 					// only add overloaded items once to jsdocItems
 					// because of the two for-loops in prepareResults
@@ -183,7 +183,7 @@ export class JSDocTsdParser {
 						break;
 				}
 
-				if (addItem) {
+				if (parsedItem && addItem) {
 					if (addJsDocComment) {
 						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
 					}
@@ -252,7 +252,7 @@ export class JSDocTsdParser {
 									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
 									break;
 							}
-						 break;
+							break;
 
 						case "class":
 							let classMember = parsedItem as dom.ClassMember;
@@ -729,7 +729,7 @@ export class JSDocTsdParser {
 		// check if it's a type parameter
 		// e.g. "Promise.<*>" (JSDoc always separate the type with a dot)
 		const typeParameterMatches = variableType.match(/^([^<.]+)\.<([^>]+)>$/);
-  if (typeParameterMatches && typeParameterMatches.length === 3) {
+		if (typeParameterMatches && typeParameterMatches.length === 3) {
 			// it's not a pretty nice solution, but it works for now
 			resultType = dom.create.typeParameter(
 				`${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`,
@@ -848,30 +848,60 @@ export class JSDocTsdParser {
 		);
 	}
 
-	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase {
-		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0 && jsdocItem.type.names[0] === "function") {
-			// if the jsdoc item has a property "type", we can be sure that it isn't a typedef
-			// which should be mapped to an interface. Instead we create a typeAlias-Declaration
-			return this.parseTypeAliasDefinition(jsdocItem);
-		} else {
-			const domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
-
-			if (jsdocItem.properties) {
-				for (const property of jsdocItem.properties) {
-					let propertyType: dom.Type = dom.type.any;
-					if (property.type) {
-						propertyType = this.mapTypesToUnion(property.type.names);
-					}
-
-					const domProperty = dom.create.property(property.name, propertyType);
-					domProperty.jsDocComment = property.description;
-					this.handleFlags(property, domProperty);
-
-					domInterface.members.push(domProperty);
-				}
+	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase | null {
+		let result: dom.DeclarationBase | null = null;
+		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0) {
+			const typedefType = jsdocItem.type.names[0].toLowerCase();
+			if (typedefType === "function") {
+				result = this.parseTypeDefinitionAsFunction(jsdocItem);
+			} else if (typedefType === "object") {
+				result = this.parseTypeDefinitionAsObject(jsdocItem);
+			} else {
+				result = this.parseTypeDefinitionAsType(jsdocItem);
 			}
-			return domInterface;
+		} else {
+			console.log("Invalid typedef. Typedef has no type: " + JSON.stringify(jsdocItem));
 		}
+
+		return result;
 	}
 
+	private parseTypeDefinitionAsFunction(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration {
+		// if the jsdoc item has a property "type", we can be sure that it isn't a typedef
+		// which should be mapped to an interface. Instead we create a typeAlias-Declaration
+		return this.parseTypeAliasDefinition(jsdocItem);
+	}
+
+	private parseTypeDefinitionAsObject(jsdocItem: ITypedefDoclet): dom.InterfaceDeclaration {
+		const domInterface: dom.InterfaceDeclaration = dom.create.interface(jsdocItem.name);
+
+		if (jsdocItem.properties) {
+			for (const property of jsdocItem.properties) {
+				let propertyType: dom.Type = dom.type.any;
+				if (property.type) {
+					propertyType = this.mapTypesToUnion(property.type.names);
+				}
+
+				const domProperty = dom.create.property(property.name, propertyType);
+				domProperty.jsDocComment = property.description;
+				this.handleFlags(property, domProperty);
+
+				domInterface.members.push(domProperty);
+			}
+		}
+
+		return domInterface;
+	}
+
+	private parseTypeDefinitionAsType(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration | null {
+		let result = null;
+		if (jsdocItem.properties) {
+			console.log(`Invalid typedef. Typedef type is '${jsdocItem.type.names[0]}' and properties are defined.
+			Properties are only allowed for type definitions of type 'object': ${JSON.stringify(jsdocItem)}`);
+		} else {
+			result = dom.create.alias(jsdocItem.name, jsdocItem.type.names.join("|") as dom.Type);
+		}
+
+		return result;
+	}
 }
