@@ -58,4 +58,19 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const optionalMember = interfaceDeclaration.members[0];
 		expect(optionalMember.flags).to.eq(dom.DeclarationFlags.Optional);
 	});
+
+	it("should create type declaration for strings", () => {
+		const typeData: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/typedef_string.json"), { encoding: "utf-8" }));
+		expect(typeData.length).to.eq(1);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(typeData);
+
+		const result = parser.prepareResults();
+		expect(result).haveOwnPropertyDescriptor("FuuBar");
+
+		const typeDeclaration: dom.TypeAliasDeclaration = result.FuuBar as dom.TypeAliasDeclaration;
+		expect(typeDeclaration.kind).to.eq("alias");
+		expect(typeDeclaration.type).to.eq(`"fuu"|"bar"`);
+	});
 });
