@@ -1,5 +1,5 @@
 import * as dom from "dts-dom";
-import { InterfaceDeclaration, ParameterFlags, TypeParameter } from "dts-dom";
+import { ParameterFlags } from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -589,16 +589,7 @@ export class JSDocTsdParser {
 					}
 				} else if (parentItem) {
 					const parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
-					let parentItemName = "";
-					for (let i = 0; i < index; i++) {
-						if (i > 0) {
-							parentItemName += ".";
-						}
-
-						parentItemName += parentItemNames[i];
-					}
-
-					const itemFound = parentItemAsNamespace.members.some((item) => {
+					parentItemAsNamespace.members.some((item) => {
 						if (item.name === name) {
 							parentItem = item;
 

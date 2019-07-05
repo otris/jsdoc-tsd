@@ -14,7 +14,7 @@
 		"compile-tests": "tsc -p ./test/tsconfig.json && copyfiles \"test/**\" src-out --exclude \"**/test.*.ts\"",
 		"compile-watch": "npm run compile -- --watch",
 		"generate-package-lock": "node -e \"var fs = require('fs'); if (fs.existsSync('package-lock.json')) fs.unlinkSync('package-lock.json')\" && synp --source-file yarn.lock",
-		"lint": "tslint -c test/tslint.json -p test/tsconfig.json",
+		"lint": "tslint -c tslint.json -p tsconfig.json",
 		"parse-example": "move /Y src-out\\src\\core\\publish.js src-out\\src\\core\\publish.backup.js && copy /Y src-out\\src\\core\\publish-example.js src-out\\src\\core\\publish.js && jsdoc -r exampleProject -t src-out\\src\\core && move /Y src-out\\src\\core\\publish.backup.js src-out\\src\\core\\publish.js",
 		"re-compile": "rimraf src-out && npm run compile",
 		"test": "npm run compile-tests && mocha --no-timeouts --forbid-only src-out/test/**/test.*.js",

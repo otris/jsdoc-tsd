@@ -42,6 +42,8 @@
 		true,
 		"allow-leading-underscore"
 	  ],
-	  "no-empty-interface": false
+	  "no-empty-interface": false,
+	  "one-variable-per-declaration": false,
+	  "no-unused-expression": true
 	}
   }

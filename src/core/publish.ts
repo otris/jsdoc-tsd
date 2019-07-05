@@ -1,8 +1,8 @@
 import * as fs from "fs";
+import * as helper from "jsdoc/util/templateHelper";
 import * as path from "path";
 import * as shelljs from "shelljs";
 import { JSDocTsdParser } from "./jsdoc-tsd-parser";
-import * as helper from "jsdoc/util/templateHelper";
 
 /**
  * Entry-Point of jsdoc. Gets called by the jsdoc-module to generate the docs.
@@ -30,7 +30,7 @@ export function publish(data: any, opts: any) {
 	parser.parse(jsdocResults);
 
 	// Write the output
-	var outputDir, outputFilePath;
+	let outputDir, outputFilePath;
 	if (opts.destination.endsWith(".d.ts")) {
 		outputFilePath = opts.destination;
 		outputDir = path.dirname(outputFilePath);
