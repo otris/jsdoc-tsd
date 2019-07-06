@@ -31,6 +31,7 @@
 		"dts-dom": "^3.3.0",
 		"node-version-compare": "^1.0.1",
 		"shelljs": "^0.8.3",
+		"strip-json-comments": "^3.0.1",
 		"typescript": "^3.5.2"
 	},
 	"peerDependencies": {

@@ -1,7 +1,6 @@
 import * as dom from "dts-dom";
 import { ParameterFlags } from "dts-dom";
-import * as fs from "fs";
-import * as path from "path";
+import { Configuration } from "./Configuration";
 
 /* tslint:disable:no-var-requires */
 // These modules only exports a function, so require is necessary here
@@ -11,85 +10,44 @@ const jsdocCommentParser = require("comment-parser");
 
 export class JSDocTsdParser {
 
+	/**
+	 * Maps the access flags from JSDoc to declaration flags of dts-dom
+	 */
 	private accessFlagMap: { [key: string]: dom.DeclarationFlags } = {
 		private: dom.DeclarationFlags.Private,
 		protected: dom.DeclarationFlags.Protected,
 		public: dom.DeclarationFlags.None,
 	};
-	private config = {} as any;
-	private jsdocItems: TDoclet[] = [];
-	private rejectedItems: string[] = [];
+
+	/**
+	 * Configuration of of this template.
+	 */
+	private config: Configuration;
+
+	/**
+	 * JSDoc items which were parsed from the passed in taffy db
+	 */
+	private jsdocItems: TDoclet[];
+
+	/**
+	 * Tranformed JSDoc items (to declaration bases) which can
+	 * be passed in to dts-dom for output the d.ts-file.
+	 * The parentship of these items are already resolved.
+	 */
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
 
-	constructor(config?: any) {
+	/**
+	 * Array of jsdoc items which should be ignored because of
+	 * the since tag.
+	 * @todo Is this necessary? Why adding this item to 'jsdocItems'?
+	 */
+
+	constructor(config?: Configuration) {
 		this.resultItems = {};
 		this.jsdocItems = [];
-
-		if (config) {
-			this.config = config;
-		}
-
-		if (!this.config.ignoreScopes) {
-			this.config.ignoreScopes = [];
-		}
-
-		if (typeof this.config.versionComparator !== "function" && (typeof this.config.versionComparator !== "string" || this.config.versionComparator === "")) {
-			this.config.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {
-				if (taggedVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
-					if (typeof latestVersion === "string" && latestVersion.match(/v?([0-9]+\.){2}[0-9]+/i)) {
-						const result = compare(latestVersion, taggedVersion);
-						return result >= 0;
-					} else {
-						return true;
-					}
-				} else {
-					return true;
-				}
-			};
-		} else if (typeof this.config.versionComparator === "function") {
-			// test for errors
-			try {
-				const result = this.config.versionComparator("", "");
-				if (typeof result !== "boolean") {
-					throw new Error("The versionComparator-function has to return a boolean, instead got " + typeof result);
-				}
-			} catch (err) {
-				if (err instanceof ReferenceError || err instanceof SyntaxError || err instanceof TypeError) {
-					throw new Error("Invalid valueComparator-function: " + err);
-				}
-
-				console.log(err);
-			}
-		} else {
-			if (this.config.versionComparator.indexOf("{") > 0) {
-				let functionBody = this.config.versionComparator.substr(this.config.versionComparator.indexOf("{") + 1);
-				functionBody = functionBody.substr(0, functionBody.length - 1).trim();
-				this.config.versionComparator = new Function("param1", "param2", functionBody);
-			} else if (fs.existsSync(this.config.versionComparator)) {
-				if (path.extname(this.config.versionComparator) !== ".js") {
-					throw new Error(this.config.versionComparator + " must be a JavaScript file");
-				}
-				this.config.versionComparator = require(this.config.versionComparator);
-			} else {
-				throw new Error("versionComparator must contain a valid path or a valid function as string");
-			}
-
-			// test for errors
-			try {
-				const result = this.config.versionComparator("", "");
-				if (typeof result !== "boolean") {
-					throw new Error("The versionComparator-function has to return a boolean, instead got " + typeof result);
-				}
-			} catch (err) {
-				if (err instanceof ReferenceError || err instanceof SyntaxError || err instanceof TypeError) {
-					throw new Error("Invalid valueComparator-function: " + err);
-				}
-
-				console.log(err);
-			}
-		}
+		this.config = config || new Configuration();
 	}
 
 	public getResultItems() {
@@ -102,7 +60,7 @@ export class JSDocTsdParser {
 		jsdocItems.forEach((item) => {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
-			} else if (!item.ignore && this.config.ignoreScopes.indexOf(item.scope) === -1) {
+			} else if (!item.ignore && this.config.ignoreScope(item.scope)) {
 				let addItem = true;
 				let addJsDocComment = true;
 				let parsedItem: dom.DeclarationBase | null = {};

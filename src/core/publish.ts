@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as helper from "jsdoc/util/templateHelper";
 import * as path from "path";
 import * as shelljs from "shelljs";
+import { Configuration } from "./Configuration";
 import { JSDocTsdParser } from "./jsdoc-tsd-parser";
 
 /**
@@ -21,7 +22,8 @@ export function publish(data: any, opts: any) {
 
 	let parser;
 	if (opts.configure) {
-		parser = new JSDocTsdParser(JSON.parse(fs.readFileSync(opts.configure, { encoding: "utf-8" })));
+		const config = new Configuration(opts.configure);
+		parser = new JSDocTsdParser(config);
 	} else {
 		parser = new JSDocTsdParser();
 	}
