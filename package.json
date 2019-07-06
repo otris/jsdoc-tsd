@@ -7,10 +7,9 @@
 		"compile": "tsc -p ./",
 		"compile-watch": "npm run compile -- --watch",
 		"compile-tests": "tsc -p ./test",
-		"parse-example": "move /Y src-out\\core\\publish.js src-out\\core\\publish.backup.js && copy /Y src-out\\core\\publish-example.js src-out\\core\\publish.js && jsdoc -r exampleProject -t src-out\\core && move /Y src-out\\core\\publish.backup.js src-out\\core\\publish.js",
-		"postinstall": "tsc -p ./",
-		"test": "mocha --compilers=ts:ts-node/register --no-timeouts test/**/test.*.ts",
-		"test-extension": "jsdoc -r exampleProject -t src-out/core"
+		"parse-example": "move /Y src-out\\publish.js src-out\\publish.backup.js && copy /Y src-out\\publish-example.js src-out\\publish.js && jsdoc -r exampleProject -t src-out && move /Y src-out\\publish.backup.js src-out\\publish.js",
+		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --opts test/mocha.opts",
+		"test-extension": "jsdoc -r exampleProject -t src-out"
 	},
 	"author": "Maximilian Wehrstedt",
 	"license": "MIT",
@@ -18,6 +17,7 @@
 		"@types/chai": "^4.0.4",
 		"@types/mocha": "^5.2.7",
 		"chai": "^4.1.2",
+		"cross-env": "^5.2.0",
 		"grunt": "^1.0.1",
 		"grunt-jsdoc": "^2.1.1",
 		"jsdoc3-parser": "^2.0.0",
