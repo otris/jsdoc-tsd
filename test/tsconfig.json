@@ -1,11 +1,11 @@
 {
-    "extends": "../tsconfig",
+    "extends": "../tsconfig.json",
     "compilerOptions": {
         "noUnusedLocals": false
     },
     "include": [
-        "../typings",
-        "**/*.ts",
-        "../src"
+        "**/test.*.ts",
+        "../src/**/*.ts",
+        "../typings/**/*.d.ts"
     ]
 }
