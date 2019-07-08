@@ -4,7 +4,6 @@ import { Configuration } from "./Configuration";
 
 /* tslint:disable:no-var-requires */
 // These modules only exports a function, so require is necessary here
-const compare = require("node-version-compare");
 const jsdocCommentParser = require("comment-parser");
 /* tslint:enable:no-var-requires */
 
@@ -30,6 +29,13 @@ export class JSDocTsdParser {
 	private jsdocItems: TDoclet[];
 
 	/**
+	 * Array of jsdoc items which should be ignored because of
+	 * the since tag.
+	 * @todo Is this necessary? Why adding this item to 'jsdocItems'?
+	 */
+	private rejectedItems: string[] = [];
+
+	/**
 	 * Tranformed JSDoc items (to declaration bases) which can
 	 * be passed in to dts-dom for output the d.ts-file.
 	 * The parentship of these items are already resolved.
@@ -37,12 +43,6 @@ export class JSDocTsdParser {
 	private resultItems: {
 		[key: string]: dom.DeclarationBase[];
 	};
-
-	/**
-	 * Array of jsdoc items which should be ignored because of
-	 * the since tag.
-	 * @todo Is this necessary? Why adding this item to 'jsdocItems'?
-	 */
 
 	constructor(config?: Configuration) {
 		this.resultItems = {};

@@ -1,38 +1,52 @@
 {
 	"name": "@otris/jsdoc-tsd",
-	"version": "0.8.2",
+	"version": "1.0.4",
 	"description": "JSDoc Template for generate typescript definition files from JSDoc comments",
-	"main": "./src-out/core/publish.js",
+	"main": "src-out/core/publish.js",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com:otris/jsdoc-tsd.git"
+	},
 	"scripts": {
+		"prepublishOnly": "npm run re-compile && cp src-out/src/core/*.js ./ && npm run generate-package-lock",
+		"beautify": "npm run lint -- --fix",
 		"compile": "tsc -p ./",
-		"compile-watch": "npm run compile -- --watch",
 		"compile-tests": "tsc -p ./test",
-		"parse-example": "move /Y src-out\\publish.js src-out\\publish.backup.js && copy /Y src-out\\publish-example.js src-out\\publish.js && jsdoc -r exampleProject -t src-out && move /Y src-out\\publish.backup.js src-out\\publish.js",
-		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --opts test/mocha.opts",
-		"test-extension": "jsdoc -r exampleProject -t src-out"
+		"compile-watch": "npm run compile -- --watch",
+		"generate-package-lock": "node -e \"var fs = require('fs'); if (fs.existsSync('package-lock.json')) fs.unlinkSync('package-lock.json')\" && synp --source-file yarn.lock",
+		"lint": "tslint -c tslint.json -p tsconfig.json",
+		"parse-example": "move /Y src-out\\src\\core\\publish.js src-out\\src\\core\\publish.backup.js && copy /Y src-out\\src\\core\\publish-example.js src-out\\src\\core\\publish.js && jsdoc -r exampleProject -t src-out\\src\\core && move /Y src-out\\src\\core\\publish.backup.js src-out\\src\\core\\publish.js",
+		"re-compile": "rimraf src-out && npm run compile",
+		"test": "mocha --compilers=ts:ts-node/register --no-timeouts test/**/test.*.ts",
+		"posttest": "npm run lint",
+		"test-extension": "jsdoc -r exampleProject -t src-out/src/core",
+		"test-publish": "npm pack"
 	},
 	"author": "Maximilian Wehrstedt",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/chai": "^4.0.4",
+		"@types/chai": "^4.1.7",
 		"@types/mocha": "^5.2.7",
-		"chai": "^4.1.2",
-		"cross-env": "^5.2.0",
-		"grunt": "^1.0.1",
-		"grunt-jsdoc": "^2.1.1",
-		"jsdoc3-parser": "^2.0.0",
-		"mocha": "^6.1.4",
-		"ts-node": "^8.3.0",
-		"tslint": "^5.7.0"
-	},
-	"dependencies": {
 		"@types/node": "^12.0.12",
 		"@types/shelljs": "^0.8.5",
-		"dts-dom": "^3.3.0",
-		"node-version-compare": "^1.0.1",
-		"shelljs": "^0.8.3",
-		"strip-json-comments": "^3.0.1",
+		"@types/strip-json-comments": "^0.0.30",
+		"chai": "^4.2.0",
+		"grunt": "^1.0.4",
+		"grunt-jsdoc": "^2.4.0",
+		"jsdoc3-parser": "^2.0.0",
+		"mocha": "^6.1.4",
+		"rimraf": "^2.6.3",
+		"synp": "^1.5.0",
+		"ts-node": "^8.3.0",
+		"tslint": "^5.18.0",
 		"typescript": "^3.5.2"
+	},
+	"dependencies": {
+		"comment-parser": "^0.5.5",
+		"copyfiles": "^2.1.0",
+		"dts-dom": "^3.3.0",
+		"node-version-compare": "^1.0.2",
+		"shelljs": "^0.8.3"
 	},
 	"peerDependencies": {
 		"jsdoc": "^3.5.5"
