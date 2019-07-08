@@ -3,10 +3,11 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { parseFile } from "../jsdoc-helper";
 
 describe("JSDocTsdParser.parse.typedef", () => {
-	it("Should create an interface", () => {
-		const typeData: ITypedefDoclet = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/typedefinition.json"), { encoding: "utf-8" }));
+	it("Should create an interface", async () => {
+		const typeData: ITypedefDoclet = (await parseFile(path.join(__dirname, "data/typedefinition.js")))[0] as ITypedefDoclet;
 
 		if (!typeData.properties) {
 			throw new Error("The type defintion has no properties");
@@ -33,12 +34,8 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		expect(unionType.members[0]).to.eq(typeData.properties[0].type.names[0] as dom.Type);
 	});
 
-	it("should create an interface with an optional property", () => {
-		const typeData: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/typedefinition_optional.json"), { encoding: "utf-8" }));
-		expect(typeData.length).to.eq(1);
-
-		const typeDefinition: ITypedefDoclet = typeData[0];
-
+	it("should create an interface with an optional property", async () => {
+		const typeDefinition: ITypedefDoclet = (await parseFile(path.resolve(__dirname, "data/typedefinition_optional.js")))[0] as ITypedefDoclet;
 		if (!typeDefinition.properties) {
 			throw new Error("Property 'properties' not defined");
 		}
@@ -47,7 +44,7 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		expect(typeDefinition.properties[0].optional).to.equal(true);
 
 		const parser = new JSDocTsdParser();
-		parser.parse(typeData);
+		parser.parse([typeDefinition]);
 
 		const result = parser.prepareResults();
 		expect(result).haveOwnPropertyDescriptor("someOtherObject");

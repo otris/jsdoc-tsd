@@ -25,20 +25,15 @@ export class Configuration {
 		return this._latestVersion;
 	}
 
-	/**
-	 * Determines if the tagged version is in range of the latest version
-	 * @param taggedVersion Current version tag
-	 * @param latestVersion Latest version tag from config
-	 */
-	public get versionComparator(): VersionComparatorFunction {
-		return this._versionComparator;
+	public set latestVersion(value: string) {
+		this._latestVersion = value;
 	}
 
-	public set versionComparator(value: VersionComparatorFunction) {
+	public set versionComparator(value: VersionComparatorFunction | string) {
 		// Its possible to pass the version comparator via the jsdoc config
 		// either as function string or as a file path to a js-file which
 		// the version comparator function
-		let newVersionComparator: VersionComparatorFunction = value;
+		let newVersionComparator: VersionComparatorFunction;
 		if (typeof value === "string") {
 			const versionComparatorAsString: string = value;
 			if (versionComparatorAsString.indexOf("{") > 0) {
@@ -54,6 +49,8 @@ export class Configuration {
 			} else {
 				throw new Error(`Version comparator must contain a valid path or a valid function as string, got ${value}`);
 			}
+		} else {
+			newVersionComparator = value;
 		}
 
 		this._versionComparator = newVersionComparator;
@@ -70,6 +67,16 @@ export class Configuration {
 		if (filePath) {
 			this.loadFromFile(filePath);
 		}
+	}
+
+	/**
+	 * Determines if the tagged version is in range of the latest version
+	 * using the provided version comparator
+	 * @param taggedVersion Current version tag
+	 * @param latestVersion Latest version tag from config
+	 */
+	public compareVersions(taggedVersion: string, latestVersion: string): boolean {
+		return this._versionComparator(taggedVersion, latestVersion);
 	}
 
 	public ignoreScope(scope: string): boolean {

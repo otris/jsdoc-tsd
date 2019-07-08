@@ -60,7 +60,7 @@ export class JSDocTsdParser {
 		jsdocItems.forEach((item) => {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
-			} else if (!item.ignore && this.config.ignoreScope(item.scope)) {
+			} else if (!item.ignore && !this.config.ignoreScope(item.scope)) {
 				let addItem = true;
 				let addJsDocComment = true;
 				let parsedItem: dom.DeclarationBase | null = {};
@@ -522,7 +522,7 @@ export class JSDocTsdParser {
 
 	private evaluateSinceTag(sinceTag: string | undefined) {
 		if (typeof sinceTag === "string" && sinceTag !== "") {
-			return this.config.versionComparator(sinceTag, this.config.latestVersion);
+			return this.config.compareVersions(sinceTag, this.config.latestVersion);
 		} else {
 			return true;
 		}

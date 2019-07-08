@@ -1,937 +1,1170 @@
 [
-	{
-		"comment": "/**\r\n * My test class\r\n * @class\r\n */",
-		"meta": {
-			"range": [
-				39,
-				267
-			],
-			"filename": "class1.js",
-			"lineno": 5,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class",
-			"code": {
-				"id": "astnode100000002",
-				"name": "myTestClass",
-				"type": "FunctionDeclaration",
-				"paramnames": []
-			},
-			"vars": {
-				"this.myNumberMember": "myTestClass#myNumberMember",
-				"this.mySimpleFunction": "myTestClass#mySimpleFunction",
-				"": null
-			}
-		},
-		"description": "My test class",
-		"kind": "class",
-		"name": "myTestClass",
-		"longname": "myTestClass",
-		"scope": "global",
-		"params": [],
-		"___id": "T000002R000002",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * A simple number member\r\n\t * @type {number|string}\r\n\t */",
-		"meta": {
-			"range": [
-				133,
-				156
-			],
-			"filename": "class1.js",
-			"lineno": 10,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class",
-			"code": {
-				"id": "astnode100000006",
-				"name": "this.myNumberMember",
-				"type": "Literal",
-				"value": 0,
-				"paramnames": []
-			}
-		},
-		"description": "A simple number member",
-		"type": {
-			"names": [
-				"number",
-				"string"
-			]
-		},
-		"name": "myNumberMember",
-		"longname": "myTestClass#myNumberMember",
-		"kind": "member",
-		"memberof": "myTestClass",
-		"scope": "instance",
-		"___id": "T000002R000003",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * A simple function\r\n\t */",
-		"meta": {
-			"range": [
-				197,
-				264
-			],
-			"filename": "class1.js",
-			"lineno": 15,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class",
-			"code": {
-				"id": "astnode100000012",
-				"name": "this.mySimpleFunction",
-				"type": "FunctionExpression",
-				"paramnames": []
-			}
-		},
-		"description": "A simple function",
-		"name": "mySimpleFunction",
-		"longname": "myTestClass#mySimpleFunction",
-		"kind": "function",
-		"memberof": "myTestClass",
-		"scope": "instance",
-		"___id": "T000002R000004",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n * A class with a private members\r\n * @class\r\n */",
-		"meta": {
-			"range": [
-				56,
-				324
-			],
-			"filename": "class_privateMember.js",
-			"lineno": 5,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class",
-			"code": {
-				"id": "astnode100000020",
-				"name": "classWithPrivateMembers",
-				"type": "FunctionDeclaration",
-				"paramnames": []
-			},
-			"vars": {
-				"this.myNumberMember": "classWithPrivateMembers#myNumberMember",
-				"this.mySimpleFunction": "classWithPrivateMembers#mySimpleFunction",
-				"": null
-			}
-		},
-		"description": "A class with a private members",
-		"kind": "class",
-		"name": "classWithPrivateMembers",
-		"longname": "classWithPrivateMembers",
-		"scope": "global",
-		"params": [],
-		"___id": "T000002R000005",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * A simple number member\r\n\t * @type {number|string}\r\n\t * @private\r\n\t */",
-		"meta": {
-			"range": [
-				176,
-				199
-			],
-			"filename": "class_privateMember.js",
-			"lineno": 11,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class",
-			"code": {
-				"id": "astnode100000024",
-				"name": "this.myNumberMember",
-				"type": "Literal",
-				"value": 0,
-				"paramnames": []
-			}
-		},
-		"description": "A simple number member",
-		"type": {
-			"names": [
-				"number",
-				"string"
-			]
-		},
-		"access": "private",
-		"name": "myNumberMember",
-		"longname": "classWithPrivateMembers#myNumberMember",
-		"kind": "member",
-		"memberof": "classWithPrivateMembers",
-		"scope": "instance",
-		"___id": "T000002R000006",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * A simple function\r\n\t * @private\r\n\t */",
-		"meta": {
-			"range": [
-				254,
-				321
-			],
-			"filename": "class_privateMember.js",
-			"lineno": 17,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\class",
-			"code": {
-				"id": "astnode100000030",
-				"name": "this.mySimpleFunction",
-				"type": "FunctionExpression",
-				"paramnames": []
-			}
-		},
-		"description": "A simple function",
-		"access": "private",
-		"name": "mySimpleFunction",
-		"longname": "classWithPrivateMembers#mySimpleFunction",
-		"kind": "function",
-		"memberof": "classWithPrivateMembers",
-		"scope": "instance",
-		"___id": "T000002R000007",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n * @namespace myModule\r\n */",
-		"meta": {
-			"filename": "myModule.js",
-			"lineno": 1,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {}
-		},
-		"kind": "namespace",
-		"name": "myModule",
-		"longname": "myModule",
-		"scope": "global",
-		"___id": "T000002R000008",
-		"___s": true
-	},
-	{
-		"comment": "/**\n * @module myModule2\n */",
-		"meta": {
-			"filename": "myModule2.js",
-			"lineno": 1,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {}
-		},
-		"kind": "module",
-		"name": "myModule2",
-		"longname": "module:myModule2",
-		"___id": "T000002R000012",
-		"___s": true
-	},
-	{
-		"comment": "/**\n * exported function\n * @function myFunction1\n * @param {string} myString\n * @param {testCallback} myCallback\n * @static\n */",
-		"meta": {
-			"filename": "myModule2.js",
-			"lineno": 4,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {}
-		},
-		"description": "exported function",
-		"kind": "function",
-		"name": "myFunction1",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"name": "myString"
-			},
-			{
-				"type": {
-					"names": [
-						"testCallback"
-					]
-				},
-				"name": "myCallback"
-			}
-		],
-		"scope": "static",
-		"longname": "module:myModule2.myFunction1",
-		"memberof": "module:myModule2",
-		"___id": "T000002R000013",
-		"___s": true
-	},
-	{
-		"comment": "/**\n * exported callback\n * @callback testCallback\n * @param {string} testCBParam\n * @static\n */",
-		"meta": {
-			"filename": "myModule2.js",
-			"lineno": 11,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {}
-		},
-		"description": "exported callback",
-		"kind": "typedef",
-		"name": "testCallback",
-		"type": {
-			"names": [
-				"function"
-			]
-		},
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"name": "testCBParam"
-			}
-		],
-		"scope": "static",
-		"longname": "module:myModule2.testCallback",
-		"memberof": "module:myModule2",
-		"___id": "T000002R000014",
-		"___s": true
-	},
-	{
-		"comment": "/**\n * inner function\n * @function myFunction2\n * @param {string} myString\n */",
-		"meta": {
-			"filename": "myModule2.js",
-			"lineno": 18,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {}
-		},
-		"description": "inner function",
-		"kind": "function",
-		"name": "myFunction2",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"name": "myString"
-			}
-		],
-		"longname": "module:myModule2~myFunction2",
-		"scope": "inner",
-		"memberof": "module:myModule2",
-		"___id": "T000002R000015",
-		"___s": true
-	},
-	{
-		"comment": "/**\n * @module myModule3\n */",
-		"meta": {
-			"filename": "myModule3.js",
-			"lineno": 1,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {}
-		},
-		"kind": "module",
-		"name": "myModule3",
-		"longname": "module:myModule3",
-		"___id": "T000002R000016",
-		"___s": true
-	},
-	{
-		"comment": "/**\n     * exported function\n     * @param {string} param1\n     * @return {string}\n     */",
-		"meta": {
-			"range": [
-				147,
-				207
-			],
-			"filename": "myModule3.js",
-			"lineno": 10,
-			"columnno": 4,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {
-				"id": "astnode100000060",
-				"name": "myFunction1",
-				"type": "FunctionExpression"
-			}
-		},
-		"description": "exported function",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"name": "param1"
-			}
-		],
-		"returns": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				}
-			}
-		],
-		"name": "myFunction1",
-		"longname": "module:myModule3.myFunction1",
-		"kind": "function",
-		"memberof": "module:myModule3",
-		"scope": "static",
-		"___id": "T000002R000018",
-		"___s": true
-	},
-	{
-		"comment": "/**\n     * inner function\n     * @param {string} param2\n     * @inner\n     */",
-		"meta": {
-			"range": [
-				295,
-				347
-			],
-			"filename": "myModule3.js",
-			"lineno": 18,
-			"columnno": 4,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\core",
-			"code": {
-				"id": "astnode100000065",
-				"name": "myFunction2",
-				"type": "FunctionExpression"
-			}
-		},
-		"description": "inner function",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"name": "param2"
-			}
-		],
-		"scope": "inner",
-		"name": "myFunction2",
-		"longname": "module:myModule3~myFunction2",
-		"kind": "function",
-		"memberof": "module:myModule3",
-		"___id": "T000002R000019",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n * @namespace myModule_Namespace1\r\n * @memberof myModule\r\n */",
-		"meta": {
-			"filename": "namespace1.js",
-			"lineno": 2,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-			"code": {}
-		},
-		"kind": "namespace",
-		"name": "myModule_Namespace1",
-		"memberof": "myModule",
-		"scope": "static",
-		"longname": "myModule.myModule_Namespace1",
-		"___id": "T000002R000020",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * Stupid enum member\r\n\t * @enum {string}\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
-		"meta": {
-			"range": [
-				219,
-				334
-			],
-			"filename": "namespace1.js",
-			"lineno": 13,
-			"columnno": 5,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-			"code": {
-				"id": "astnode100000078",
-				"name": "myStupidEnum",
-				"type": "ObjectExpression",
-				"value": "{\"VAL1\":\"VAL1\",\"VAL2\":\"VAL2\"}"
-			}
-		},
-		"description": "Stupid enum member",
-		"kind": "member",
-		"isEnum": true,
-		"type": {
-			"names": [
-				"string"
-			]
-		},
-		"memberof": "myModule.myModule_Namespace1",
-		"name": "myStupidEnum",
-		"longname": "myModule.myModule_Namespace1.myStupidEnum",
-		"scope": "static",
-		"params": [],
-		"properties": [
-			{
-				"comment": "/** Stupid enum value 1 */",
-				"meta": {
-					"range": [
-						269,
-						281
-					],
-					"filename": "namespace1.js",
-					"lineno": 15,
-					"columnno": 2,
-					"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-					"code": {
-						"id": "astnode100000081",
-						"name": "VAL1",
-						"type": "Literal",
-						"value": "VAL1"
-					}
-				},
-				"description": "Stupid enum value 1",
-				"name": "VAL1",
-				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
-				"kind": "member",
-				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
-				"scope": "static",
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"defaultvalue": "VAL1",
-				"___id": "T000002R000023",
-				"___s": true
-			},
-			{
-				"comment": "/** Stupid enum value 2 */",
-				"meta": {
-					"range": [
-						318,
-						330
-					],
-					"filename": "namespace1.js",
-					"lineno": 18,
-					"columnno": 2,
-					"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-					"code": {
-						"id": "astnode100000083",
-						"name": "VAL2",
-						"type": "Literal",
-						"value": "VAL2"
-					}
-				},
-				"description": "Stupid enum value 2",
-				"name": "VAL2",
-				"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
-				"kind": "member",
-				"memberof": "myModule.myModule_Namespace1.myStupidEnum",
-				"scope": "static",
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"defaultvalue": "VAL2",
-				"___id": "T000002R000024",
-				"___s": true
-			}
-		],
-		"___id": "T000002R000022",
-		"___s": true
-	},
-	{
-		"comment": "/** Stupid enum value 1 */",
-		"meta": {
-			"range": [
-				269,
-				281
-			],
-			"filename": "namespace1.js",
-			"lineno": 15,
-			"columnno": 2,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-			"code": {
-				"id": "astnode100000081",
-				"name": "VAL1",
-				"type": "Literal",
-				"value": "VAL1"
-			}
-		},
-		"description": "Stupid enum value 1",
-		"name": "VAL1",
-		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
-		"kind": "member",
-		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
-		"scope": "static",
-		"type": {
-			"names": [
-				"string"
-			]
-		},
-		"defaultvalue": "VAL1",
-		"___id": "T000002R000023",
-		"___s": true
-	},
-	{
-		"comment": "/** Stupid enum value 2 */",
-		"meta": {
-			"range": [
-				318,
-				330
-			],
-			"filename": "namespace1.js",
-			"lineno": 18,
-			"columnno": 2,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-			"code": {
-				"id": "astnode100000083",
-				"name": "VAL2",
-				"type": "Literal",
-				"value": "VAL2"
-			}
-		},
-		"description": "Stupid enum value 2",
-		"name": "VAL2",
-		"longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
-		"kind": "member",
-		"memberof": "myModule.myModule_Namespace1.myStupidEnum",
-		"scope": "static",
-		"type": {
-			"names": [
-				"string"
-			]
-		},
-		"defaultvalue": "VAL2",
-		"___id": "T000002R000024",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * Executes some fancy commands\r\n\t * @param {string|object} param1 Some string parameter\r\n\t * @param {string[]} param2 Some string array\r\n\t * @param {DocFile} param3 fgfg\r\n\t * @returns {object} a fancy object\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
-		"meta": {
-			"range": [
-				607,
-				657
-			],
-			"filename": "namespace1.js",
-			"lineno": 29,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace1",
-			"code": {
-				"id": "astnode100000085",
-				"name": "function1",
-				"type": "FunctionDeclaration",
-				"paramnames": [
-					"param1",
-					"param2",
-					"param3"
-				]
-			}
-		},
-		"description": "Executes some fancy commands",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string",
-						"object"
-					]
-				},
-				"description": "Some string parameter",
-				"name": "param1"
-			},
-			{
-				"type": {
-					"names": [
-						"Array.<string>"
-					]
-				},
-				"description": "Some string array",
-				"name": "param2"
-			},
-			{
-				"type": {
-					"names": [
-						"DocFile"
-					]
-				},
-				"description": "fgfg",
-				"name": "param3"
-			}
-		],
-		"returns": [
-			{
-				"type": {
-					"names": [
-						"object"
-					]
-				},
-				"description": "a fancy object"
-			}
-		],
-		"memberof": "myModule.myModule_Namespace1",
-		"name": "function1",
-		"longname": "myModule.myModule_Namespace1.function1",
-		"kind": "function",
-		"scope": "static",
-		"___id": "T000002R000025",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n * @namespace myModule_Namespace2\r\n * @memberof myModule\r\n */",
-		"meta": {
-			"filename": "namespace2.js",
-			"lineno": 2,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace2",
-			"code": {}
-		},
-		"kind": "namespace",
-		"name": "myModule_Namespace2",
-		"memberof": "myModule",
-		"scope": "static",
-		"longname": "myModule.myModule_Namespace2",
-		"___id": "T000002R000028",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * Destroys your system\r\n\t * @param {string} param1 A simple string param\r\n\t * @param {object} param2 A object param\r\n\t * @returns {string} A funny joke about you\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
-		"meta": {
-			"range": [
-				336,
-				378
-			],
-			"filename": "namespace2.js",
-			"lineno": 15,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace2",
-			"code": {
-				"id": "astnode100000105",
-				"name": "function1",
-				"type": "FunctionDeclaration",
-				"paramnames": [
-					"param1",
-					"param2"
-				]
-			}
-		},
-		"description": "Destroys your system",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"description": "A simple string param",
-				"name": "param1"
-			},
-			{
-				"type": {
-					"names": [
-						"object"
-					]
-				},
-				"description": "A object param",
-				"name": "param2"
-			}
-		],
-		"returns": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"description": "A funny joke about you"
-			}
-		],
-		"memberof": "myModule.myModule_Namespace2",
-		"name": "function1",
-		"longname": "myModule.myModule_Namespace2.function1",
-		"kind": "function",
-		"scope": "static",
-		"___id": "T000002R000030",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * A simple function\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
-		"meta": {
-			"range": [
-				462,
-				490
-			],
-			"filename": "namespace2.js",
-			"lineno": 23,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace2",
-			"code": {
-				"id": "astnode100000110",
-				"name": "function2",
-				"type": "FunctionDeclaration",
-				"paramnames": []
-			}
-		},
-		"description": "A simple function",
-		"memberof": "myModule.myModule_Namespace2",
-		"name": "function2",
-		"longname": "myModule.myModule_Namespace2.function2",
-		"kind": "function",
-		"scope": "static",
-		"params": [],
-		"___id": "T000002R000031",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * A function with multiple return values\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t * @returns {string|boolean}\r\n\t */",
-		"meta": {
-			"range": [
-				626,
-				654
-			],
-			"filename": "namespace2.js",
-			"lineno": 32,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace2",
-			"code": {
-				"id": "astnode100000113",
-				"name": "function3",
-				"type": "FunctionDeclaration",
-				"paramnames": []
-			}
-		},
-		"description": "A function with multiple return values",
-		"memberof": "myModule.myModule_Namespace2",
-		"returns": [
-			{
-				"type": {
-					"names": [
-						"string",
-						"boolean"
-					]
-				}
-			}
-		],
-		"name": "function3",
-		"longname": "myModule.myModule_Namespace2.function3",
-		"kind": "function",
-		"scope": "static",
-		"params": [],
-		"___id": "T000002R000032",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n\t * Function with different parameter types\r\n\t * @param {string|boolean} param1 A fancy parameter\r\n\t */",
-		"meta": {
-			"range": [
-				770,
-				804
-			],
-			"filename": "namespace2.js",
-			"lineno": 40,
-			"columnno": 1,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src\\namespace2",
-			"code": {
-				"id": "astnode100000116",
-				"name": "function4",
-				"type": "FunctionDeclaration",
-				"paramnames": [
-					"param1"
-				]
-			}
-		},
-		"description": "Function with different parameter types",
-		"params": [
-			{
-				"type": {
-					"names": [
-						"string",
-						"boolean"
-					]
-				},
-				"description": "A fancy parameter",
-				"name": "param1"
-			}
-		],
-		"name": "function4",
-		"longname": "<anonymous>~function4",
-		"kind": "function",
-		"memberof": "<anonymous>",
-		"scope": "inner",
-		"___id": "T000002R000033",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n * A realy cool object\r\n * @typedef myRealyCoolObject\r\n * @property {string} A property\r\n * @property {myModule.myModule_Namespace1.someOtherObject} B Property, yeah\r\n * @memberof myModule.myModule_Namespace1\r\n */",
-		"meta": {
-			"filename": "typedefs.js",
-			"lineno": 1,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
-			"code": {}
-		},
-		"description": "A realy cool object",
-		"kind": "typedef",
-		"name": "myRealyCoolObject",
-		"properties": [
-			{
-				"type": {
-					"names": [
-						"string"
-					]
-				},
-				"description": "property",
-				"name": "A"
-			},
-			{
-				"type": {
-					"names": [
-						"myModule.myModule_Namespace1.someOtherObject"
-					]
-				},
-				"description": "Property, yeah",
-				"name": "B"
-			}
-		],
-		"memberof": "myModule.myModule_Namespace1",
-		"scope": "static",
-		"longname": "myModule.myModule_Namespace1.myRealyCoolObject",
-		"___id": "T000002R000038",
-		"___s": true
-	},
-	{
-		"comment": "/**\r\n * My other object\r\n * @typedef someOtherObject\r\n * @property {boolean} heyho Some property\r\n * @memberof myModule.myModule_Namespace1\r\n */",
-		"meta": {
-			"filename": "typedefs.js",
-			"lineno": 9,
-			"columnno": 0,
-			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
-			"code": {}
-		},
-		"description": "My other object",
-		"kind": "typedef",
-		"name": "someOtherObject",
-		"properties": [
-			{
-				"type": {
-					"names": [
-						"boolean"
-					]
-				},
-				"description": "Some property",
-				"name": "heyho"
-			}
-		],
-		"memberof": "myModule.myModule_Namespace1",
-		"scope": "static",
-		"longname": "myModule.myModule_Namespace1.someOtherObject",
-		"___id": "T000002R000039",
-		"___s": true
-	},
-	{
-		"kind": "package",
-		"longname": "package:undefined",
-		"files": [
-			"E:\\jsdoc-tsd\\exampleProject\\src\\class\\class1.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\class\\class_privateMember.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\core\\myModule.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\core\\myModule2.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\core\\myModule3.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\namespace1\\namespace1.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\namespace2\\namespace2.js",
-			"E:\\jsdoc-tsd\\exampleProject\\src\\typedefs.js"
-		],
-		"___id": "T000002R000040",
-		"___s": true
-	}
+    {
+        "comment": "/**\r\n * My test class\r\n * @class\r\n */",
+        "meta": {
+            "range": [
+                39,
+                267
+            ],
+            "filename": "class1.js",
+            "lineno": 5,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+            "code": {
+                "id": "astnode100000002",
+                "name": "myTestClass",
+                "type": "FunctionDeclaration",
+                "paramnames": []
+            },
+            "vars": {
+                "this.myNumberMember": "myTestClass#myNumberMember",
+                "this.mySimpleFunction": "myTestClass#mySimpleFunction",
+                "": null
+            }
+        },
+        "description": "My test class",
+        "kind": "class",
+        "name": "myTestClass",
+        "longname": "myTestClass",
+        "scope": "global",
+        "params": []
+    },
+    {
+        "comment": "/**\r\n\t * A simple number member\r\n\t * @type {number|string}\r\n\t */",
+        "meta": {
+            "range": [
+                133,
+                156
+            ],
+            "filename": "class1.js",
+            "lineno": 10,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+            "code": {
+                "id": "astnode100000006",
+                "name": "this.myNumberMember",
+                "type": "Literal",
+                "value": 0,
+                "paramnames": []
+            }
+        },
+        "description": "A simple number member",
+        "type": {
+            "names": [
+                "number",
+                "string"
+            ]
+        },
+        "name": "myNumberMember",
+        "longname": "myTestClass#myNumberMember",
+        "kind": "member",
+        "memberof": "myTestClass",
+        "scope": "instance"
+    },
+    {
+        "comment": "/**\r\n\t * A simple function\r\n\t */",
+        "meta": {
+            "range": [
+                197,
+                264
+            ],
+            "filename": "class1.js",
+            "lineno": 15,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+            "code": {
+                "id": "astnode100000012",
+                "name": "this.mySimpleFunction",
+                "type": "FunctionExpression",
+                "paramnames": []
+            }
+        },
+        "description": "A simple function",
+        "name": "mySimpleFunction",
+        "longname": "myTestClass#mySimpleFunction",
+        "kind": "function",
+        "memberof": "myTestClass",
+        "scope": "instance"
+    },
+    {
+        "comment": "/**\r\n * A class with a private members\r\n * @class\r\n */",
+        "meta": {
+            "range": [
+                56,
+                324
+            ],
+            "filename": "class_privateMember.js",
+            "lineno": 5,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+            "code": {
+                "id": "astnode100000020",
+                "name": "classWithPrivateMembers",
+                "type": "FunctionDeclaration",
+                "paramnames": []
+            },
+            "vars": {
+                "this.myNumberMember": "classWithPrivateMembers#myNumberMember",
+                "this.mySimpleFunction": "classWithPrivateMembers#mySimpleFunction",
+                "": null
+            }
+        },
+        "description": "A class with a private members",
+        "kind": "class",
+        "name": "classWithPrivateMembers",
+        "longname": "classWithPrivateMembers",
+        "scope": "global",
+        "params": []
+    },
+    {
+        "comment": "/**\r\n\t * A simple number member\r\n\t * @type {number|string}\r\n\t * @private\r\n\t */",
+        "meta": {
+            "range": [
+                176,
+                199
+            ],
+            "filename": "class_privateMember.js",
+            "lineno": 11,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+            "code": {
+                "id": "astnode100000024",
+                "name": "this.myNumberMember",
+                "type": "Literal",
+                "value": 0,
+                "paramnames": []
+            }
+        },
+        "description": "A simple number member",
+        "type": {
+            "names": [
+                "number",
+                "string"
+            ]
+        },
+        "access": "private",
+        "name": "myNumberMember",
+        "longname": "classWithPrivateMembers#myNumberMember",
+        "kind": "member",
+        "memberof": "classWithPrivateMembers",
+        "scope": "instance"
+    },
+    {
+        "comment": "/**\r\n\t * A simple function\r\n\t * @private\r\n\t */",
+        "meta": {
+            "range": [
+                254,
+                321
+            ],
+            "filename": "class_privateMember.js",
+            "lineno": 17,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class",
+            "code": {
+                "id": "astnode100000030",
+                "name": "this.mySimpleFunction",
+                "type": "FunctionExpression",
+                "paramnames": []
+            }
+        },
+        "description": "A simple function",
+        "access": "private",
+        "name": "mySimpleFunction",
+        "longname": "classWithPrivateMembers#mySimpleFunction",
+        "kind": "function",
+        "memberof": "classWithPrivateMembers",
+        "scope": "instance"
+    },
+    {
+        "comment": "/**\r\n * @namespace myModule\r\n */",
+        "meta": {
+            "filename": "myModule.js",
+            "lineno": 1,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {}
+        },
+        "kind": "namespace",
+        "name": "myModule",
+        "longname": "myModule",
+        "scope": "global"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                38,
+                158
+            ],
+            "filename": "myModule.js",
+            "lineno": 4,
+            "columnno": 4,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {
+                "id": "astnode100000039",
+                "name": "myModule",
+                "type": "CallExpression",
+                "value": ""
+            }
+        },
+        "undocumented": true,
+        "name": "myModule",
+        "longname": "myModule",
+        "kind": "member",
+        "scope": "global",
+        "params": []
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                80,
+                111
+            ],
+            "filename": "myModule.js",
+            "lineno": 7,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {
+                "id": "astnode100000046",
+                "name": "namespace1",
+                "type": "Identifier",
+                "value": "myModule_Namespace1"
+            }
+        },
+        "undocumented": true,
+        "name": "namespace1",
+        "longname": "namespace1",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                116,
+                147
+            ],
+            "filename": "myModule.js",
+            "lineno": 8,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {
+                "id": "astnode100000048",
+                "name": "namespace2",
+                "type": "Identifier",
+                "value": "myModule_Namespace2"
+            }
+        },
+        "undocumented": true,
+        "name": "namespace2",
+        "longname": "namespace2",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "/**\n * @module myModule2\n */",
+        "meta": {
+            "filename": "myModule2.js",
+            "lineno": 1,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {}
+        },
+        "kind": "module",
+        "name": "myModule2",
+        "longname": "module:myModule2"
+    },
+    {
+        "comment": "/**\n * exported function\n * @function myFunction1\n * @param {string} myString\n * @param {testCallback} myCallback\n * @static\n */",
+        "meta": {
+            "filename": "myModule2.js",
+            "lineno": 4,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {}
+        },
+        "description": "exported function",
+        "kind": "function",
+        "name": "myFunction1",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "name": "myString"
+            },
+            {
+                "type": {
+                    "names": [
+                        "testCallback"
+                    ]
+                },
+                "name": "myCallback"
+            }
+        ],
+        "scope": "static",
+        "longname": "module:myModule2.myFunction1",
+        "memberof": "module:myModule2"
+    },
+    {
+        "comment": "/**\n * exported callback\n * @callback testCallback\n * @param {string} testCBParam\n * @static\n */",
+        "meta": {
+            "filename": "myModule2.js",
+            "lineno": 11,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {}
+        },
+        "description": "exported callback",
+        "kind": "typedef",
+        "name": "testCallback",
+        "type": {
+            "names": [
+                "function"
+            ]
+        },
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "name": "testCBParam"
+            }
+        ],
+        "scope": "static",
+        "longname": "module:myModule2.testCallback",
+        "memberof": "module:myModule2"
+    },
+    {
+        "comment": "/**\n * inner function\n * @function myFunction2\n * @param {string} myString\n */",
+        "meta": {
+            "filename": "myModule2.js",
+            "lineno": 18,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {}
+        },
+        "description": "inner function",
+        "kind": "function",
+        "name": "myFunction2",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "name": "myString"
+            }
+        ],
+        "longname": "module:myModule2~myFunction2",
+        "scope": "inner",
+        "memberof": "module:myModule2"
+    },
+    {
+        "comment": "/**\n * @module myModule3\n */",
+        "meta": {
+            "filename": "myModule3.js",
+            "lineno": 1,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {}
+        },
+        "kind": "module",
+        "name": "myModule3",
+        "longname": "module:myModule3"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                29,
+                350
+            ],
+            "filename": "myModule3.js",
+            "lineno": 4,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {
+                "id": "astnode100000055",
+                "name": "module.exports",
+                "type": "ObjectExpression",
+                "value": "{\"myFunction1\":\"\",\"myFunction2\":\"\"}",
+                "paramnames": []
+            }
+        },
+        "undocumented": true,
+        "name": "module:myModule3",
+        "longname": "module:myModule3",
+        "kind": "member"
+    },
+    {
+        "comment": "/**\n     * exported function\n     * @param {string} param1\n     * @return {string}\n     */",
+        "meta": {
+            "range": [
+                147,
+                207
+            ],
+            "filename": "myModule3.js",
+            "lineno": 10,
+            "columnno": 4,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {
+                "id": "astnode100000060",
+                "name": "myFunction1",
+                "type": "FunctionExpression"
+            }
+        },
+        "description": "exported function",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "name": "param1"
+            }
+        ],
+        "returns": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                }
+            }
+        ],
+        "name": "myFunction1",
+        "longname": "module:myModule3.myFunction1",
+        "kind": "function",
+        "memberof": "module:myModule3",
+        "scope": "static"
+    },
+    {
+        "comment": "/**\n     * inner function\n     * @param {string} param2\n     * @inner\n     */",
+        "meta": {
+            "range": [
+                295,
+                347
+            ],
+            "filename": "myModule3.js",
+            "lineno": 18,
+            "columnno": 4,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core",
+            "code": {
+                "id": "astnode100000065",
+                "name": "myFunction2",
+                "type": "FunctionExpression"
+            }
+        },
+        "description": "inner function",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "name": "param2"
+            }
+        ],
+        "scope": "inner",
+        "name": "myFunction2",
+        "longname": "module:myModule3~myFunction2",
+        "kind": "function",
+        "memberof": "module:myModule3"
+    },
+    {
+        "comment": "/**\r\n * @namespace myModule_Namespace1\r\n * @memberof myModule\r\n */",
+        "meta": {
+            "filename": "namespace1.js",
+            "lineno": 2,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {}
+        },
+        "kind": "namespace",
+        "name": "myModule_Namespace1",
+        "memberof": "myModule",
+        "scope": "static",
+        "longname": "myModule.myModule_Namespace1"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                74,
+                724
+            ],
+            "filename": "namespace1.js",
+            "lineno": 6,
+            "columnno": 4,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000072",
+                "name": "myModule_Namespace1",
+                "type": "CallExpression",
+                "value": ""
+            }
+        },
+        "undocumented": true,
+        "name": "myModule_Namespace1",
+        "longname": "myModule_Namespace1",
+        "kind": "member",
+        "scope": "global",
+        "params": []
+    },
+    {
+        "comment": "/**\r\n\t * Stupid enum member\r\n\t * @enum {string}\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
+        "meta": {
+            "range": [
+                219,
+                334
+            ],
+            "filename": "namespace1.js",
+            "lineno": 13,
+            "columnno": 5,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000078",
+                "name": "myStupidEnum",
+                "type": "ObjectExpression",
+                "value": "{\"VAL1\":\"VAL1\",\"VAL2\":\"VAL2\"}"
+            }
+        },
+        "description": "Stupid enum member",
+        "kind": "member",
+        "isEnum": true,
+        "type": {
+            "names": [
+                "string"
+            ]
+        },
+        "memberof": "myModule.myModule_Namespace1",
+        "name": "myStupidEnum",
+        "longname": "myModule.myModule_Namespace1.myStupidEnum",
+        "scope": "static",
+        "params": [],
+        "properties": [
+            {
+                "comment": "/** Stupid enum value 1 */",
+                "meta": {
+                    "range": [
+                        269,
+                        281
+                    ],
+                    "filename": "namespace1.js",
+                    "lineno": 15,
+                    "columnno": 2,
+                    "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+                    "code": {
+                        "id": "astnode100000081",
+                        "name": "VAL1",
+                        "type": "Literal",
+                        "value": "VAL1"
+                    }
+                },
+                "description": "Stupid enum value 1",
+                "name": "VAL1",
+                "longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+                "kind": "member",
+                "memberof": "myModule.myModule_Namespace1.myStupidEnum",
+                "scope": "static",
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "defaultvalue": "VAL1"
+            },
+            {
+                "comment": "/** Stupid enum value 2 */",
+                "meta": {
+                    "range": [
+                        318,
+                        330
+                    ],
+                    "filename": "namespace1.js",
+                    "lineno": 18,
+                    "columnno": 2,
+                    "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+                    "code": {
+                        "id": "astnode100000083",
+                        "name": "VAL2",
+                        "type": "Literal",
+                        "value": "VAL2"
+                    }
+                },
+                "description": "Stupid enum value 2",
+                "name": "VAL2",
+                "longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+                "kind": "member",
+                "memberof": "myModule.myModule_Namespace1.myStupidEnum",
+                "scope": "static",
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "defaultvalue": "VAL2"
+            }
+        ]
+    },
+    {
+        "comment": "/** Stupid enum value 1 */",
+        "meta": {
+            "range": [
+                269,
+                281
+            ],
+            "filename": "namespace1.js",
+            "lineno": 15,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000081",
+                "name": "VAL1",
+                "type": "Literal",
+                "value": "VAL1"
+            }
+        },
+        "description": "Stupid enum value 1",
+        "name": "VAL1",
+        "longname": "myModule.myModule_Namespace1.myStupidEnum.VAL1",
+        "kind": "member",
+        "memberof": "myModule.myModule_Namespace1.myStupidEnum",
+        "scope": "static",
+        "type": {
+            "names": [
+                "string"
+            ]
+        },
+        "defaultvalue": "VAL1"
+    },
+    {
+        "comment": "/** Stupid enum value 2 */",
+        "meta": {
+            "range": [
+                318,
+                330
+            ],
+            "filename": "namespace1.js",
+            "lineno": 18,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000083",
+                "name": "VAL2",
+                "type": "Literal",
+                "value": "VAL2"
+            }
+        },
+        "description": "Stupid enum value 2",
+        "name": "VAL2",
+        "longname": "myModule.myModule_Namespace1.myStupidEnum.VAL2",
+        "kind": "member",
+        "memberof": "myModule.myModule_Namespace1.myStupidEnum",
+        "scope": "static",
+        "type": {
+            "names": [
+                "string"
+            ]
+        },
+        "defaultvalue": "VAL2"
+    },
+    {
+        "comment": "/**\r\n\t * Executes some fancy commands\r\n\t * @param {string|object} param1 Some string parameter\r\n\t * @param {string[]} param2 Some string array\r\n\t * @param {DocFile} param3 fgfg\r\n\t * @returns {object} a fancy object\r\n\t * @memberof myModule.myModule_Namespace1\r\n\t */",
+        "meta": {
+            "range": [
+                607,
+                657
+            ],
+            "filename": "namespace1.js",
+            "lineno": 29,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000085",
+                "name": "function1",
+                "type": "FunctionDeclaration",
+                "paramnames": [
+                    "param1",
+                    "param2",
+                    "param3"
+                ]
+            }
+        },
+        "description": "Executes some fancy commands",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string",
+                        "object"
+                    ]
+                },
+                "description": "Some string parameter",
+                "name": "param1"
+            },
+            {
+                "type": {
+                    "names": [
+                        "Array.<string>"
+                    ]
+                },
+                "description": "Some string array",
+                "name": "param2"
+            },
+            {
+                "type": {
+                    "names": [
+                        "DocFile"
+                    ]
+                },
+                "description": "fgfg",
+                "name": "param3"
+            }
+        ],
+        "returns": [
+            {
+                "type": {
+                    "names": [
+                        "object"
+                    ]
+                },
+                "description": "a fancy object"
+            }
+        ],
+        "memberof": "myModule.myModule_Namespace1",
+        "name": "function1",
+        "longname": "myModule.myModule_Namespace1.function1",
+        "kind": "function",
+        "scope": "static"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                674,
+                694
+            ],
+            "filename": "namespace1.js",
+            "lineno": 34,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000093",
+                "name": "function1",
+                "type": "Identifier",
+                "value": "function1"
+            }
+        },
+        "undocumented": true,
+        "name": "function1",
+        "longname": "function1",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                699,
+                711
+            ],
+            "filename": "namespace1.js",
+            "lineno": 35,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1",
+            "code": {
+                "id": "astnode100000095",
+                "name": "myStupidEnum",
+                "type": "Identifier",
+                "value": "myStupidEnum"
+            }
+        },
+        "undocumented": true,
+        "name": "myStupidEnum",
+        "longname": "myStupidEnum",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "/**\r\n * @namespace myModule_Namespace2\r\n * @memberof myModule\r\n */",
+        "meta": {
+            "filename": "namespace2.js",
+            "lineno": 2,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {}
+        },
+        "kind": "namespace",
+        "name": "myModule_Namespace2",
+        "memberof": "myModule",
+        "scope": "static",
+        "longname": "myModule.myModule_Namespace2"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                74,
+                929
+            ],
+            "filename": "namespace2.js",
+            "lineno": 6,
+            "columnno": 4,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000100",
+                "name": "myModule_Namespace2",
+                "type": "CallExpression",
+                "value": ""
+            }
+        },
+        "undocumented": true,
+        "name": "myModule_Namespace2",
+        "longname": "myModule_Namespace2",
+        "kind": "member",
+        "scope": "global",
+        "params": []
+    },
+    {
+        "comment": "/**\r\n\t * Destroys your system\r\n\t * @param {string} param1 A simple string param\r\n\t * @param {object} param2 A object param\r\n\t * @returns {string} A funny joke about you\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
+        "meta": {
+            "range": [
+                336,
+                378
+            ],
+            "filename": "namespace2.js",
+            "lineno": 15,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000105",
+                "name": "function1",
+                "type": "FunctionDeclaration",
+                "paramnames": [
+                    "param1",
+                    "param2"
+                ]
+            }
+        },
+        "description": "Destroys your system",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "description": "A simple string param",
+                "name": "param1"
+            },
+            {
+                "type": {
+                    "names": [
+                        "object"
+                    ]
+                },
+                "description": "A object param",
+                "name": "param2"
+            }
+        ],
+        "returns": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "description": "A funny joke about you"
+            }
+        ],
+        "memberof": "myModule.myModule_Namespace2",
+        "name": "function1",
+        "longname": "myModule.myModule_Namespace2.function1",
+        "kind": "function",
+        "scope": "static"
+    },
+    {
+        "comment": "/**\r\n\t * A simple function\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t */",
+        "meta": {
+            "range": [
+                462,
+                490
+            ],
+            "filename": "namespace2.js",
+            "lineno": 23,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000110",
+                "name": "function2",
+                "type": "FunctionDeclaration",
+                "paramnames": []
+            }
+        },
+        "description": "A simple function",
+        "memberof": "myModule.myModule_Namespace2",
+        "name": "function2",
+        "longname": "myModule.myModule_Namespace2.function2",
+        "kind": "function",
+        "scope": "static",
+        "params": []
+    },
+    {
+        "comment": "/**\r\n\t * A function with multiple return values\r\n\t * @memberof myModule.myModule_Namespace2\r\n\t * @returns {string|boolean}\r\n\t */",
+        "meta": {
+            "range": [
+                626,
+                654
+            ],
+            "filename": "namespace2.js",
+            "lineno": 32,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000113",
+                "name": "function3",
+                "type": "FunctionDeclaration",
+                "paramnames": []
+            }
+        },
+        "description": "A function with multiple return values",
+        "memberof": "myModule.myModule_Namespace2",
+        "returns": [
+            {
+                "type": {
+                    "names": [
+                        "string",
+                        "boolean"
+                    ]
+                }
+            }
+        ],
+        "name": "function3",
+        "longname": "myModule.myModule_Namespace2.function3",
+        "kind": "function",
+        "scope": "static",
+        "params": []
+    },
+    {
+        "comment": "/**\r\n\t * Function with different parameter types\r\n\t * @param {string|boolean} param1 A fancy parameter\r\n\t */",
+        "meta": {
+            "range": [
+                770,
+                804
+            ],
+            "filename": "namespace2.js",
+            "lineno": 40,
+            "columnno": 1,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000116",
+                "name": "function4",
+                "type": "FunctionDeclaration",
+                "paramnames": [
+                    "param1"
+                ]
+            }
+        },
+        "description": "Function with different parameter types",
+        "params": [
+            {
+                "type": {
+                    "names": [
+                        "string",
+                        "boolean"
+                    ]
+                },
+                "description": "A fancy parameter",
+                "name": "param1"
+            }
+        ],
+        "name": "function4",
+        "longname": "<anonymous>~function4",
+        "kind": "function",
+        "memberof": "<anonymous>",
+        "scope": "inner"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                821,
+                841
+            ],
+            "filename": "namespace2.js",
+            "lineno": 45,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000122",
+                "name": "function1",
+                "type": "Identifier",
+                "value": "function1"
+            }
+        },
+        "undocumented": true,
+        "name": "function1",
+        "longname": "function1",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                846,
+                866
+            ],
+            "filename": "namespace2.js",
+            "lineno": 46,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000124",
+                "name": "function2",
+                "type": "Identifier",
+                "value": "function2"
+            }
+        },
+        "undocumented": true,
+        "name": "function2",
+        "longname": "function2",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                871,
+                891
+            ],
+            "filename": "namespace2.js",
+            "lineno": 47,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000126",
+                "name": "function3",
+                "type": "Identifier",
+                "value": "function3"
+            }
+        },
+        "undocumented": true,
+        "name": "function3",
+        "longname": "function3",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "",
+        "meta": {
+            "range": [
+                896,
+                916
+            ],
+            "filename": "namespace2.js",
+            "lineno": 48,
+            "columnno": 2,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2",
+            "code": {
+                "id": "astnode100000128",
+                "name": "function4",
+                "type": "Identifier",
+                "value": "function4"
+            }
+        },
+        "undocumented": true,
+        "name": "function4",
+        "longname": "function4",
+        "kind": "member",
+        "scope": "global"
+    },
+    {
+        "comment": "/**\r\n * A realy cool object\r\n * @typedef myRealyCoolObject\r\n * @property {string} A property\r\n * @property {myModule.myModule_Namespace1.someOtherObject} B Property, yeah\r\n * @memberof myModule.myModule_Namespace1\r\n */",
+        "meta": {
+            "filename": "typedefs.js",
+            "lineno": 1,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src",
+            "code": {}
+        },
+        "description": "A realy cool object",
+        "kind": "typedef",
+        "name": "myRealyCoolObject",
+        "properties": [
+            {
+                "type": {
+                    "names": [
+                        "string"
+                    ]
+                },
+                "description": "property",
+                "name": "A"
+            },
+            {
+                "type": {
+                    "names": [
+                        "myModule.myModule_Namespace1.someOtherObject"
+                    ]
+                },
+                "description": "Property, yeah",
+                "name": "B"
+            }
+        ],
+        "memberof": "myModule.myModule_Namespace1",
+        "scope": "static",
+        "longname": "myModule.myModule_Namespace1.myRealyCoolObject"
+    },
+    {
+        "comment": "/**\r\n * My other object\r\n * @typedef someOtherObject\r\n * @property {boolean} heyho Some property\r\n * @memberof myModule.myModule_Namespace1\r\n */",
+        "meta": {
+            "filename": "typedefs.js",
+            "lineno": 9,
+            "columnno": 0,
+            "path": "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src",
+            "code": {}
+        },
+        "description": "My other object",
+        "kind": "typedef",
+        "name": "someOtherObject",
+        "properties": [
+            {
+                "type": {
+                    "names": [
+                        "boolean"
+                    ]
+                },
+                "description": "Some property",
+                "name": "heyho"
+            }
+        ],
+        "memberof": "myModule.myModule_Namespace1",
+        "scope": "static",
+        "longname": "myModule.myModule_Namespace1.someOtherObject"
+    },
+    {
+        "kind": "package",
+        "longname": "package:undefined",
+        "files": [
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class\\class1.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\class\\class_privateMember.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core\\myModule.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core\\myModule2.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\core\\myModule3.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace1\\namespace1.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\namespace2\\namespace2.js",
+            "C:\\Users\\maxim\\Develop\\jsdoc-tsd\\exampleProject\\src\\typedefs.js"
+        ]
+    }
 ]

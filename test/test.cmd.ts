@@ -11,7 +11,7 @@ describe("Tests for different cmd calls", () => {
 			shelljs.rm("-rf", targetFolder);
 		}
 
-		const command = `node node_modules/jsdoc/jsdoc -r exampleProject/src -t src-out/src/core -d ${targetFolder}`;
+		const command = `node node_modules/jsdoc/jsdoc -r exampleProject/src -t src-out/ -d ${targetFolder}`;
 		execSync(command);
 
 		expect(fs.existsSync(targetFolder)).to.be.true;
@@ -25,7 +25,7 @@ describe("Tests for different cmd calls", () => {
 			shelljs.rm("-rf", targetFolder);
 		}
 
-		const command = `node node_modules/jsdoc/jsdoc -r exampleProject/src -t src-out/src/core -d ${targetFilePath}`;
+		const command = `node node_modules/jsdoc/jsdoc -r exampleProject/src -t src-out -d ${targetFilePath}`;
 		execSync(command);
 
 		expect(fs.existsSync(targetFilePath));
