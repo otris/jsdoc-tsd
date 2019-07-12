@@ -14,7 +14,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		parser.parse(moduleData);
 
 		const results = parser.getResultItems();
-		const moduleDeclarations: dom.ModuleDeclaration[] = results[moduleData[2].longname] as dom.ModuleDeclaration[];
+		const moduleDeclarations: dom.ModuleDeclaration[] = parser.getResultItem(moduleData[2].longname) as dom.ModuleDeclaration[];
 
 		expect(moduleDeclarations.length).to.eq(1);
 		const moduleDeclaration = moduleDeclarations[0];

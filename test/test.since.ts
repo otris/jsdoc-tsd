@@ -1,10 +1,12 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { Configuration } from "../src/core/Configuration";
 import { JSDocTsdParser } from "../src/core/jsdoc-tsd-parser";
 import { parseFile } from "./jsdoc-helper";
+chai.should();
 
 describe("Test for parsing the since tag", () => {
 	let emptyClassData: TDoclet;
@@ -24,7 +26,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 
 		// The same behavior if the tag is undefined
 		myClass.since = undefined;
@@ -34,7 +36,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 	});
 
 	it("should add the class definition if the tag is a valid semver tag and no latest tag is configured", () => {
@@ -46,7 +48,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 
 		// same for other representation
 		myClass.since = "1.0.0";
@@ -56,7 +58,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 	});
 
 	it("should add the class definition if the tag is a valid semver tag and the latest tag is bigger than the since tag", () => {
@@ -72,7 +74,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 
 		// latest verion < since
 		myClass.since = "v1.1.0";
@@ -93,7 +95,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 	});
 
 	it("should add the class members if the tag is a valid semver tag and the latest tag is bigger than the since tag", () => {
@@ -135,7 +137,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 
 		// same for other representation
 		myClass.since = "1.0.12";
@@ -145,7 +147,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 	});
 
 	it("should not add the class definition if the tag is not a valid semver tag and no custom comparator is set", () => {
@@ -183,7 +185,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 	});
 
 	it("should use the comparator function if it's passed as JavaScript file", () => {
@@ -205,7 +207,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 	});
 
 	it("should pass the config values to the comparator function", () => {
@@ -222,7 +224,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getResultItems();
-		expect(results).haveOwnPropertyDescriptor("MyTestClass");
+		results.should.have.key("MyTestClass");
 
 		// opposite test
 		parserConfig.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {

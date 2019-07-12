@@ -14,7 +14,7 @@ describe("JSDocTsdParser.parse.interface", () => {
 		parser.parse(interfaceData);
 
 		const results = parser.getResultItems();
-		const interfaceDeclarations: dom.InterfaceDeclaration[] = results[interfaceData[0].longname] as dom.InterfaceDeclaration[];
+		const interfaceDeclarations: dom.InterfaceDeclaration[] = parser.getResultItem(interfaceData[0].longname) as dom.InterfaceDeclaration[];
 
 		expect(interfaceDeclarations.length).to.eq(1);
 		const interfaceDeclaration = interfaceDeclarations[0];

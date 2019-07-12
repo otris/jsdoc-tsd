@@ -12,11 +12,7 @@ describe("JSDocTsdParser.parse.namespace", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(namespace);
 
-		const results = parser.getResultItems();
-
-		expect(results).haveOwnProperty(namespace[0].longname);
-
-		const namespaceDeclarations = results[namespace[0].longname];
+		const namespaceDeclarations = parser.getResultItem(namespace[0].longname);
 		expect(namespaceDeclarations.length).to.equals(1);
 
 		const namespaceDeclaration = namespaceDeclarations[0] as dom.NamespaceDeclaration;
@@ -28,10 +24,7 @@ describe("JSDocTsdParser.parse.namespace", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(namespace);
 
-		const results = parser.getResultItems();
-		expect(results).haveOwnProperty(namespace[1].longname);
-
-		const members = results[namespace[1].longname];
+		const members = parser.getResultItem(namespace[1].longname);
 		expect(members.length).to.equals(1);
 
 		const member = members[0] as dom.ConstDeclaration;

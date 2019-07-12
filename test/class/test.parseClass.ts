@@ -19,7 +19,8 @@ describe("JSDocTsdParser.parse.class", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([emptyClassData]);
 		let results = parser.getResultItems();
-		let classDeclarations: dom.ClassDeclaration[] = results[emptyClassData.longname] as dom.ClassDeclaration[];
+		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
+		expect(classDeclarations).to.not.be.undefined;
 
 		expect(classDeclarations.length).to.eq(1);
 		let classDeclaration = classDeclarations[0];
@@ -38,10 +39,12 @@ describe("JSDocTsdParser.parse.class", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([myClass]);
 		let results = parser.getResultItems();
-		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
+		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
+		expect(classDeclarations).to.not.be.undefined;
+		let classDeclaration = classDeclarations[0] as dom.ClassDeclaration;
 
-		expect(classDeclarations.members.length).to.eq(1);
-		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
+		expect(classDeclaration.members.length).to.eq(1);
+		let constr: dom.ConstructorDeclaration = classDeclaration.members[0] as dom.ConstructorDeclaration;
 		expect(constr.jsDocComment).to.eq("My Class\n@param myParam My param description");
 	});
 
@@ -49,10 +52,12 @@ describe("JSDocTsdParser.parse.class", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([emptyClassData]);
 		let results = parser.getResultItems();
-		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
-		expect(classDeclarations.members.length).to.eq(1);
+		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
+		expect(classDeclarations).to.not.be.undefined;
+		let classDeclaration = classDeclarations[0] as dom.ClassDeclaration;
+		expect(classDeclaration.members.length).to.eq(1);
 
-		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
+		let constr: dom.ConstructorDeclaration = classDeclaration.members[0] as dom.ConstructorDeclaration;
 		expect(constr.parameters.length).to.eq(0);
 	});
 
@@ -60,8 +65,10 @@ describe("JSDocTsdParser.parse.class", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([classConstructorStringParam]);
 		let results = parser.getResultItems();
-		let classDeclarations: dom.ClassDeclaration	= results[emptyClassData.longname][0] as dom.ClassDeclaration;
-		let constr: dom.ConstructorDeclaration = classDeclarations.members[0] as dom.ConstructorDeclaration;
+		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
+		expect(classDeclarations).to.not.be.undefined;
+		let classDeclaration = classDeclarations[0] as dom.ClassDeclaration;
+		let constr: dom.ConstructorDeclaration = classDeclaration.members[0] as dom.ConstructorDeclaration;
 		expect(constr.parameters.length).to.eq(1);
 
 		let unionType: dom.UnionType = constr.parameters[0].type as dom.UnionType;

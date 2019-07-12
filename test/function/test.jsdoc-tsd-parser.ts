@@ -10,10 +10,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 
-		const result = parser.getResultItems();
-		expect(result).haveOwnProperty(functionData.longname);
-
-		const functionDeclarations = result[functionData.longname];
+		const functionDeclarations = parser.getResultItem(functionData.longname);
 		expect(functionDeclarations.length).to.equals(1);
 
 		const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
@@ -38,7 +35,7 @@ describe("JSDocTsdParser.parse.function", () => {
 			parser.parse([functionData]);
 
 			const result = parser.getResultItems();
-			const functionDeclarations = result[functionData.longname];
+			const functionDeclarations = parser.getResultItem(functionData.longname);
 			expect(functionDeclarations.length).to.equals(1);
 
 			const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
@@ -63,7 +60,7 @@ describe("JSDocTsdParser.parse.function", () => {
 			parser.parse([functionData]);
 
 			const result = parser.getResultItems();
-			const functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+			const functionDeclarations: dom.FunctionDeclaration[] = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.equal(1);
 
 			const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;
@@ -86,7 +83,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		let result = parser.getResultItems();
-		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		let functionDeclarations: dom.FunctionDeclaration[] = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 		expect(functionDeclarations[0].returnType).to.eq(dom.type.void);
 
@@ -108,7 +105,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		result = parser.getResultItems();
-		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 		expect(functionDeclarations[0].returnType).to.eq(dom.type.void);
 	});
@@ -128,7 +125,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		let result = parser.getResultItems();
-		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		let functionDeclarations: dom.FunctionDeclaration[] = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		let union = functionDeclarations[0].returnType as dom.UnionType;
@@ -153,7 +150,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		result = parser.getResultItems();
-		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		union = functionDeclarations[0].returnType as dom.UnionType;
@@ -177,7 +174,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		let result = parser.getResultItems();
-		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		let functionDeclarations: dom.FunctionDeclaration[] = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		let union = functionDeclarations[0].returnType as dom.UnionType;
@@ -203,7 +200,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		result = parser.getResultItems();
-		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		union = functionDeclarations[0].returnType as dom.UnionType;
@@ -246,7 +243,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		const result = parser.getResultItems();
-		const functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		const functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		// ensure that every type is mapped correctly
@@ -299,7 +296,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser.parse([functionData]);
 
 		const result = parser.getResultItems();
-		const functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		const functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equal(1);
 
 		// ensure that every type is mapped correctly
@@ -344,7 +341,7 @@ describe("JSDocTsdParser.parse.function", () => {
 			const parser = new JSDocTsdParser();
 			parser.parse([functionData]);
 
-			const functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
+			const functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.eq(1);
 
 			const union = functionDeclarations[0].returnType as dom.UnionType;
@@ -368,7 +365,7 @@ describe("JSDocTsdParser.parse.function", () => {
 			const parser = new JSDocTsdParser();
 			parser.parse([functionData]);
 
-			const functionDeclarations = parser.getResultItems()[functionData.longname] as dom.FunctionDeclaration[];
+			const functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 			expect(functionDeclarations.length).to.eq(1);
 
 			const union = functionDeclarations[0].returnType as dom.UnionType;
@@ -385,7 +382,7 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		let result = parser.getResultItems();
 
-		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		let functionDeclarations: dom.FunctionDeclaration[] = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equals(1);
 
 		let functionDescription = `Function with different parameter types\n@param param1 A fancy parameter`;
@@ -408,7 +405,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 		result = parser.getResultItems();
-		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 
 		expect(functionDeclarations.length).to.equals(1);
 		const functionDeclaration = functionDeclarations[0];
@@ -423,7 +420,7 @@ describe("JSDocTsdParser.parse.function", () => {
 
 		let result = parser.getResultItems();
 
-		let functionDeclarations: dom.FunctionDeclaration[] = result[functionData.longname] as dom.FunctionDeclaration[];
+		let functionDeclarations: dom.FunctionDeclaration[] = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 		expect(functionDeclarations.length).to.equals(1);
 
 		let functionDescription = `Function with different parameter types\n@param param1 A fancy parameter`;
@@ -446,7 +443,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		parser = new JSDocTsdParser();
 		parser.parse([functionData]);
 		result = parser.getResultItems();
-		functionDeclarations = result[functionData.longname] as dom.FunctionDeclaration[];
+		functionDeclarations = parser.getResultItem(functionData.longname) as dom.FunctionDeclaration[];
 
 		expect(functionDeclarations.length).to.equals(1);
 		const functionDeclaration = functionDeclarations[0];

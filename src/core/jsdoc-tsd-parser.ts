@@ -7,6 +7,12 @@ import { Configuration } from "./Configuration";
 const jsdocCommentParser = require("comment-parser");
 /* tslint:enable:no-var-requires */
 
+export interface IParsedJSDocItem {
+	longname: string;
+	memberof?: string;
+	parsed: dom.DeclarationBase;
+}
+
 export class JSDocTsdParser {
 
 	/**
@@ -38,20 +44,40 @@ export class JSDocTsdParser {
 	/**
 	 * Tranformed JSDoc items (to declaration bases) which can
 	 * be passed in to dts-dom for output the d.ts-file.
-	 * The parentship of these items are already resolved.
+	 *
+	 * The membership is not resolved. JSDoc allows a lot of bullshit.
+	 * E. g. items with same name of different types can be added. This
+	 * is not valid in typescript, but we will simply ignore this to enforce
+	 * the user of this module to correct their JSDoc comments. For that reason
+	 * we store all items with same longname (Pattern: <membership>.<name>) in
+	 * an array. Once all items are parsed, we can resolve the memberships
+	 * (@see prepareResults).
 	 */
-	private resultItems: {
-		[key: string]: dom.DeclarationBase[];
-	};
+	private resultItems: Map<string, IParsedJSDocItem[]>;
 
 	constructor(config?: Configuration) {
-		this.resultItems = {};
+		this.resultItems = new Map();
 		this.jsdocItems = [];
 		this.config = config || new Configuration();
 	}
 
-	public getResultItems() {
-		return this.resultItems;
+	public getResultItem(name: string): dom.DeclarationBase[] {
+		const item = this.resultItems.get(name);
+		if (item) {
+			return item.map((i) => i.parsed);
+		} else {
+			throw new Error(`Item with name ${name} not found in result items`);
+		}
+	}
+
+	public getResultItems(): Map<string, dom.DeclarationBase[]> {
+		const entries = [...this.resultItems.entries()];
+		const newEntries = entries.map((entry) => {
+			return [entry[0], entry[1].map((i) => i.parsed)];
+		});
+
+		// @ts-ignore
+		return new Map(newEntries);
 	}
 
 	public parse(jsdocItems: TDoclet[]) {
@@ -61,11 +87,9 @@ export class JSDocTsdParser {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
 			} else if (!item.ignore && !this.config.ignoreScope(item.scope)) {
-				if (!this.resultItems[item.longname]) {
+				const parsedItems: IParsedJSDocItem[] = this.resultItems.get(item.longname) || [];
+				if (parsedItems.length === 0) {
 					this.jsdocItems.push(item);
-					// overloaded items are added to the same key
-					// in resultItems
-					this.resultItems[item.longname] = [];
 				}
 
 				const parsedItem: dom.DeclarationBase | null = this.parseJSDocItem(item);
@@ -76,7 +100,12 @@ export class JSDocTsdParser {
 
 					this.handleFlags(item, parsedItem);
 					this.handleTags(item, parsedItem);
-					this.resultItems[item.longname].push(parsedItem);
+					parsedItems.push({
+						longname: item.longname,
+						memberof: item.memberof,
+						parsed: parsedItem,
+					});
+					this.resultItems.set(item.longname, parsedItems);
 				}
 			} else {
 				// item is ignored because of the @private-annotation or by it's scope
@@ -94,159 +123,163 @@ export class JSDocTsdParser {
 			if (parentItem) {
 				// add the items we parsed before as a member of the top level declaration
 
-				for (const parsedItem of this.resultItems[jsdocItem.longname]) {
-					switch (parentItem.kind) {
-						case "namespace":
-							const namespaceMember = parsedItem as dom.NamespaceMember;
-							switch ((namespaceMember as any).kind) {
+				if (this.resultItems.has(jsdocItem.longname)) {
+					const parsedItems = this.resultItems.get(jsdocItem.longname) as IParsedJSDocItem[];
+					for (const parsedItem of parsedItems) {
+						const dtsItem = parsedItem.parsed;
+						switch (parentItem.kind) {
+							case "namespace":
+								const namespaceMember = dtsItem as dom.NamespaceMember;
+								switch ((namespaceMember as any).kind) {
 
-								case "const":
-									const constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
-									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
-										constDeclaration.flags = dom.DeclarationFlags.Export;
-									}
-									constDeclaration.comment = namespaceMember.comment;
-									constDeclaration.jsDocComment = namespaceMember.jsDocComment;
-									(parentItem as dom.NamespaceDeclaration).members.push(constDeclaration);
-									break;
+									case "const":
+										const constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
+										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+											constDeclaration.flags = dom.DeclarationFlags.Export;
+										}
+										constDeclaration.comment = namespaceMember.comment;
+										constDeclaration.jsDocComment = namespaceMember.jsDocComment;
+										(parentItem as dom.NamespaceDeclaration).members.push(constDeclaration);
+										break;
 
-								case "property":
-									const variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
-									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
-										variableDeclaration.flags = dom.DeclarationFlags.Export;
-									}
-									variableDeclaration.comment = namespaceMember.comment;
-									variableDeclaration.jsDocComment = namespaceMember.jsDocComment;
-									(parentItem as dom.NamespaceDeclaration).members.push(variableDeclaration);
-									break;
+									case "property":
+										const variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
+										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+											variableDeclaration.flags = dom.DeclarationFlags.Export;
+										}
+										variableDeclaration.comment = namespaceMember.comment;
+										variableDeclaration.jsDocComment = namespaceMember.jsDocComment;
+										(parentItem as dom.NamespaceDeclaration).members.push(variableDeclaration);
+										break;
 
-								case "function":
-									if (!parsedItem.flags || 0 === (parsedItem.flags & dom.DeclarationFlags.Private)) {
-										namespaceMember.flags = dom.DeclarationFlags.Export;
-									}
-									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
-									break;
+									case "function":
+										if (!dtsItem.flags || 0 === (dtsItem.flags & dom.DeclarationFlags.Private)) {
+											namespaceMember.flags = dom.DeclarationFlags.Export;
+										}
+										(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
+										break;
 
-								case "interface":
-								case "class":
-								case "namespace":
-								case "var":
-								case "alias":
-								case "enum":
-									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
-									break;
+									case "interface":
+									case "class":
+									case "namespace":
+									case "var":
+									case "alias":
+									case "enum":
+										(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
+										break;
 
-								default:
-									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
-									break;
-							}
-							break;
+									default:
+										console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
+										break;
+								}
+								break;
 
-						case "class":
-							let classMember = parsedItem as dom.ClassMember;
+							case "class":
+								let classMember = dtsItem as dom.ClassMember;
 
-							switch ((classMember as any).kind) {
-								case "function":
-									const functionDeclaration: dom.FunctionDeclaration = classMember as any;
-									classMember = dom.create.method(
-										functionDeclaration.name,
-										functionDeclaration.parameters,
-										functionDeclaration.returnType,
-										functionDeclaration.flags,
-									);
+								switch ((classMember as any).kind) {
+									case "function":
+										const functionDeclaration: dom.FunctionDeclaration = classMember as any;
+										classMember = dom.create.method(
+											functionDeclaration.name,
+											functionDeclaration.parameters,
+											functionDeclaration.returnType,
+											functionDeclaration.flags,
+										);
 
-									classMember.typeParameters = functionDeclaration.typeParameters;
-									classMember.comment = functionDeclaration.comment;
-									classMember.jsDocComment = functionDeclaration.jsDocComment;
-									break;
-							}
+										classMember.typeParameters = functionDeclaration.typeParameters;
+										classMember.comment = functionDeclaration.comment;
+										classMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
+								}
 
-							(parentItem as dom.ClassDeclaration).members.push(classMember);
-							break;
+								(parentItem as dom.ClassDeclaration).members.push(classMember);
+								break;
 
-						case "enum":
-							// enum members can already exists
-							const foundItem = parentItem.members.filter((member) => {
-								return member.name === (parsedItem as dom.EnumMemberDeclaration).name;
-							}).length > 0;
+							case "enum":
+								// enum members can already exists
+								const foundItem = parentItem.members.filter((member) => {
+									return member.name === (dtsItem as dom.EnumMemberDeclaration).name;
+								}).length > 0;
 
-							if (!foundItem) {
-								parentItem.members.push(parsedItem as dom.EnumMemberDeclaration);
-							}
-							break;
+								if (!foundItem) {
+									parentItem.members.push(dtsItem as dom.EnumMemberDeclaration);
+								}
+								break;
 
-						case "interface":
-							let objectTypeMember = parsedItem as dom.ObjectTypeMember;
+							case "interface":
+								let objectTypeMember = dtsItem as dom.ObjectTypeMember;
 
-							switch ((objectTypeMember as any).kind) {
-								case "function":
-									const functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
-									objectTypeMember = dom.create.method(
-										functionDeclaration.name,
-										functionDeclaration.parameters,
-										functionDeclaration.returnType,
-										functionDeclaration.flags,
-									);
+								switch ((objectTypeMember as any).kind) {
+									case "function":
+										const functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
+										objectTypeMember = dom.create.method(
+											functionDeclaration.name,
+											functionDeclaration.parameters,
+											functionDeclaration.returnType,
+											functionDeclaration.flags,
+										);
 
-									objectTypeMember.typeParameters = functionDeclaration.typeParameters;
-									objectTypeMember.comment = functionDeclaration.comment;
-									objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
-									break;
+										objectTypeMember.typeParameters = functionDeclaration.typeParameters;
+										objectTypeMember.comment = functionDeclaration.comment;
+										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
+										break;
 
-								case "property":
-									// ok, nothing to change
-									break;
+									case "property":
+										// ok, nothing to change
+										break;
 
-								default:
-									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parentItem.kind}'`);
-									break;
-							}
+									default:
+										console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parentItem.kind}'`);
+										break;
+								}
 
-							(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
-							break;
+								(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
+								break;
 
-						case "module":
-							const moduleMember = parsedItem as dom.ModuleMember;
-							switch ((moduleMember as any).kind) {
+							case "module":
+								const moduleMember = dtsItem as dom.ModuleMember;
+								switch ((moduleMember as any).kind) {
 
-								case "property":
-									const variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
-									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
-										variableDeclaration.flags = dom.DeclarationFlags.Export;
-									}
-									variableDeclaration.comment = moduleMember.comment;
-									variableDeclaration.jsDocComment = moduleMember.jsDocComment;
-									(parentItem as dom.ModuleDeclaration).members.push(variableDeclaration);
-									break;
+									case "property":
+										const variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
+										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+											variableDeclaration.flags = dom.DeclarationFlags.Export;
+										}
+										variableDeclaration.comment = moduleMember.comment;
+										variableDeclaration.jsDocComment = moduleMember.jsDocComment;
+										(parentItem as dom.ModuleDeclaration).members.push(variableDeclaration);
+										break;
 
-								case "function":
-								case "alias":
-									if (parsedItem.flags && ((parsedItem.flags & dom.DeclarationFlags.Export) || (parsedItem.flags & dom.DeclarationFlags.Static))) {
-										moduleMember.flags = dom.DeclarationFlags.Export;
-									}
-									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
-									break;
+									case "function":
+									case "alias":
+										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+											moduleMember.flags = dom.DeclarationFlags.Export;
+										}
+										(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+										break;
 
-								case "interface":
-								case "class":
-								case "namespace":
-								case "const":
-								case "var":
-									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
-									break;
+									case "interface":
+									case "class":
+									case "namespace":
+									case "const":
+									case "var":
+										(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+										break;
 
-								default:
-									console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
-									break;
-							}
+									default:
+										console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
+										break;
+								}
 
-							break;
+								break;
 
-						default:
-							// parent type not supported
-							// tslint:disable-next-line:max-line-length
-							console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`);
-							break;
+							default:
+								// parent type not supported
+								// tslint:disable-next-line:max-line-length
+								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`);
+								break;
+						}
 					}
 				}
 			} else {
@@ -263,9 +296,12 @@ export class JSDocTsdParser {
 					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'.");
 				} else if (!jsdocItem.memberof) {
 					// member has no parent, add the item as top-level declaration
-					for (const parsedItem of this.resultItems[jsdocItem.longname]) {
-						if (!domTopLevelDeclarations[jsdocItem.longname]) {
-							domTopLevelDeclarations[jsdocItem.longname] = parsedItem as dom.TopLevelDeclaration;
+					if (this.resultItems.has(jsdocItem.longname)) {
+						const parsedItems = this.resultItems.get(jsdocItem.longname) as IParsedJSDocItem[];
+						for (const parsedItem of parsedItems) {
+							if (!domTopLevelDeclarations[jsdocItem.longname]) {
+								domTopLevelDeclarations[jsdocItem.longname] = parsedItem.parsed as dom.TopLevelDeclaration;
+							}
 						}
 					}
 				}
@@ -414,7 +450,11 @@ export class JSDocTsdParser {
 
 					// create an interface from the typedef
 					const domInterface: dom.InterfaceDeclaration = this.parseTypeDefinition(typeDef) as dom.InterfaceDeclaration;
-					this.resultItems[typeDef.longname] = [domInterface];
+					this.resultItems.set(typeDef.longname, [{
+						longname: typeDef.longname,
+						memberof: typeDef.memberof,
+						parsed: domInterface,
+					}]);
 
 					// create the parameter with the interface as type
 					let interfaceType;
@@ -470,8 +510,9 @@ export class JSDocTsdParser {
 					parentItem = domTopLevelDeclarations[name];
 
 					if (!parentItem) {
-						if (this.resultItems[name]) {
-							domTopLevelDeclarations[name] = this.resultItems[name][0] as dom.TopLevelDeclaration;
+						if (this.resultItems.has(name)) {
+							const parsedItem = (this.resultItems.get(name) as IParsedJSDocItem[])[0];
+							domTopLevelDeclarations[name] = parsedItem.parsed as dom.TopLevelDeclaration;
 							parentItem = domTopLevelDeclarations[name];
 						}
 					}
@@ -725,9 +766,10 @@ export class JSDocTsdParser {
 				return this.parseTypeDefinition(item as ITypedefDoclet);
 
 			case "class":
-				if (this.resultItems[item.longname].length === 1) {
+				let parsedItems: IParsedJSDocItem[];
+				if (this.resultItems.has(item.longname) && (parsedItems = this.resultItems.get(item.longname) as IParsedJSDocItem[]).length === 1) {
 					// class is already created, only add the constructor to the class
-					this.parseClass(item as IClassDoclet, this.resultItems[item.longname][0] as dom.ClassDeclaration);
+					this.parseClass(item as IClassDoclet, parsedItems[0].parsed as dom.ClassDeclaration);
 					return null;
 				} else {
 					return this.parseClass(item as IClassDoclet);
