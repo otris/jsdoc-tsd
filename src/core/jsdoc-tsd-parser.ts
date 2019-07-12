@@ -57,94 +57,23 @@ export class JSDocTsdParser {
 	public parse(jsdocItems: TDoclet[]) {
 		this.jsdocItems = [];
 
-		jsdocItems.forEach((item) => {
+		for (const item of jsdocItems) {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
 			} else if (!item.ignore && !this.config.ignoreScope(item.scope)) {
-				let addItem = true;
-				let addJsDocComment = true;
-				let parsedItem: dom.DeclarationBase | null = {};
 				if (!this.resultItems[item.longname]) {
-					// only add overloaded items once to jsdocItems
-					// because of the two for-loops in prepareResults
 					this.jsdocItems.push(item);
 					// overloaded items are added to the same key
 					// in resultItems
 					this.resultItems[item.longname] = [];
 				}
 
-				switch (item.kind) {
-					case "function":
-						parsedItem = this.parseFunction(item as IFunctionDoclet);
-						break;
-
-					case "constant":
-						parsedItem = this.parseConstant(item as IMemberDoclet);
-						break;
-
-					case "member":
-						if (item.isEnum) {
-							parsedItem = this.parseEnum(item as IMemberDoclet);
-						} else {
-							parsedItem = this.parseMember(item as IMemberDoclet);
-						}
-						break;
-
-					case "namespace":
-						parsedItem = this.parseNamespace(item as INamespaceDoclet);
-						break;
-
-					case "typedef":
-						parsedItem = this.parseTypeDefinition(item as ITypedefDoclet);
-						break;
-
-					case "file":
-						// suppress warnings for this type
-						addItem = false;
-						break;
-
-					case "class":
-						// IClassDoclet with kind 'class'
-						if (this.resultItems[item.longname].length === 1) {
-
-							// class is already created, only add the constructor to the class
-							parsedItem = this.parseClass(item as IClassDoclet, this.resultItems[item.longname][0] as dom.ClassDeclaration);
-
-							// class is already added
-							addItem = false;
-						} else {
-
-							// create new class
-							parsedItem = this.parseClass(item as IClassDoclet);
-						}
-
-						// jsDocComment is already added to the constructors
-						// @classdesc is alrady added to the class
-						addJsDocComment = false;
-						break;
-
-					case "interface":
-						// IClassDoclet with kind 'interface'
-						parsedItem = this.parseInterface(item as IClassDoclet);
-						break;
-
-					case "module":
-						parsedItem = this.parseModule(item as INamespaceDoclet);
-						break;
-
-					default:
-						if ((item as any).kind !== "package") {
-							console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
-						}
-
-						addItem = false;
-						break;
-				}
-
-				if (parsedItem && addItem) {
-					if (addJsDocComment) {
+				const parsedItem: dom.DeclarationBase | null = this.parseJSDocItem(item);
+				if (parsedItem) {
+					if (item.kind !== "class") {
 						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
 					}
+
 					this.handleFlags(item, parsedItem);
 					this.handleTags(item, parsedItem);
 					this.resultItems[item.longname].push(parsedItem);
@@ -153,7 +82,7 @@ export class JSDocTsdParser {
 				// item is ignored because of the @private-annotation or by it's scope
 				this.rejectedItems.push(item.longname);
 			}
-		});
+		}
 	}
 
 	public prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
@@ -164,6 +93,7 @@ export class JSDocTsdParser {
 
 			if (parentItem) {
 				// add the items we parsed before as a member of the top level declaration
+
 				for (const parsedItem of this.resultItems[jsdocItem.longname]) {
 					switch (parentItem.kind) {
 						case "namespace":
@@ -763,6 +693,62 @@ export class JSDocTsdParser {
 
 	private parseInterface(jsdocItem: IClassDoclet) {
 		return dom.create.interface(jsdocItem.name);
+	}
+
+	/**
+	 * Converts a JSDoc item to a declaration base which can be printed
+	 * with the dts-dom module in a declaration file.
+	 *
+	 * The resulting item can be passed to dts-dom.emit which will then
+	 * output the item in the declaration file.
+	 * @param item JSDoc item from the taffy DB
+	 */
+	private parseJSDocItem(item: TDoclet): dom.DeclarationBase | null {
+		switch (item.kind) {
+			case "function":
+				return this.parseFunction(item as IFunctionDoclet);
+
+			case "constant":
+				return this.parseConstant(item as IMemberDoclet);
+
+			case "member":
+				if (item.isEnum) {
+					return this.parseEnum(item as IMemberDoclet);
+				} else {
+					return this.parseMember(item as IMemberDoclet);
+				}
+
+			case "namespace":
+				return this.parseNamespace(item as INamespaceDoclet);
+
+			case "typedef":
+				return this.parseTypeDefinition(item as ITypedefDoclet);
+
+			case "class":
+				if (this.resultItems[item.longname].length === 1) {
+					// class is already created, only add the constructor to the class
+					this.parseClass(item as IClassDoclet, this.resultItems[item.longname][0] as dom.ClassDeclaration);
+					return null;
+				} else {
+					return this.parseClass(item as IClassDoclet);
+				}
+
+			case "interface":
+				return this.parseInterface(item as IClassDoclet);
+
+			case "module":
+				return this.parseModule(item as INamespaceDoclet);
+
+			// suppress warnings for this type
+			case "file":
+				return null;
+
+			default:
+				if ((item as any).kind !== "package") {
+					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
+				}
+				return null;
+		}
 	}
 
 	private parseMember(jsdocItem: IMemberDoclet) {
