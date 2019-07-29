@@ -25,7 +25,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 
 		// The same behavior if the tag is undefined
@@ -35,7 +35,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser();
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 	});
 
@@ -47,7 +47,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 
 		// same for other representation
@@ -57,7 +57,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser();
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 	});
 
@@ -73,7 +73,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 
 		// latest verion < since
@@ -84,7 +84,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		expect(Object.keys(results).length).to.eq(0);
 
 		// latest verion > since for other representation
@@ -94,7 +94,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 	});
 
@@ -136,7 +136,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 
 		// same for other representation
@@ -146,7 +146,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 	});
 
@@ -158,7 +158,7 @@ describe("Test for parsing the since tag", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse([myClass]);
 
-		const results = parser.getResultItems();
+		const results = parser.getParsedItems();
 		expect(Object.keys(results).length).to.eq(0);
 	});
 
@@ -174,7 +174,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		expect(Object.keys(results).length).to.eq(0);
 
 		// opposite test
@@ -184,7 +184,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 	});
 
@@ -198,7 +198,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		expect(Object.keys(results).length).to.eq(0);
 
 		// opposite test
@@ -206,7 +206,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 	});
 
@@ -223,7 +223,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		results.should.have.key("MyTestClass");
 
 		// opposite test
@@ -233,7 +233,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse([myClass]);
 
-		results = parser.getResultItems();
+		results = parser.getParsedItems();
 		expect(Object.keys(results).length).to.eq(0);
 	});
 

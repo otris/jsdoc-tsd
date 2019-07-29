@@ -16,7 +16,7 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse([typeData]);
 
-		const interfaceDeclarations: dom.InterfaceDeclaration[] = parser.getResultItem(typeData.longname) as dom.InterfaceDeclaration[];
+		const interfaceDeclarations: dom.InterfaceDeclaration[] = parser.getParsedItem(typeData.longname) as dom.InterfaceDeclaration[];
 		expect(interfaceDeclarations).to.not.be.undefined;
 		expect(interfaceDeclarations.length).to.eq(1);
 		expect(interfaceDeclarations[0].name).to.eq(typeData.name);

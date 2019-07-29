@@ -13,7 +13,7 @@ describe("JSDocTsdParser.parse.enum", () => {
 
 		const parser = new JSDocTsdParser();
 		parser.parse(enumData);
-		const enumDeclarations: dom.EnumDeclaration[] = parser.getResultItem(enumData[0].longname) as dom.EnumDeclaration[];
+		const enumDeclarations: dom.EnumDeclaration[] = parser.getParsedItem(enumData[0].longname) as dom.EnumDeclaration[];
 
 		expect(enumDeclarations.length).to.eq(1);
 		const enumDeclaration = enumDeclarations[0];

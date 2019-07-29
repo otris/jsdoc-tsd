@@ -13,7 +13,7 @@ describe("JSDocTsdParser.parse.overloading", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
 
-		const classDeclarations: dom.ClassDeclaration[] = parser.getResultItem(classData[0].longname) as dom.ClassDeclaration[];
+		const classDeclarations: dom.ClassDeclaration[] = parser.getParsedItem(classData[0].longname) as dom.ClassDeclaration[];
 		expect(classDeclarations.length).to.eq(1);
 
 		expect(classDeclarations[0].jsDocComment).to.eq("Class description");
@@ -30,7 +30,7 @@ describe("JSDocTsdParser.parse.overloading", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
 
-		const classDeclarations: dom.ClassDeclaration[] = parser.getResultItem(classData[0].longname) as dom.ClassDeclaration[];
+		const classDeclarations: dom.ClassDeclaration[] = parser.getParsedItem(classData[0].longname) as dom.ClassDeclaration[];
 		expect(classDeclarations.length).to.eq(1);
 		const classDeclaration = classDeclarations[0];
 		expect(classDeclaration.members.length).to.eq(2);

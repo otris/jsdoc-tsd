@@ -18,7 +18,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should parse a class definition with the correct name", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([emptyClassData]);
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
 		expect(classDeclarations).to.not.be.undefined;
 
@@ -38,7 +38,7 @@ describe("JSDocTsdParser.parse.class", () => {
 
 		let parser = new JSDocTsdParser();
 		parser.parse([myClass]);
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
 		expect(classDeclarations).to.not.be.undefined;
 		let classDeclaration = classDeclarations[0] as dom.ClassDeclaration;
@@ -51,7 +51,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should add an constructor with no params to the class members", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([emptyClassData]);
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
 		expect(classDeclarations).to.not.be.undefined;
 		let classDeclaration = classDeclarations[0] as dom.ClassDeclaration;
@@ -64,7 +64,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should add an constructor with a string param to the class members", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse([classConstructorStringParam]);
-		let results = parser.getResultItems();
+		let results = parser.getParsedItems();
 		const classDeclarations: dom.ClassDeclaration[] = results.get(emptyClassData.longname) as dom.ClassDeclaration[];
 		expect(classDeclarations).to.not.be.undefined;
 		let classDeclaration = classDeclarations[0] as dom.ClassDeclaration;

@@ -11,7 +11,7 @@ describe("JSDocTsdParser.parse.callback", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse([callbackData]);
 
-		const results = parser.getResultItems();
+		const results = parser.getParsedItems();
 		const callbackDeclarations: dom.TypeAliasDeclaration[] = results.get(callbackData.longname) as dom.TypeAliasDeclaration[];
 		expect(callbackDeclarations).to.not.be.undefined;
 		expect(callbackDeclarations.length).to.eq(1);

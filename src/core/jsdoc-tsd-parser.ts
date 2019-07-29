@@ -35,13 +35,6 @@ export class JSDocTsdParser {
 	private jsdocItems: TDoclet[];
 
 	/**
-	 * Array of jsdoc items which should be ignored because of
-	 * the since tag.
-	 * @todo Is this necessary? Why adding this item to 'jsdocItems'?
-	 */
-	private rejectedItems: string[] = [];
-
-	/**
 	 * Tranformed JSDoc items (to declaration bases) which can
 	 * be passed in to dts-dom for output the d.ts-file.
 	 *
@@ -53,16 +46,28 @@ export class JSDocTsdParser {
 	 * an array. Once all items are parsed, we can resolve the memberships
 	 * (@see prepareResults).
 	 */
-	private resultItems: Map<string, IParsedJSDocItem[]>;
+	private parsedItems: Map<string, IParsedJSDocItem[]>;
+
+	/**
+	 * Array of jsdoc items which should be ignored because of
+	 * the since tag.
+	 * @todo Is this necessary? Why adding this item to 'jsdocItems'?
+	 */
+	private rejectedItems: string[] = [];
 
 	constructor(config?: Configuration) {
-		this.resultItems = new Map();
+		this.parsedItems = new Map();
 		this.jsdocItems = [];
 		this.config = config || new Configuration();
 	}
 
-	public getResultItem(name: string): dom.DeclarationBase[] {
-		const item = this.resultItems.get(name);
+	/**
+	 * Returns the parsed Declaration Base of an jsdoc item
+	 * @param name The longname of the jsdoc item (name including membership, e.g. "myNamespace.myMember")
+	 * @throws {Error} When no item with this name was parsed
+	 */
+	public getParsedItem(name: string): dom.DeclarationBase[] {
+		const item = this.parsedItems.get(name);
 		if (item) {
 			return item.map((i) => i.parsed);
 		} else {
@@ -70,8 +75,11 @@ export class JSDocTsdParser {
 		}
 	}
 
-	public getResultItems(): Map<string, dom.DeclarationBase[]> {
-		const entries = [...this.resultItems.entries()];
+	/**
+	 * Returns all parsed Declaration Bases
+	 */
+	public getParsedItems(): Map<string, dom.DeclarationBase[]> {
+		const entries = [...this.parsedItems.entries()];
 		const newEntries = entries.map((entry) => {
 			return [entry[0], entry[1].map((i) => i.parsed)];
 		});
@@ -87,7 +95,7 @@ export class JSDocTsdParser {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
 			} else if (!item.ignore && !this.config.ignoreScope(item.scope)) {
-				const parsedItems: IParsedJSDocItem[] = this.resultItems.get(item.longname) || [];
+				const parsedItems: IParsedJSDocItem[] = this.parsedItems.get(item.longname) || [];
 				if (parsedItems.length === 0) {
 					this.jsdocItems.push(item);
 				}
@@ -105,7 +113,7 @@ export class JSDocTsdParser {
 						memberof: item.memberof,
 						parsed: parsedItem,
 					});
-					this.resultItems.set(item.longname, parsedItems);
+					this.parsedItems.set(item.longname, parsedItems);
 				}
 			} else {
 				// item is ignored because of the @private-annotation or by it's scope
@@ -123,8 +131,8 @@ export class JSDocTsdParser {
 			if (parentItem) {
 				// add the items we parsed before as a member of the top level declaration
 
-				if (this.resultItems.has(jsdocItem.longname)) {
-					const parsedItems = this.resultItems.get(jsdocItem.longname) as IParsedJSDocItem[];
+				if (this.parsedItems.has(jsdocItem.longname)) {
+					const parsedItems = this.parsedItems.get(jsdocItem.longname) as IParsedJSDocItem[];
 					for (const parsedItem of parsedItems) {
 						const dtsItem = parsedItem.parsed;
 						switch (parentItem.kind) {
@@ -296,8 +304,8 @@ export class JSDocTsdParser {
 					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'.");
 				} else if (!jsdocItem.memberof) {
 					// member has no parent, add the item as top-level declaration
-					if (this.resultItems.has(jsdocItem.longname)) {
-						const parsedItems = this.resultItems.get(jsdocItem.longname) as IParsedJSDocItem[];
+					if (this.parsedItems.has(jsdocItem.longname)) {
+						const parsedItems = this.parsedItems.get(jsdocItem.longname) as IParsedJSDocItem[];
 						for (const parsedItem of parsedItems) {
 							if (!domTopLevelDeclarations[jsdocItem.longname]) {
 								domTopLevelDeclarations[jsdocItem.longname] = parsedItem.parsed as dom.TopLevelDeclaration;
@@ -450,7 +458,7 @@ export class JSDocTsdParser {
 
 					// create an interface from the typedef
 					const domInterface: dom.InterfaceDeclaration = this.parseTypeDefinition(typeDef) as dom.InterfaceDeclaration;
-					this.resultItems.set(typeDef.longname, [{
+					this.parsedItems.set(typeDef.longname, [{
 						longname: typeDef.longname,
 						memberof: typeDef.memberof,
 						parsed: domInterface,
@@ -510,8 +518,8 @@ export class JSDocTsdParser {
 					parentItem = domTopLevelDeclarations[name];
 
 					if (!parentItem) {
-						if (this.resultItems.has(name)) {
-							const parsedItem = (this.resultItems.get(name) as IParsedJSDocItem[])[0];
+						if (this.parsedItems.has(name)) {
+							const parsedItem = (this.parsedItems.get(name) as IParsedJSDocItem[])[0];
 							domTopLevelDeclarations[name] = parsedItem.parsed as dom.TopLevelDeclaration;
 							parentItem = domTopLevelDeclarations[name];
 						}
@@ -767,7 +775,7 @@ export class JSDocTsdParser {
 
 			case "class":
 				let parsedItems: IParsedJSDocItem[];
-				if (this.resultItems.has(item.longname) && (parsedItems = this.resultItems.get(item.longname) as IParsedJSDocItem[]).length === 1) {
+				if (this.parsedItems.has(item.longname) && (parsedItems = this.parsedItems.get(item.longname) as IParsedJSDocItem[]).length === 1) {
 					// class is already created, only add the constructor to the class
 					this.parseClass(item as IClassDoclet, parsedItems[0].parsed as dom.ClassDeclaration);
 					return null;
