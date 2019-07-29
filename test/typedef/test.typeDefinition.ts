@@ -1,9 +1,11 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
 import { parseFile } from "../jsdoc-helper";
+chai.should();
 
 describe("JSDocTsdParser.parse.typedef", () => {
 	it("Should create an interface", async () => {

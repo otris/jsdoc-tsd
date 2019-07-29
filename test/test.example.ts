@@ -10,7 +10,7 @@ describe("JSDocTsdParser.parse.exampleProject", () => {
 
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
-		const result = parser.resolveResults();
+		const result = parser.generateTypeDefinition();
 		console.log(result);
 	});
 });

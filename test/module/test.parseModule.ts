@@ -1,9 +1,11 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { parse } from "querystring";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+chai.should();
 
 describe("JSDocTsdParser.parse.module", () => {
 	const moduleData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/module.json"), { encoding: "utf-8" }));
