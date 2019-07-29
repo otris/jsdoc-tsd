@@ -44,10 +44,10 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse([typeDefinition]);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("someOtherObject");
+		const result = parser.resolveMembership();
+		result.should.include.keys("someOtherObject");
 
-		const interfaceDeclaration: dom.InterfaceDeclaration = result.someOtherObject as dom.InterfaceDeclaration;
+		const interfaceDeclaration: dom.InterfaceDeclaration = result.get("someOtherObject") as dom.InterfaceDeclaration;
 		expect(interfaceDeclaration.members.length).to.eq(1);
 
 		const optionalMember = interfaceDeclaration.members[0];
@@ -61,10 +61,10 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(typeData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("FuuBar");
+		const result = parser.resolveMembership();
+		result.should.include.keys("FuuBar");
 
-		const typeDeclaration: dom.TypeAliasDeclaration = result.FuuBar as dom.TypeAliasDeclaration;
+		const typeDeclaration: dom.TypeAliasDeclaration = result.get("FuuBar") as dom.TypeAliasDeclaration;
 		expect(typeDeclaration.kind).to.eq("alias");
 		expect(typeDeclaration.type).to.eq(`"fuu"|"bar"`);
 	});

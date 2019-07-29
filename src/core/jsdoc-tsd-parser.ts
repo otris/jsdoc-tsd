@@ -44,7 +44,7 @@ export class JSDocTsdParser {
 	 * the user of this module to correct their JSDoc comments. For that reason
 	 * we store all items with same longname (Pattern: <membership>.<name>) in
 	 * an array. Once all items are parsed, we can resolve the memberships
-	 * (@see prepareResults).
+	 * (@see resolveMembership).
 	 */
 	private parsedItems: Map<string, IParsedJSDocItem[]>;
 
@@ -122,10 +122,21 @@ export class JSDocTsdParser {
 		}
 	}
 
-	public prepareResults(): { [key: string]: dom.TopLevelDeclaration } {
-		const domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration } = {};
+	/**
+	 * Resolves the membership of all parsed items. For example a namspace member will be
+	 * added to the member-property of the parsed namespace, if the namespace was parsed.
+	 * Otherwise the member will be added to the top level declaration.
+	 * @returns Map with the top level declarations and resolved memberships. The key is the
+	 *          long name of the item, the value is the @see {dom.TopLevelDeclaration}
+	 */
+	public resolveMembership(): Map<string, dom.TopLevelDeclaration> {
+		const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
 
+		// @todo Why iterating over "this.jsdocItems" instead of "this.parsedItems"?
 		for (const jsdocItem of this.jsdocItems) {
+			// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
+			//       Maybe the parent item was not processed yet, then it will not be
+			//       found
 			const parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
 
 			if (parentItem) {
@@ -307,8 +318,11 @@ export class JSDocTsdParser {
 					if (this.parsedItems.has(jsdocItem.longname)) {
 						const parsedItems = this.parsedItems.get(jsdocItem.longname) as IParsedJSDocItem[];
 						for (const parsedItem of parsedItems) {
-							if (!domTopLevelDeclarations[jsdocItem.longname]) {
-								domTopLevelDeclarations[jsdocItem.longname] = parsedItem.parsed as dom.TopLevelDeclaration;
+							if (!domTopLevelDeclarations.has(jsdocItem.longname)) {
+								domTopLevelDeclarations.set(
+									jsdocItem.longname,
+									parsedItem.parsed as dom.TopLevelDeclaration,
+								);
 							}
 						}
 					}
@@ -322,18 +336,18 @@ export class JSDocTsdParser {
 	public resolveResults(): string {
 		let output = "";
 
-		const results = this.prepareResults();
-		Object.keys(results).forEach((key) => {
+		const results = this.resolveMembership();
+		for (const [longname, item] of results.entries()) {
 			try {
-				output += dom.emit(results[key]);
+				output += dom.emit(item);
 			} catch (err) {
-				console.error(`Unexpected error. Please report this error on github!\nCan't emit item ${key}: ${err}\n\n${JSON.stringify(results[key], null, "\t")}`);
+				console.error(`Unexpected error. Please report this error on github!\nCan't emit item ${longname}: ${err}\n\n${JSON.stringify(item, null, "\t")}`);
 				const jsdocItems = this.jsdocItems.filter((elem) => {
-					return (elem.hasOwnProperty("name") && elem.name.endsWith(key)) || (elem.hasOwnProperty("longname") && elem.longname === key);
+					return (elem.hasOwnProperty("name") && elem.name.endsWith(longname)) || (elem.hasOwnProperty("longname") && elem.longname === longname);
 				});
 				console.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
 			}
-		});
+		}
 
 		return output;
 	}
@@ -506,22 +520,27 @@ export class JSDocTsdParser {
 		}
 	}
 
-	private findParentItem(jsdocItem: TDoclet, domTopLevelDeclarations: { [key: string]: dom.TopLevelDeclaration }): dom.TopLevelDeclaration {
+	/**
+	 * Tries to find the parent item of the passed jsdoc item
+	 * @param jsdocItem Item of which the parent item should be searched
+	 * @param domTopLevelDeclarations Source items to search in
+	 */
+	private findParentItem(jsdocItem: TDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.TopLevelDeclaration | undefined {
 		// we have to find the parent item
-		let parentItem: dom.TopLevelDeclaration = null as any;
+		let parentItem: dom.TopLevelDeclaration | undefined;
 
 		if (jsdocItem.memberof) {
 			const parentItemNames = jsdocItem.memberof.split(".");
 			parentItemNames.forEach((name, index) => {
 
 				if (index < 1) {
-					parentItem = domTopLevelDeclarations[name];
+					parentItem = domTopLevelDeclarations.get(name);
 
 					if (!parentItem) {
 						if (this.parsedItems.has(name)) {
 							const parsedItem = (this.parsedItems.get(name) as IParsedJSDocItem[])[0];
-							domTopLevelDeclarations[name] = parsedItem.parsed as dom.TopLevelDeclaration;
-							parentItem = domTopLevelDeclarations[name];
+							domTopLevelDeclarations.set(name, parsedItem.parsed as dom.TopLevelDeclaration);
+							parentItem = domTopLevelDeclarations.get(name);
 						}
 					}
 				} else if (parentItem) {

@@ -26,7 +26,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 
 		// The same behavior if the tag is undefined
 		myClass.since = undefined;
@@ -36,7 +36,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 	});
 
 	it("should add the class definition if the tag is a valid semver tag and no latest tag is configured", () => {
@@ -48,7 +48,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 
 		// same for other representation
 		myClass.since = "1.0.0";
@@ -58,7 +58,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 	});
 
 	it("should add the class definition if the tag is a valid semver tag and the latest tag is bigger than the since tag", () => {
@@ -74,7 +74,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 
 		// latest verion < since
 		myClass.since = "v1.1.0";
@@ -95,7 +95,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 	});
 
 	it("should add the class members if the tag is a valid semver tag and the latest tag is bigger than the since tag", () => {
@@ -110,9 +110,9 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse(myClass);
 
-		let result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestClass");
-		const classDeclaration: dom.ClassDeclaration = result.myTestClass as dom.ClassDeclaration;
+		let result = parser.resolveMembership();
+		result.should.include.keys("myTestClass");
+		const classDeclaration: dom.ClassDeclaration = result.get("myTestClass") as dom.ClassDeclaration;
 		expect(classDeclaration.members.length).to.eq(3);
 
 		// latest version < since
@@ -122,7 +122,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse(myClass);
 
-		result = parser.prepareResults();
+		result = parser.resolveMembership();
 		expect(Object.keys(result).length).to.eq(0);
 	});
 
@@ -137,7 +137,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 
 		// same for other representation
 		myClass.since = "1.0.12";
@@ -147,7 +147,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 	});
 
 	it("should not add the class definition if the tag is not a valid semver tag and no custom comparator is set", () => {
@@ -185,7 +185,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 	});
 
 	it("should use the comparator function if it's passed as JavaScript file", () => {
@@ -207,7 +207,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 	});
 
 	it("should pass the config values to the comparator function", () => {
@@ -224,7 +224,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		let results = parser.getParsedItems();
-		results.should.have.key("MyTestClass");
+		results.should.include.keys("MyTestClass");
 
 		// opposite test
 		parserConfig.versionComparator = (taggedVersion: string, latestVersion: string): boolean => {

@@ -1,9 +1,11 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
 import { parseFile } from "../jsdoc-helper";
+chai.should();
 
 describe("JSDocTsdParser.parse.class", () => {
 	let emptyClassData: TDoclet;
@@ -79,10 +81,11 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should create a private class member", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classDataPrivateMembers);
-		let results = parser.prepareResults();
+		let results = parser.resolveMembership();
 
-		expect(results).haveOwnPropertyDescriptor("classWithPrivateMembers");
-		let classDeclaration: dom.ClassDeclaration = results["classWithPrivateMembers"] as dom.ClassDeclaration;
+		results.set("fuu", results.get("classWithPrivateMembers") as any);
+		results.should.include.keys("classWithPrivateMembers");
+		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
 		expect(classDeclaration.members.length).to.eq(3);
 
 		let propertyDeclarations = classDeclaration.members.filter((member) => {
@@ -95,10 +98,10 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should create a private class member method", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classDataPrivateMembers);
-		let results = parser.prepareResults();
+		let results = parser.resolveMembership();
 
-		expect(results).haveOwnPropertyDescriptor("classWithPrivateMembers");
-		let classDeclaration: dom.ClassDeclaration = results["classWithPrivateMembers"] as dom.ClassDeclaration;
+		results.should.include.keys("classWithPrivateMembers");
+		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
 		expect(classDeclaration.members.length).to.eq(3);
 
 		let methodDeclarations = classDeclaration.members.filter((member) => {

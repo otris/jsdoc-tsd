@@ -26,10 +26,10 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("module:myModule");
+		const result = parser.resolveMembership();
+		result.should.include.keys("module:myModule");
 
-		const parsedModule: dom.ModuleDeclaration = result["module:myModule"] as dom.ModuleDeclaration;
+		const parsedModule: dom.ModuleDeclaration = result.get("module:myModule") as dom.ModuleDeclaration;
 		expect(parsedModule.members.length).to.eq(2);
 
 		const functionDeclaration: dom.FunctionDeclaration = parsedModule.members[1] as dom.FunctionDeclaration;
@@ -40,10 +40,10 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("module:myModule");
+		const result = parser.resolveMembership();
+		result.should.include.keys("module:myModule");
 
-		const parsedModule: dom.ModuleDeclaration = result["module:myModule"] as dom.ModuleDeclaration;
+		const parsedModule: dom.ModuleDeclaration = result.get("module:myModule") as dom.ModuleDeclaration;
 		expect(parsedModule.members.length).to.eq(2);
 
 		const variableMember: dom.VariableDeclaration = parsedModule.members[0] as dom.VariableDeclaration;

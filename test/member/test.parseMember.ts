@@ -13,10 +13,10 @@ describe("JSDocTsdParser.parse.member", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestClass");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myTestClass");
 
-		const myClass: dom.ClassDeclaration = result.myTestClass as dom.ClassDeclaration;
+		const myClass: dom.ClassDeclaration = result.get("myTestClass") as dom.ClassDeclaration;
 		expect(myClass.members.length).to.equal(2);
 
 		const myPropertyMember: dom.PropertyDeclaration = myClass.members[1] as dom.PropertyDeclaration;

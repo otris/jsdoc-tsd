@@ -1,8 +1,10 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+chai.should();
 
 describe("JSDocTsdParser.parse.function", () => {
 	it("should create a function dom object", () => {
@@ -456,10 +458,10 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("function1");
+		const result = parser.resolveMembership();
+		result.should.include.keys("function1");
 
-		const functionDeclaration: dom.FunctionDeclaration = result.function1 as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = result.get("function1") as dom.FunctionDeclaration;
 		expect(functionDeclaration.parameters.length).to.eq(2);
 
 		const optionalParam = functionDeclaration.parameters[1];
@@ -471,10 +473,10 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTemplateFunction");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myTemplateFunction");
 
-		const functionDeclaration: dom.FunctionDeclaration = result.myTemplateFunction as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = result.get("myTemplateFunction") as dom.FunctionDeclaration;
 		expect(functionDeclaration.typeParameters.length).to.eq(1);
 
 		const typeParameter = functionDeclaration.typeParameters[0];
