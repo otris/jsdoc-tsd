@@ -131,199 +131,187 @@ export class JSDocTsdParser {
 	 */
 	public resolveMembership(): Map<string, dom.TopLevelDeclaration> {
 		const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
-
-		// @todo Why iterating over "this.jsdocItems" instead of "this.parsedItems"?
-		for (const jsdocItem of this.jsdocItems) {
-			// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
-			//       Maybe the parent item was not processed yet, then it will not be
-			//       found
-			const parentItem = this.findParentItem(jsdocItem, domTopLevelDeclarations);
-
-			if (parentItem) {
-				// add the items we parsed before as a member of the top level declaration
-
-				if (this.parsedItems.has(jsdocItem.longname)) {
-					const parsedItems = this.parsedItems.get(jsdocItem.longname) as IParsedJSDocItem[];
-					for (const parsedItem of parsedItems) {
-						const dtsItem = parsedItem.parsed;
-						switch (parentItem.kind) {
-							case "namespace":
-								const namespaceMember = dtsItem as dom.NamespaceMember;
-								switch ((namespaceMember as any).kind) {
-
-									case "const":
-										const constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
-										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
-											constDeclaration.flags = dom.DeclarationFlags.Export;
-										}
-										constDeclaration.comment = namespaceMember.comment;
-										constDeclaration.jsDocComment = namespaceMember.jsDocComment;
-										(parentItem as dom.NamespaceDeclaration).members.push(constDeclaration);
-										break;
-
-									case "property":
-										const variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
-										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
-											variableDeclaration.flags = dom.DeclarationFlags.Export;
-										}
-										variableDeclaration.comment = namespaceMember.comment;
-										variableDeclaration.jsDocComment = namespaceMember.jsDocComment;
-										(parentItem as dom.NamespaceDeclaration).members.push(variableDeclaration);
-										break;
-
-									case "function":
-										if (!dtsItem.flags || 0 === (dtsItem.flags & dom.DeclarationFlags.Private)) {
-											namespaceMember.flags = dom.DeclarationFlags.Export;
-										}
-										(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
-										break;
-
-									case "interface":
-									case "class":
-									case "namespace":
-									case "var":
-									case "alias":
-									case "enum":
-										(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
-										break;
-
-									default:
-										console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
-										break;
-								}
-								break;
-
-							case "class":
-								let classMember = dtsItem as dom.ClassMember;
-
-								switch ((classMember as any).kind) {
-									case "function":
-										const functionDeclaration: dom.FunctionDeclaration = classMember as any;
-										classMember = dom.create.method(
-											functionDeclaration.name,
-											functionDeclaration.parameters,
-											functionDeclaration.returnType,
-											functionDeclaration.flags,
-										);
-
-										classMember.typeParameters = functionDeclaration.typeParameters;
-										classMember.comment = functionDeclaration.comment;
-										classMember.jsDocComment = functionDeclaration.jsDocComment;
-										break;
-								}
-
-								(parentItem as dom.ClassDeclaration).members.push(classMember);
-								break;
-
-							case "enum":
-								// enum members can already exists
-								const foundItem = parentItem.members.filter((member) => {
-									return member.name === (dtsItem as dom.EnumMemberDeclaration).name;
-								}).length > 0;
-
-								if (!foundItem) {
-									parentItem.members.push(dtsItem as dom.EnumMemberDeclaration);
-								}
-								break;
-
-							case "interface":
-								let objectTypeMember = dtsItem as dom.ObjectTypeMember;
-
-								switch ((objectTypeMember as any).kind) {
-									case "function":
-										const functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
-										objectTypeMember = dom.create.method(
-											functionDeclaration.name,
-											functionDeclaration.parameters,
-											functionDeclaration.returnType,
-											functionDeclaration.flags,
-										);
-
-										objectTypeMember.typeParameters = functionDeclaration.typeParameters;
-										objectTypeMember.comment = functionDeclaration.comment;
-										objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
-										break;
-
-									case "property":
-										// ok, nothing to change
-										break;
-
-									default:
-										console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parentItem.kind}'`);
-										break;
-								}
-
-								(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
-								break;
-
-							case "module":
-								const moduleMember = dtsItem as dom.ModuleMember;
-								switch ((moduleMember as any).kind) {
-
-									case "property":
-										const variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
-										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
-											variableDeclaration.flags = dom.DeclarationFlags.Export;
-										}
-										variableDeclaration.comment = moduleMember.comment;
-										variableDeclaration.jsDocComment = moduleMember.jsDocComment;
-										(parentItem as dom.ModuleDeclaration).members.push(variableDeclaration);
-										break;
-
-									case "function":
-									case "alias":
-										if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
-											moduleMember.flags = dom.DeclarationFlags.Export;
-										}
-										(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
-										break;
-
-									case "interface":
-									case "class":
-									case "namespace":
-									case "const":
-									case "var":
-										(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
-										break;
-
-									default:
-										console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
-										break;
-								}
-
-								break;
-
-							default:
-								// parent type not supported
-								// tslint:disable-next-line:max-line-length
-								console.warn(`Can't add member '${jsdocItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`);
-								break;
-						}
-					}
+		for (const parsedItems of this.parsedItems.values()) {
+			for (const parsedItem of parsedItems) {
+				let parentItem;
+				if (parsedItem.memberof) {
+					// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
+					//       Maybe the parent item was not processed yet, then it will not be
+					//       found
+					parentItem = this.findParentItem(parsedItem.memberof, domTopLevelDeclarations);
 				}
-			} else {
-				// parent of the item not found, there are different possible reasons...
 
-				if (jsdocItem.memberof && this.rejectedItems.indexOf(jsdocItem.memberof) >= 0) {
-					// parent was rejected by the since comparator
-					// so do not add the item
-				} else if (jsdocItem.memberof) {
-					// item has a parent but the parent was not found, possible reasons:
-					// + a typo in the @memberof tag
-					// + the parent is a private class that extends a public class
-					// do not add the item, but show warning
-					console.warn("Missing top level declaration '" + jsdocItem.memberof + "' for member '" + jsdocItem.longname + "'.");
-				} else if (!jsdocItem.memberof) {
-					// member has no parent, add the item as top-level declaration
-					if (this.parsedItems.has(jsdocItem.longname)) {
-						const parsedItems = this.parsedItems.get(jsdocItem.longname) as IParsedJSDocItem[];
-						for (const parsedItem of parsedItems) {
-							if (!domTopLevelDeclarations.has(jsdocItem.longname)) {
-								domTopLevelDeclarations.set(
-									jsdocItem.longname,
-									parsedItem.parsed as dom.TopLevelDeclaration,
-								);
+				if (parentItem) {
+					// add the items we parsed before as a member of the top level declaration
+					const dtsItem = parsedItem.parsed;
+					switch (parentItem.kind) {
+						case "namespace":
+							const namespaceMember = dtsItem as dom.NamespaceMember;
+							switch ((namespaceMember as any).kind) {
+
+								case "const":
+									const constDeclaration = dom.create.const((namespaceMember as dom.ConstDeclaration).name, (namespaceMember as dom.ConstDeclaration).type);
+									if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+										constDeclaration.flags = dom.DeclarationFlags.Export;
+									}
+									constDeclaration.comment = namespaceMember.comment;
+									constDeclaration.jsDocComment = namespaceMember.jsDocComment;
+									(parentItem as dom.NamespaceDeclaration).members.push(constDeclaration);
+									break;
+
+								case "property":
+									const variableDeclaration = dom.create.variable((namespaceMember as dom.VariableDeclaration).name, (namespaceMember as dom.VariableDeclaration).type);
+									if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+										variableDeclaration.flags = dom.DeclarationFlags.Export;
+									}
+									variableDeclaration.comment = namespaceMember.comment;
+									variableDeclaration.jsDocComment = namespaceMember.jsDocComment;
+									(parentItem as dom.NamespaceDeclaration).members.push(variableDeclaration);
+									break;
+
+								case "function":
+									if (!dtsItem.flags || 0 === (dtsItem.flags & dom.DeclarationFlags.Private)) {
+										namespaceMember.flags = dom.DeclarationFlags.Export;
+									}
+									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
+									break;
+
+								case "interface":
+								case "class":
+								case "namespace":
+								case "var":
+								case "alias":
+								case "enum":
+									(parentItem as dom.NamespaceDeclaration).members.push(namespaceMember);
+									break;
+
+								default:
+									console.warn(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported member type: '${namespaceMember.kind}'`);
+									break;
 							}
+							break;
+
+						case "class":
+							let classMember = dtsItem as dom.ClassMember;
+
+							switch ((classMember as any).kind) {
+								case "function":
+									const functionDeclaration: dom.FunctionDeclaration = classMember as any;
+									classMember = dom.create.method(
+										functionDeclaration.name,
+										functionDeclaration.parameters,
+										functionDeclaration.returnType,
+										functionDeclaration.flags,
+									);
+
+									classMember.typeParameters = functionDeclaration.typeParameters;
+									classMember.comment = functionDeclaration.comment;
+									classMember.jsDocComment = functionDeclaration.jsDocComment;
+									break;
+							}
+
+							(parentItem as dom.ClassDeclaration).members.push(classMember);
+							break;
+
+						case "enum":
+							// enum members can already exists
+							const foundItem = parentItem.members.filter((member) => {
+								return member.name === (dtsItem as dom.EnumMemberDeclaration).name;
+							}).length > 0;
+
+							if (!foundItem) {
+								parentItem.members.push(dtsItem as dom.EnumMemberDeclaration);
+							}
+							break;
+
+						case "interface":
+							let objectTypeMember = dtsItem as dom.ObjectTypeMember;
+
+							switch ((objectTypeMember as any).kind) {
+								case "function":
+									const functionDeclaration: dom.FunctionDeclaration = objectTypeMember as any;
+									objectTypeMember = dom.create.method(
+										functionDeclaration.name,
+										functionDeclaration.parameters,
+										functionDeclaration.returnType,
+										functionDeclaration.flags,
+									);
+
+									objectTypeMember.typeParameters = functionDeclaration.typeParameters;
+									objectTypeMember.comment = functionDeclaration.comment;
+									objectTypeMember.jsDocComment = functionDeclaration.jsDocComment;
+									break;
+
+								case "property":
+									// ok, nothing to change
+									break;
+
+								default:
+									console.warn(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${parentItem.kind}'`);
+									break;
+							}
+
+							(parentItem as dom.InterfaceDeclaration).members.push(objectTypeMember);
+							break;
+
+						case "module":
+							const moduleMember = dtsItem as dom.ModuleMember;
+							switch ((moduleMember as any).kind) {
+
+								case "property":
+									const variableDeclaration = dom.create.variable((moduleMember as dom.VariableDeclaration).name, (moduleMember as dom.VariableDeclaration).type);
+									if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+										variableDeclaration.flags = dom.DeclarationFlags.Export;
+									}
+									variableDeclaration.comment = moduleMember.comment;
+									variableDeclaration.jsDocComment = moduleMember.jsDocComment;
+									(parentItem as dom.ModuleDeclaration).members.push(variableDeclaration);
+									break;
+
+								case "function":
+								case "alias":
+									if (dtsItem.flags && ((dtsItem.flags & dom.DeclarationFlags.Export) || (dtsItem.flags & dom.DeclarationFlags.Static))) {
+										moduleMember.flags = dom.DeclarationFlags.Export;
+									}
+									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+									break;
+
+								case "interface":
+								case "class":
+								case "namespace":
+								case "const":
+								case "var":
+									(parentItem as dom.ModuleDeclaration).members.push(moduleMember);
+									break;
+
+								default:
+									console.warn(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
+									break;
+							}
+
+							break;
+
+						default:
+							// parent type not supported
+							// tslint:disable-next-line:max-line-length
+							console.warn(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`);
+							break;
+					}
+				} else {
+					// parent of the item not found, there are different possible reasons...
+					if (parsedItem.memberof) {
+						// item has a parent but the parent was not found, possible reasons:
+						// + a typo in the @memberof tag
+						// + the parent is a private class that extends a public class
+						// do not add the item, but show warning
+						console.warn("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.");
+					} else {
+						// member has no parent, add the item as top-level declaration
+						if (!domTopLevelDeclarations.has(parsedItem.longname)) {
+							domTopLevelDeclarations.set(
+								parsedItem.longname,
+								parsedItem.parsed as dom.TopLevelDeclaration,
+							);
 						}
 					}
 				}
@@ -522,15 +510,15 @@ export class JSDocTsdParser {
 
 	/**
 	 * Tries to find the parent item of the passed jsdoc item
-	 * @param jsdocItem Item of which the parent item should be searched
+	 * @param parentItemLongname Long name of the searched item
 	 * @param domTopLevelDeclarations Source items to search in
 	 */
-	private findParentItem(jsdocItem: TDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.TopLevelDeclaration | undefined {
+	private findParentItem(parentItemLongname: string, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.TopLevelDeclaration | undefined {
 		// we have to find the parent item
 		let parentItem: dom.TopLevelDeclaration | undefined;
 
-		if (jsdocItem.memberof) {
-			const parentItemNames = jsdocItem.memberof.split(".");
+		if (parentItemLongname) {
+			const parentItemNames = parentItemLongname.split(".");
 			parentItemNames.forEach((name, index) => {
 
 				if (index < 1) {

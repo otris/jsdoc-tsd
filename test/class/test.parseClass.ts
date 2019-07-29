@@ -83,7 +83,6 @@ describe("JSDocTsdParser.parse.class", () => {
 		parser.parse(classDataPrivateMembers);
 		let results = parser.resolveMembership();
 
-		results.set("fuu", results.get("classWithPrivateMembers") as any);
 		results.should.include.keys("classWithPrivateMembers");
 		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
 		expect(classDeclaration.members.length).to.eq(3);
