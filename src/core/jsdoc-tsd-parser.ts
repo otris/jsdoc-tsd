@@ -122,7 +122,7 @@ export class JSDocTsdParser {
 		for (const item of jsdocItems) {
 			if (!this.evaluateSinceTag(item.since)) {
 				this.rejectedItems.push(item.longname);
-			} else if (!item.ignore && !this.config.ignoreScope(item.scope)) {
+			if (!item.ignore && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
 				const parsedItems: IParsedJSDocItem[] = this.parsedItems.get(item.longname) || [];
 				if (parsedItems.length === 0) {
 					this.jsdocItems.push(item);

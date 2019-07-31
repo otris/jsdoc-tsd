@@ -50,4 +50,14 @@ describe("JSDocTsdParser.parse.namespace", () => {
 		const enumMember = fuuNamespace.members[0] as dom.EnumDeclaration;
 		expect(enumMember.name).to.equal("Bar");
 	});
+
+	it("should ignore @type annotations in code", async () => {
+		const inlineAnnotationsData = await parseFile(path.join(__dirname, "data/inlineAnnotation.js"));
+		const parser = new JSDocTsdParser();
+		parser.parse(inlineAnnotationsData);
+
+		const resultItems = parser.resolveMembership();
+		resultItems.should.include.keys("Fuu");
+		expect([...resultItems.keys()]).to.not.include.keys("iShouldNotBePrintedToTheFileTypeDefinition");
+	});
 });
