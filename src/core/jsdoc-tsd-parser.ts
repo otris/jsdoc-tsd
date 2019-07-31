@@ -49,13 +49,6 @@ export class JSDocTsdParser {
 	 */
 	private parsedItems: Map<string, IParsedJSDocItem[]>;
 
-	/**
-	 * Array of jsdoc items which should be ignored because of
-	 * the since tag.
-	 * @todo Is this necessary? Why adding this item to 'jsdocItems'?
-	 */
-	private rejectedItems: string[] = [];
-
 	constructor(config?: Configuration) {
 		this.parsedItems = new Map();
 		this.jsdocItems = [];
@@ -120,9 +113,7 @@ export class JSDocTsdParser {
 		this.jsdocItems = [];
 
 		for (const item of jsdocItems) {
-			if (!this.evaluateSinceTag(item.since)) {
-				this.rejectedItems.push(item.longname);
-			if (!item.ignore && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
+			if (this.evaluateSinceTag(item.since) && !item.ignore && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
 				const parsedItems: IParsedJSDocItem[] = this.parsedItems.get(item.longname) || [];
 				if (parsedItems.length === 0) {
 					this.jsdocItems.push(item);
@@ -143,9 +134,6 @@ export class JSDocTsdParser {
 					});
 					this.parsedItems.set(item.longname, parsedItems);
 				}
-			} else {
-				// item is ignored because of the @private-annotation or by it's scope
-				this.rejectedItems.push(item.longname);
 			}
 		}
 	}
