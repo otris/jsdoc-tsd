@@ -804,6 +804,7 @@ export class JSDocTsdParser {
 			case "property":
 			case "method":
 				classMemberToAdd = classMember;
+				break;
 
 			default:
 				console.warn(`Can't add member '${(classMember as any).name}' to parent item '${(parsedClass as any).name}'. Unsupported member type: '${kind}'`);
