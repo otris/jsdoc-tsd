@@ -792,11 +792,13 @@ export class JSDocTsdParser {
 	 */
 	private resolveClassMembership(classMember: dom.ClassMember, parsedClass: dom.ClassDeclaration) {
 		let classMemberToAdd: dom.ClassMember | null = null;
-		switch (classMember.kind) {
+		const kind = classMember.kind;
+		switch (kind) {
 			// @ts-ignore
 			case "function":
 				// Classes can only contain method declarations
-				classMemberToAdd = this.transformFunctionDeclarationToMethod(classMember);
+				const classMemberFunction = (classMember as unknown) as dom.FunctionDeclaration;
+				classMemberToAdd = this.transformFunctionDeclarationToMethod(classMemberFunction);
 				break;
 
 			case "index-signature":
@@ -804,9 +806,10 @@ export class JSDocTsdParser {
 			case "property":
 			case "method":
 				classMemberToAdd = classMember;
+				break;
 
 			default:
-				console.warn(`Can't add member '${(classMember as any).longname}' to parent item '${(parsedClass as any).longname}'. Unsupported member type: '${classMember.kind}'`);
+				console.warn(`Can't add member '${(classMember as any).name}' to parent item '${(parsedClass as any).name}'. Unsupported member type: '${kind}'`);
 				break;
 		}
 
@@ -850,7 +853,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(interfaceMember as any).longname}' to parent item '${(parsedInterface as any).longname}'. Unsupported member type: '${interfaceMember.kind}'`);
+				console.warn(`Can't add member '${(interfaceMember as any).name}' to parent item '${(parsedInterface as any).name}'. Unsupported member type: '${interfaceMember.kind}'`);
 				break;
 		}
 
@@ -886,7 +889,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(moduleMember as any).longname}' to parent item '${(parsedModule as any).longname}'. Unsupported member type: '${moduleMember.kind}'`);
+				console.warn(`Can't add member '${(moduleMember as any).name}' to parent item '${(parsedModule as any).name}'. Unsupported member type: '${moduleMember.kind}'`);
 				break;
 		}
 
@@ -931,7 +934,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(namespaceMember as any).longname}' to parent item '${parsedNamespace.name}'. Unsupported member type: '${(namespaceMember as any).kind}'`);
+				console.warn(`Can't add member '${(namespaceMember as any).name}' to parent item '${parsedNamespace.name}'. Unsupported member type: '${(namespaceMember as any).kind}'`);
 				break;
 		}
 
