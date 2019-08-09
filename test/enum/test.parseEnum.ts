@@ -1,8 +1,10 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+chai.should();
 
 describe("JSDocTsdParser.parse.enum", () => {
 	const enumData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/enum.json"), { encoding: "utf-8" }));
@@ -13,8 +15,7 @@ describe("JSDocTsdParser.parse.enum", () => {
 
 		const parser = new JSDocTsdParser();
 		parser.parse(enumData);
-		const results = parser.getResultItems();
-		const enumDeclarations: dom.EnumDeclaration[] = results[enumData[0].longname] as dom.EnumDeclaration[];
+		const enumDeclarations: dom.EnumDeclaration[] = parser.getParsedItem(enumData[0].longname) as dom.EnumDeclaration[];
 
 		expect(enumDeclarations.length).to.eq(1);
 		const enumDeclaration = enumDeclarations[0];
@@ -43,10 +44,10 @@ describe("JSDocTsdParser.parse.enum", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(enumData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myStupidEnum");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myStupidEnum");
 
-		const enumDeclaration: dom.EnumDeclaration = result.myStupidEnum as dom.EnumDeclaration;
+		const enumDeclaration: dom.EnumDeclaration = result.get("myStupidEnum") as dom.EnumDeclaration;
 		expect(enumDeclaration.members.length).to.eq(2);
 	});
 
@@ -54,10 +55,10 @@ describe("JSDocTsdParser.parse.enum", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(enumInNamespaceData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myNamespace");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myNamespace");
 
-		const namespace = result.myNamespace as dom.NamespaceDeclaration;
+		const namespace = result.get("myNamespace") as dom.NamespaceDeclaration;
 		expect(namespace.members.length).to.eq(1);
 
 		const enumMember: dom.EnumDeclaration = namespace.members[0] as any;

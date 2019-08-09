@@ -3,6 +3,7 @@ exampleProject/
 node_modules/
 src/
 src-out/
+test/
 typings/
 .editorconfig
 .travis.yml

@@ -1,8 +1,9 @@
 import * as fs from "fs";
+import * as helper from "jsdoc/util/templateHelper";
 import * as path from "path";
 import * as shelljs from "shelljs";
+import { Configuration } from "./Configuration";
 import { JSDocTsdParser } from "./jsdoc-tsd-parser";
-import * as helper from "jsdoc/util/templateHelper";
 
 /**
  * Entry-Point of jsdoc. Gets called by the jsdoc-module to generate the docs.
@@ -21,7 +22,8 @@ export function publish(data: any, opts: any) {
 
 	let parser;
 	if (opts.configure) {
-		parser = new JSDocTsdParser(JSON.parse(fs.readFileSync(opts.configure, { encoding: "utf-8" })));
+		const config = new Configuration(opts.configure);
+		parser = new JSDocTsdParser(config);
 	} else {
 		parser = new JSDocTsdParser();
 	}
@@ -30,7 +32,7 @@ export function publish(data: any, opts: any) {
 	parser.parse(jsdocResults);
 
 	// Write the output
-	var outputDir, outputFilePath;
+	let outputDir, outputFilePath;
 	if (opts.destination.endsWith(".d.ts")) {
 		outputFilePath = opts.destination;
 		outputDir = path.dirname(outputFilePath);
@@ -48,7 +50,7 @@ export function publish(data: any, opts: any) {
 	}
 
 	try {
-		fs.writeFileSync(outputFilePath, parser.resolveResults());
+		fs.writeFileSync(outputFilePath, parser.generateTypeDefinition());
 	} catch (err) {
 		throw new Error("Can't write results to file '" + outputFilePath + "': " + err);
 	}

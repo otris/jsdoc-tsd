@@ -3,7 +3,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { parse } from "querystring";
-import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { JSDocTsdParser, IParsedJSDocItem } from "../../src/core/jsdoc-tsd-parser";
 
 describe("JSDocTsdParser.parse.overloading", () => {
 	const classData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/overloading.json"), { encoding: "utf-8" }));
@@ -12,10 +12,9 @@ describe("JSDocTsdParser.parse.overloading", () => {
 	it("should add the jsdoc comment to the constructor description and the classdesc tag to the class description", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
-  const results = parser.getResultItems();
 
-		const classDeclarations: dom.ClassDeclaration[] = results[classData[0].longname] as dom.ClassDeclaration[];
-  expect(classDeclarations.length).to.eq(1);
+		const classDeclarations: dom.ClassDeclaration[] = parser.getParsedItem(classData[0].longname) as dom.ClassDeclaration[];
+		expect(classDeclarations.length).to.eq(1);
 
 		expect(classDeclarations[0].jsDocComment).to.eq("Class description");
 		const classDeclaration = classDeclarations[0];
@@ -30,8 +29,8 @@ describe("JSDocTsdParser.parse.overloading", () => {
 	it("should add two constructors with different parameters to the class members", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
-		const results = parser.getResultItems();
-		const classDeclarations: dom.ClassDeclaration[] = results[classData[0].longname] as dom.ClassDeclaration[];
+
+		const classDeclarations: dom.ClassDeclaration[] = parser.getParsedItem(classData[0].longname) as dom.ClassDeclaration[];
 		expect(classDeclarations.length).to.eq(1);
 		const classDeclaration = classDeclarations[0];
 		expect(classDeclaration.members.length).to.eq(2);

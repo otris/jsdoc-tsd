@@ -10,10 +10,7 @@ describe("JSDocTsdParser.parse.topLevelFunction", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		const result = parser.getResultItems();
-		expect(result).haveOwnProperty(functionData[0].longname);
-
-		const functionDeclarations = result[functionData[0].longname];
+		const functionDeclarations = parser.getParsedItem(functionData[0].longname);
 		expect(functionDeclarations.length).to.equals(1);
 
 		const functionDeclaration = functionDeclarations[0] as dom.FunctionDeclaration;

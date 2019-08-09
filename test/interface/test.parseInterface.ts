@@ -13,8 +13,8 @@ describe("JSDocTsdParser.parse.interface", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const results = parser.getResultItems();
-		const interfaceDeclarations: dom.InterfaceDeclaration[] = results[interfaceData[0].longname] as dom.InterfaceDeclaration[];
+		const results = parser.getParsedItems();
+		const interfaceDeclarations: dom.InterfaceDeclaration[] = parser.getParsedItem(interfaceData[0].longname) as dom.InterfaceDeclaration[];
 
 		expect(interfaceDeclarations.length).to.eq(1);
 		const interfaceDeclaration = interfaceDeclarations[0];
@@ -26,10 +26,10 @@ describe("JSDocTsdParser.parse.interface", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestInterface");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myTestInterface");
 
-		const parsedInterface: dom.InterfaceDeclaration = result.myTestInterface as dom.InterfaceDeclaration;
+		const parsedInterface: dom.InterfaceDeclaration = result.get("myTestInterface") as dom.InterfaceDeclaration;
 		expect(parsedInterface.members.length).to.eq(2);
 
 		const methodDeclaration: dom.MethodDeclaration = parsedInterface.members[1] as dom.MethodDeclaration;
@@ -40,10 +40,10 @@ describe("JSDocTsdParser.parse.interface", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestInterface");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myTestInterface");
 
-		const parsedInterface: dom.InterfaceDeclaration = result.myTestInterface as dom.InterfaceDeclaration;
+		const parsedInterface: dom.InterfaceDeclaration = result.get("myTestInterface") as dom.InterfaceDeclaration;
 		expect(parsedInterface.members.length).to.eq(2);
 
 		const myPropertyMember: dom.PropertyDeclaration = parsedInterface.members[0] as dom.PropertyDeclaration;

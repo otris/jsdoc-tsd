@@ -1,0 +1,5 @@
+--timeout 36000000
+--ui bdd
+--require ts-node/register
+--forbid-only
+./test/**/test.*.ts

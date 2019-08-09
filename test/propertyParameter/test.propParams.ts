@@ -1,9 +1,10 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
-import { parse } from "querystring";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+chai.should();
 
 describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 	const interfaceData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/propParams.json"), { encoding: "utf-8" }));
@@ -13,14 +14,14 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestInterface");
-		expect(result).haveOwnPropertyDescriptor("mySimpleFunction_propertyParameter");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myTestInterface");
+		result.should.include.keys("mySimpleFunction_propertyParameter");
 
-		const parsedInterface: dom.InterfaceDeclaration = result.myTestInterface as dom.InterfaceDeclaration;
+		const parsedInterface: dom.InterfaceDeclaration = result.get("myTestInterface") as dom.InterfaceDeclaration;
 		expect(parsedInterface.members.length).to.eq(2);
 
-		const paramInterface: dom.InterfaceDeclaration = result.mySimpleFunction_propertyParameter as dom.InterfaceDeclaration;
+		const paramInterface: dom.InterfaceDeclaration = result.get("mySimpleFunction_propertyParameter") as dom.InterfaceDeclaration;
 
 		const methodDeclaration: dom.MethodDeclaration = parsedInterface.members[0] as dom.MethodDeclaration;
 		expect(methodDeclaration.jsDocComment).to.eq(`A simple function
@@ -39,14 +40,14 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("myTestInterface");
-		expect(result).haveOwnPropertyDescriptor("myEmployeeFunction_employees");
+		const result = parser.resolveMembership();
+		result.should.include.keys("myTestInterface");
+		result.should.include.keys("myEmployeeFunction_employees");
 
-		const parsedInterface: dom.InterfaceDeclaration = result.myTestInterface as dom.InterfaceDeclaration;
+		const parsedInterface: dom.InterfaceDeclaration = result.get("myTestInterface") as dom.InterfaceDeclaration;
 		expect(parsedInterface.members.length).to.eq(2);
 
-		const paramInterface: dom.InterfaceDeclaration = result.myEmployeeFunction_employees as dom.InterfaceDeclaration;
+		const paramInterface: dom.InterfaceDeclaration = result.get("myEmployeeFunction_employees") as dom.InterfaceDeclaration;
 
 		const methodDeclaration: dom.MethodDeclaration = parsedInterface.members[1] as dom.MethodDeclaration;
 		expect(methodDeclaration.jsDocComment).to.eq(`Assign the project to a list of employees

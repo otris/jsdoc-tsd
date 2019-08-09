@@ -1,0 +1,24 @@
+[
+	{
+		"comment": "/**\r\n * @typedef {\"fuu\"|\"bar\"} FuuBar\r\n */",
+		"meta": {
+			"filename": "a.js",
+			"lineno": 1,
+			"columnno": 0,
+			"path": "E:\\jsdoc-tsd\\exampleProject\\src",
+			"code": {}
+		},
+		"kind": "typedef",
+		"name": "FuuBar",
+		"type": {
+			"names": [
+				"\"fuu\"",
+				"\"bar\""
+			]
+		},
+		"longname": "FuuBar",
+		"scope": "global",
+		"___id": "T000002R000002",
+		"___s": true
+	}
+]

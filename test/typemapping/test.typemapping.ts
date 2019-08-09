@@ -18,9 +18,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map single untyped arrays", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(singleUntypedArray);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("myFunction")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.any);
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -29,9 +29,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map 2 dimensional untyped arrays", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(twoDimensionalUntypedArray);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("myFunction")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.array(dom.type.any));
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -40,9 +40,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map 3 dimensional untyped arrays", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(threeDimensionalUntypedArray);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("myFunction")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.array(dom.type.array(dom.type.any)));
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -51,9 +51,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map single typed arrays", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(singleStringArray);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("myFunction")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.string);
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -62,9 +62,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map four dimensional typed arrays", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(fourDimensionalStringArray);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("myFunction")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.array(dom.type.array(dom.type.array(dom.type.string))));
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -73,9 +73,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map two dimensional typed arrays with union types", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(twoDimensionalUnionTypeArray);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.myFunction[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("myFunction")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.type.array(dom.type.array(dom.create.union([dom.type.string, dom.type.number])));
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -84,9 +84,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map generic types for function return values", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionWithGenericReturnValue);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.f1[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("f1")[0] as dom.FunctionDeclaration;
 		const functionReturnType: dom.Type = (functionDeclaration.returnType as dom.UnionType).members[0];
 		const expectedReturnType = dom.create.typeParameter("Promise<any>");
 		expect(functionReturnType).to.deep.eq(expectedReturnType);
@@ -95,9 +95,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should map generic types for function parameters", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionWithGenericParameter);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.f1[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("f1")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = dom.create.typeParameter("Promise<any>");
 		expect(functionParamType).to.deep.eq(expectedParmType);
@@ -106,9 +106,9 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 	it("should transform object key and property descriptions", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(objectKeyAndPropertyDescription);
-		const resultItems = parser.getResultItems();
+		const resultItems = parser.getParsedItems();
 
-		const functionDeclaration: dom.FunctionDeclaration = resultItems.test[0] as dom.FunctionDeclaration;
+		const functionDeclaration: dom.FunctionDeclaration = parser.getParsedItem("test")[0] as dom.FunctionDeclaration;
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = "{ [key: string]: myCustomType }";
 		expect(functionParamType).to.deep.eq(expectedParmType);

@@ -1,9 +1,11 @@
 import { expect } from "chai";
+import chai = require("chai");
 import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { parse } from "querystring";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+chai.should();
 
 describe("JSDocTsdParser.parse.module", () => {
 	const moduleData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/module.json"), { encoding: "utf-8" }));
@@ -13,8 +15,8 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const results = parser.getResultItems();
-		const moduleDeclarations: dom.ModuleDeclaration[] = results[moduleData[2].longname] as dom.ModuleDeclaration[];
+		const results = parser.getParsedItems();
+		const moduleDeclarations: dom.ModuleDeclaration[] = parser.getParsedItem(moduleData[2].longname) as dom.ModuleDeclaration[];
 
 		expect(moduleDeclarations.length).to.eq(1);
 		const moduleDeclaration = moduleDeclarations[0];
@@ -26,10 +28,10 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("module:myModule");
+		const result = parser.resolveMembership();
+		result.should.include.keys("module:myModule");
 
-		const parsedModule: dom.ModuleDeclaration = result["module:myModule"] as dom.ModuleDeclaration;
+		const parsedModule: dom.ModuleDeclaration = result.get("module:myModule") as dom.ModuleDeclaration;
 		expect(parsedModule.members.length).to.eq(2);
 
 		const functionDeclaration: dom.FunctionDeclaration = parsedModule.members[1] as dom.FunctionDeclaration;
@@ -40,10 +42,10 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("module:myModule");
+		const result = parser.resolveMembership();
+		result.should.include.keys("module:myModule");
 
-		const parsedModule: dom.ModuleDeclaration = result["module:myModule"] as dom.ModuleDeclaration;
+		const parsedModule: dom.ModuleDeclaration = result.get("module:myModule") as dom.ModuleDeclaration;
 		expect(parsedModule.members.length).to.eq(2);
 
 		const variableMember: dom.VariableDeclaration = parsedModule.members[0] as dom.VariableDeclaration;

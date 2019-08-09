@@ -11,10 +11,10 @@ describe("JSDocTsdParser.cleanJSDocComment", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
 
-		const result = parser.prepareResults();
-		expect(result).haveOwnPropertyDescriptor("MyClass");
+		const result = parser.resolveMembership();
+		result.should.include.keys("MyClass");
 
-		const parsedClass: dom.ClassDeclaration = result.MyClass as dom.ClassDeclaration;
+		const parsedClass: dom.ClassDeclaration = result.get("MyClass") as dom.ClassDeclaration;
 		expect(parsedClass.members.length).to.eq(2);
 
 		// parsedClass.members[0] is constructor
