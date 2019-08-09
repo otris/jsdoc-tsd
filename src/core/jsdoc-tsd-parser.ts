@@ -792,11 +792,13 @@ export class JSDocTsdParser {
 	 */
 	private resolveClassMembership(classMember: dom.ClassMember, parsedClass: dom.ClassDeclaration) {
 		let classMemberToAdd: dom.ClassMember | null = null;
-		switch (classMember.kind) {
+		const kind = classMember.kind;
+		switch (kind) {
 			// @ts-ignore
 			case "function":
 				// Classes can only contain method declarations
-				classMemberToAdd = this.transformFunctionDeclarationToMethod(classMember);
+				const classMemberFunction = (classMember as unknown) as dom.FunctionDeclaration;
+				classMemberToAdd = this.transformFunctionDeclarationToMethod(classMemberFunction);
 				break;
 
 			case "index-signature":
