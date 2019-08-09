@@ -18,6 +18,7 @@
 		"parse-example": "jsdoc -r exampleProject -X > exampleProject/jsdoc-results.json",
 		"re-compile": "rimraf src-out && npm run compile",
 		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --opts test/mocha.opts",
+		"pretest": "npm run compile",
 		"posttest": "npm run lint",
 		"test-extension": "jsdoc -r exampleProject -t src-out",
 		"test-publish": "npm pack"
