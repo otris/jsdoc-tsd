@@ -17,7 +17,7 @@
 		"lint": "tslint -c tslint.json -p tsconfig.json",
 		"parse-example": "jsdoc -r exampleProject -X > exampleProject/jsdoc-results.json",
 		"re-compile": "rimraf src-out && npm run compile",
-		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true nyc --reporter=html --extension=.ts --exclude=**/*.js --include=src/**/*.ts mocha --opts test/mocha.opts",
+		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true NO_CONSOLE=true nyc --reporter=html --extension=.ts --exclude=**/*.js --include=src/**/*.ts mocha --opts test/mocha.opts",
 		"posttest": "npm run lint",
 		"test-extension": "jsdoc -r exampleProject -t src-out",
 		"test-publish": "npm pack"

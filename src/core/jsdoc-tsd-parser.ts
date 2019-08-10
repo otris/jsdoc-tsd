@@ -67,11 +67,11 @@ export class JSDocTsdParser {
 			try {
 				output += dom.emit(item);
 			} catch (err) {
-				console.error(`Unexpected error. Please report this error on github!\nCan't emit item ${longname}: ${err}\n\n${JSON.stringify(item, null, "\t")}`);
+				this.log(`Unexpected error. Please report this error on github!\nCan't emit item ${longname}: ${err}\n\n${JSON.stringify(item, null, "\t")}`, console.error);
 				const jsdocItems = this.jsdocItems.filter((elem) => {
 					return (elem.hasOwnProperty("name") && elem.name.endsWith(longname)) || (elem.hasOwnProperty("longname") && elem.longname === longname);
 				});
-				console.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
+				this.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
 			}
 		}
 
@@ -181,11 +181,11 @@ export class JSDocTsdParser {
 
 							default:
 								// parent type not supported
-								console.warn(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`);
+								this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
 								break;
 						}
 					} else {
-						console.warn("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.");
+						this.log("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.", console.warn);
 					}
 				} else {
 					// member has no parent, add the item as top-level declaration
@@ -482,6 +482,12 @@ export class JSDocTsdParser {
 		}
 	}
 
+	private log(message: string, logFunc: (msg: string) => void = this.log) {
+		if (!process.env.NO_CONSOLE) {
+			logFunc(message);
+		}
+	}
+
 	private mapTypesToUnion(types: string[]): dom.UnionType {
 		const domTypes: dom.Type[] = [];
 		for (const type of types) {
@@ -681,7 +687,7 @@ export class JSDocTsdParser {
 
 			default:
 				if ((item as any).kind !== "package") {
-					console.warn(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
+					this.log(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 				}
 				return null;
 		}
@@ -740,7 +746,7 @@ export class JSDocTsdParser {
 				result = this.parseTypeDefinitionAsType(jsdocItem);
 			}
 		} else {
-			console.log("Invalid typedef. Typedef has no type: " + JSON.stringify(jsdocItem));
+			this.log("Invalid typedef. Typedef has no type: " + JSON.stringify(jsdocItem));
 		}
 
 		return result;
@@ -776,7 +782,7 @@ export class JSDocTsdParser {
 	private parseTypeDefinitionAsType(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration | null {
 		let result = null;
 		if (jsdocItem.properties) {
-			console.log(`Invalid typedef. Typedef type is '${jsdocItem.type.names[0]}' and properties are defined.
+			this.log(`Invalid typedef. Typedef type is '${jsdocItem.type.names[0]}' and properties are defined.
 			Properties are only allowed for type definitions of type 'object': ${JSON.stringify(jsdocItem)}`);
 		} else {
 			result = dom.create.alias(jsdocItem.name, jsdocItem.type.names.join("|") as dom.Type);
@@ -809,7 +815,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(classMember as any).name}' to parent item '${(parsedClass as any).name}'. Unsupported member type: '${kind}'`);
+				this.log(`Can't add member '${(classMember as any).name}' to parent item '${(parsedClass as any).name}'. Unsupported member type: '${kind}'`);
 				break;
 		}
 
@@ -853,7 +859,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(interfaceMember as any).name}' to parent item '${(parsedInterface as any).name}'. Unsupported member type: '${interfaceMember.kind}'`);
+				this.log(`Can't add member '${(interfaceMember as any).name}' to parent item '${(parsedInterface as any).name}'. Unsupported member type: '${interfaceMember.kind}'`);
 				break;
 		}
 
@@ -889,7 +895,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(moduleMember as any).name}' to parent item '${(parsedModule as any).name}'. Unsupported member type: '${moduleMember.kind}'`);
+				this.log(`Can't add member '${(moduleMember as any).name}' to parent item '${(parsedModule as any).name}'. Unsupported member type: '${moduleMember.kind}'`);
 				break;
 		}
 
@@ -934,7 +940,7 @@ export class JSDocTsdParser {
 				break;
 
 			default:
-				console.warn(`Can't add member '${(namespaceMember as any).name}' to parent item '${parsedNamespace.name}'. Unsupported member type: '${(namespaceMember as any).kind}'`);
+				this.log(`Can't add member '${(namespaceMember as any).name}' to parent item '${parsedNamespace.name}'. Unsupported member type: '${(namespaceMember as any).kind}'`);
 				break;
 		}
 
