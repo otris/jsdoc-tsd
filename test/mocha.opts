@@ -1,5 +1,6 @@
 --timeout 36000000
 --ui bdd
 --require ts-node/register
+--require source-map-support/register
 --forbid-only
 ./test/**/test.*.ts
