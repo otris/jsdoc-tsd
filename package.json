@@ -17,7 +17,7 @@
 		"lint": "tslint -c tslint.json -p tsconfig.json",
 		"parse-example": "jsdoc -r exampleProject -X > exampleProject/jsdoc-results.json",
 		"re-compile": "rimraf src-out && npm run compile",
-		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --opts test/mocha.opts",
+		"test": "cross-env TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true NO_CONSOLE=true nyc --reporter=html --extension=.ts --exclude=**/*.js --include=src/**/*.ts mocha --opts test/mocha.opts",
 		"posttest": "npm run lint",
 		"test-extension": "jsdoc -r exampleProject -t src-out",
 		"test-publish": "npm pack"
@@ -36,7 +36,9 @@
 		"grunt-jsdoc": "^2.4.0",
 		"jsdoc3-parser": "^2.0.0",
 		"mocha": "^6.1.4",
+		"nyc": "^14.1.1",
 		"rimraf": "^2.6.3",
+		"source-map-support": "^0.5.13",
 		"synp": "^1.5.0",
 		"ts-node": "^8.3.0",
 		"tslint": "^5.18.0",

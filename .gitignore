@@ -6,6 +6,8 @@ bower_components/
 build/*
 out/*
 src-out/*
+coverage/*
+.nyc_output
 
 # Eclipse
 .compare/
