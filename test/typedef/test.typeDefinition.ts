@@ -4,7 +4,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
-import { parseFile } from "../jsdoc-helper";
+import { parseFile, parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.typedef", () => {
@@ -69,5 +69,27 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const typeDeclaration: dom.TypeAliasDeclaration = result.get("FuuBar") as dom.TypeAliasDeclaration;
 		expect(typeDeclaration.kind).to.eq("alias");
 		expect(typeDeclaration.type).to.eq(`"fuu"|"bar"`);
+	});
+
+	it("should parse a type definition even no type was specified", async () => {
+		const typeData = await parseData(`
+			/**
+			 * @typedef Fuu
+			 * @property {string} bar
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(typeData);
+
+		const result = parser.resolveMembership();
+		result.should.include.keys("Fuu");
+
+		const interfaceDeclaration: dom.InterfaceDeclaration = result.get("Fuu") as dom.InterfaceDeclaration;
+		expect(interfaceDeclaration.kind).to.eq("interface");
+
+		// @ts-ignore
+		const members = interfaceDeclaration.members.map((member) => member.name);
+		expect(members).to.include("bar");
 	});
 });

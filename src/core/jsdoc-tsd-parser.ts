@@ -746,7 +746,9 @@ export class JSDocTsdParser {
 				result = this.parseTypeDefinitionAsType(jsdocItem);
 			}
 		} else {
-			this.log("Invalid typedef. Typedef has no type: " + JSON.stringify(jsdocItem));
+			// No type specified (@typedef <Name> instead of @typedef {<type>} <Name>)
+			// We assume that it's of type object
+			result = this.parseTypeDefinitionAsObject(jsdocItem);
 		}
 
 		return result;
