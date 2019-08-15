@@ -482,7 +482,7 @@ export class JSDocTsdParser {
 		}
 	}
 
-	private log(message: string, logFunc: (msg: string) => void = this.log) {
+	private log(message: string, logFunc: (msg: string) => void = console.log) {
 		if (!process.env.NO_CONSOLE) {
 			logFunc(message);
 		}
