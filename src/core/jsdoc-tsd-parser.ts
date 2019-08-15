@@ -503,7 +503,8 @@ export class JSDocTsdParser {
 		let resultType: dom.Type = dom.type.any;
 		while (/^Array/i.test(variableType)) {
 			// it's an array, check if it's typed
-			const arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|]+\)?)>/i); // @todo: can contain namepaths
+			//                                           Array.< (bllaaa|bla)  >
+			const arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|~:]+\)?)>/i); // @todo: can contain namepaths
 			if (arrayTypeMatches && arrayTypeMatches[1]) {
 				const arrayTypeString: string = arrayTypeMatches[1];
 				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString);
@@ -536,33 +537,46 @@ export class JSDocTsdParser {
 	}
 
 	private mapVariableTypeString(variableType: string): dom.Type {
+		let resultTypeStr: string = "";
+		let resultType: dom.Type | null = null;
 		if (variableType === "bool") {
-			variableType = "boolean";
+			resultTypeStr = "boolean";
+		} else if (variableType === "function") {
+			resultTypeStr = "Function";
+		} else if (variableType === "*") {
+			resultTypeStr = "any";
+		} else {
+			// check if it's a module member
+			// e.g. module:<moduleName> or module:<moduleName>~<moduleMember>
+			const moduleMemberMatches = variableType.match(/^module:([^~]+)~?(.*)$/);
+			if (moduleMemberMatches) {
+				const moduleName = moduleMemberMatches[1];
+				const memberName = (moduleMemberMatches.length === 3) ? moduleMemberMatches[2] : null;
+				resultTypeStr = moduleName;
+				if (memberName) {
+					resultTypeStr += `.${memberName}`;
+				}
+			}
+
+			// check if it's a union type
+			if (!resultTypeStr && !resultType && variableType.indexOf("|") > -1) {
+				variableType = variableType.replace(/\(|\)/g, "");
+				resultType = this.mapTypesToUnion(variableType.split("|"));
+			}
+
+			// check if it's a type parameter
+			// e.g. "Promise.<*>" (JSDoc always separate the type with a dot)
+			const typeParameterMatches = variableType.match(/^([^<.]+)\.<([^>]+)>$/);
+			if (!resultTypeStr && !resultType && typeParameterMatches && typeParameterMatches.length === 3) {
+				// it's not a pretty nice solution, but it works for now
+				resultType = dom.create.typeParameter(
+					`${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`,
+				);
+			}
 		}
 
-		if (variableType === "function") {
-			variableType = "Function";
-		}
-
-		if (variableType === "*") {
-			variableType = "any";
-		}
-
-		// check if it's a union type
-		let resultType: dom.Type = variableType as dom.Type;
-		if (variableType.indexOf("|") > -1) {
-			variableType = variableType.replace(/\(|\)/g, "");
-			resultType = this.mapTypesToUnion(variableType.split("|"));
-		}
-
-		// check if it's a type parameter
-		// e.g. "Promise.<*>" (JSDoc always separate the type with a dot)
-		const typeParameterMatches = variableType.match(/^([^<.]+)\.<([^>]+)>$/);
-		if (typeParameterMatches && typeParameterMatches.length === 3) {
-			// it's not a pretty nice solution, but it works for now
-			resultType = dom.create.typeParameter(
-				`${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`,
-			);
+		if (!resultType) {
+			resultType = (resultTypeStr || variableType) as dom.Type;
 		}
 
 		return resultType;

@@ -5,6 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { parse } from "querystring";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.module", () => {
@@ -55,5 +56,69 @@ describe("JSDocTsdParser.parse.module", () => {
 		const unionType = variableMember.type as dom.UnionType;
 		expect(unionType.members.length).to.eq(1);
 		expect(unionType.members[0]).to.eq(dom.type.string);
+	});
+	it("should transform module members successfully (#52)", async () => {
+		const data = await parseData(`
+			/**
+			 * @module Fuu
+			 */
+
+			 /**
+			  * @typedef {Object} bar
+			  * @property {string} FuuBar
+			  * @memberof module:Fuu
+			  */
+
+			/**
+			 * @function testFunction
+			 * @returns {module:Fuu~bar}
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		expect([...result.keys()]).to.include("module:Fuu");
+
+		const moduleDeclaration: dom.ModuleDeclaration = result.get("module:Fuu") as dom.ModuleDeclaration;
+
+		// @ts-ignore
+		const functionDeclaration: dom.FunctionDeclaration = moduleDeclaration.members.filter((member) => member.name === "testFunction")[0];
+		const returnType = (functionDeclaration.returnType as dom.UnionType).members[0];
+		expect(returnType).to.equal("Fuu.bar");
+	});
+
+	it("should transform module members as arrays successfully (#52)", async () => {
+		const data = await parseData(`
+			/**
+			 * @module Fuu
+			 */
+
+			 /**
+			  * @typedef {Object} bar
+			  * @property {string} FuuBar
+			  * @memberof module:Fuu
+			  */
+
+			/**
+			 * @function testFunction
+			 * @returns {module:Fuu~bar[]}
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		expect([...result.keys()]).to.include("module:Fuu");
+
+		const moduleDeclaration: dom.ModuleDeclaration = result.get("module:Fuu") as dom.ModuleDeclaration;
+		
+		// @ts-ignore
+		const functionDeclaration: dom.FunctionDeclaration = moduleDeclaration.members.filter((member) => member.name === "testFunction")[0];
+		const returnType = (functionDeclaration.returnType as dom.UnionType).members[0] as dom.ArrayTypeReference;
+		expect(returnType.kind).to.equal("array");
+		expect(returnType.type).to.equal("Fuu.bar");
 	});
 });
