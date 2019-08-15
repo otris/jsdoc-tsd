@@ -636,6 +636,18 @@ export class JSDocTsdParser {
 	private parseFunction(jsdocItem: IFunctionDoclet): dom.DeclarationBase {
 		const functionReturnValue: dom.Type = this.getFunctionReturnValue(jsdocItem);
 		let domFunction: dom.FunctionDeclaration;
+		if (jsdocItem.this) {
+			jsdocItem.params = jsdocItem.params || [];
+			jsdocItem.params.unshift({
+				comment: "",
+				description: "",
+				name: "this",
+				type: {
+					names: [jsdocItem.this],
+				},
+			});
+		}
+
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
 			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params, jsdocItem.name), functionReturnValue);
 		} else {
