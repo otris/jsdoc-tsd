@@ -81,7 +81,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should create a private class member", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classDataPrivateMembers);
-		let results = parser.resolveMembership();
+		let results = parser.resolveMembershipAndExtends();
 
 		results.should.include.keys("classWithPrivateMembers");
 		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
@@ -97,7 +97,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should create a private class member method", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classDataPrivateMembers);
-		let results = parser.resolveMembership();
+		let results = parser.resolveMembershipAndExtends();
 
 		results.should.include.keys("classWithPrivateMembers");
 		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
@@ -133,7 +133,7 @@ describe("JSDocTsdParser.parse.class", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const results = parser.resolveMembership();
+		const results = parser.resolveMembershipAndExtends();
 		results.should.include.keys("A");
 		results.should.include.keys("B");
 

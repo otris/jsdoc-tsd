@@ -48,8 +48,8 @@ describe("General tests for the parser", () => {
 		parser.parse(data);
 
 		// Call resolveMembership twice. Before the fixes, members were duplicated
-		let results = parser.resolveMembership();
-		results = parser.resolveMembership();
+		let results = parser.resolveMembershipAndExtends();
+		results = parser.resolveMembershipAndExtends();
 
 		results.should.include.keys("A");
 		results.should.include.keys("B");

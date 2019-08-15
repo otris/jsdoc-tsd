@@ -110,7 +110,7 @@ describe("Test for parsing the since tag", () => {
 		let parser = new JSDocTsdParser(parserConfig);
 		parser.parse(myClass);
 
-		let result = parser.resolveMembership();
+		let result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestClass");
 		const classDeclaration: dom.ClassDeclaration = result.get("myTestClass") as dom.ClassDeclaration;
 		expect(classDeclaration.members.length).to.eq(3);
@@ -122,7 +122,7 @@ describe("Test for parsing the since tag", () => {
 		parser = new JSDocTsdParser(parserConfig);
 		parser.parse(myClass);
 
-		result = parser.resolveMembership();
+		result = parser.resolveMembershipAndExtends();
 		expect(Object.keys(result).length).to.eq(0);
 	});
 

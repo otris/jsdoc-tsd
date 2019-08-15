@@ -11,7 +11,7 @@ describe("JSDocTsdParser.cleanJSDocComment", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("MyClass");
 
 		const parsedClass: dom.ClassDeclaration = result.get("MyClass") as dom.ClassDeclaration;

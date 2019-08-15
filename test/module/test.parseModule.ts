@@ -29,7 +29,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("module:myModule");
 
 		const parsedModule: dom.ModuleDeclaration = result.get("module:myModule") as dom.ModuleDeclaration;
@@ -43,7 +43,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(moduleData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("module:myModule");
 
 		const parsedModule: dom.ModuleDeclaration = result.get("module:myModule") as dom.ModuleDeclaration;
@@ -78,7 +78,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		expect([...result.keys()]).to.include("module:Fuu");
 
 		const moduleDeclaration: dom.ModuleDeclaration = result.get("module:Fuu") as dom.ModuleDeclaration;
@@ -110,7 +110,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		expect([...result.keys()]).to.include("module:Fuu");
 
 		const moduleDeclaration: dom.ModuleDeclaration = result.get("module:Fuu") as dom.ModuleDeclaration;

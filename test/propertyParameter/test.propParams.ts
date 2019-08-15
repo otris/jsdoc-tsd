@@ -14,7 +14,7 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestInterface");
 		result.should.include.keys("mySimpleFunction_propertyParameter");
 
@@ -40,7 +40,7 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestInterface");
 		result.should.include.keys("myEmployeeFunction_employees");
 

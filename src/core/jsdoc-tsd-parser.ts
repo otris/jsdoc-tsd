@@ -11,6 +11,7 @@ const jsdocCommentParser = require("comment-parser");
 export interface IParsedJSDocItem {
 	longname: string;
 	memberof?: string;
+	original: TDoclet;
 	parsed: dom.DeclarationBase;
 }
 
@@ -62,7 +63,7 @@ export class JSDocTsdParser {
 	public generateTypeDefinition(targetPath?: string): string {
 		let output = "";
 
-		const results = this.resolveMembership();
+		const results = this.resolveMembershipAndExtends();
 		for (const [longname, item] of results.entries()) {
 			try {
 				output += dom.emit(item);
@@ -141,6 +142,7 @@ export class JSDocTsdParser {
 					parsedItems.push({
 						longname: item.longname,
 						memberof: item.memberof,
+						original: item,
 						parsed: parsedItem,
 					});
 					this.parsedItems.set(item.longname, parsedItems);
@@ -156,10 +158,22 @@ export class JSDocTsdParser {
 	 * @returns Map with the top level declarations and resolved memberships. The key is the
 	 *          long name of the item, the value is the @see {dom.TopLevelDeclaration}
 	 */
-	public resolveMembership(): Map<string, dom.TopLevelDeclaration> {
+	public resolveMembershipAndExtends(): Map<string, dom.TopLevelDeclaration> {
 		const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
 		for (const parsedItems of this.parsedItems.values()) {
 			for (const parsedItem of parsedItems) {
+
+					if (parsedItem.original.kind === "class" && parsedItem.original.augments) {
+					this.log(`Lookup ${parsedItem.longname} extends ${parsedItem.original.augments}`, console.error)
+						const parentItem: dom.ClassDeclaration | undefined =
+							this.findClassParent(parsedItem.original as IClassDoclet, domTopLevelDeclarations);
+
+						if (parentItem) {
+							const classItem = parsedItem.parsed as dom.ClassDeclaration;
+							classItem.baseType = parentItem;
+						}
+					}
+
 				if (parsedItem.memberof) {
 					// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
 					//       Maybe the parent item was not processed yet, then it will not be
@@ -213,6 +227,38 @@ export class JSDocTsdParser {
 
 		return domTopLevelDeclarations;
 	}
+
+	private findClassParent(parsedItem: IClassDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.ClassDeclaration | undefined {
+		return parsedItem.augments && parsedItem.augments
+			.map(augments => {
+				try {
+					const classItem = this.findParentItem(augments, domTopLevelDeclarations) as dom.ClassDeclaration;
+					this.log(`${parsedItem.name} extends ${classItem.name}`, console.error)
+					return classItem;
+				}
+				finally {
+					this.log(`${parsedItem.name} cannot find ${augments}`, console.error)
+					return;
+				}
+			})
+			.find(x => x) as dom.ClassDeclaration;
+	}
+
+	// private findInterfaceParent(parsedItem: IClassDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.ClassDeclaration | undefined {
+	// 	return parsedItem.augments && parsedItem.augments
+	// 		.map(augments => this.findParentItem(augments, domTopLevelDeclarations))
+	// 		.find((x: dom.DeclarationBase | undefined) => {
+	// 			if (!x)
+	// 				return;
+	// 			try {
+	// 				const classItem = x as dom.ClassDeclaration;
+	// 				return classItem;
+	// 			}
+	// 			finally {
+	// 				return;
+	// 			}
+	// 		}) as dom.ClassDeclaration;
+	// }
 
 	/**
 	 * Creates the comment for the jsdoc item
@@ -345,6 +391,7 @@ export class JSDocTsdParser {
 					this.parsedItems.set(typeDef.longname, [{
 						longname: typeDef.longname,
 						memberof: typeDef.memberof,
+						original: typeDef,
 						parsed: domInterface,
 					}]);
 

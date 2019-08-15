@@ -26,7 +26,7 @@ describe("JSDocTsdParser.parse.interface", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestInterface");
 
 		const parsedInterface: dom.InterfaceDeclaration = result.get("myTestInterface") as dom.InterfaceDeclaration;
@@ -40,7 +40,7 @@ describe("JSDocTsdParser.parse.interface", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(interfaceData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestInterface");
 
 		const parsedInterface: dom.InterfaceDeclaration = result.get("myTestInterface") as dom.InterfaceDeclaration;
