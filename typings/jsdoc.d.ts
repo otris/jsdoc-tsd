@@ -122,6 +122,7 @@ declare interface IFunctionDoclet extends IDocletBase {
     returns?: IDocletReturn[];
     override?: boolean;
     virtual?: string[];
+    this: string;
 }
 
 declare interface IMemberDoclet extends IDocletBase {

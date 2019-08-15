@@ -4,6 +4,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.function", () => {
@@ -489,5 +490,64 @@ describe("JSDocTsdParser.parse.function", () => {
 		const unionType: dom.UnionType = param.type as dom.UnionType;
 		expect(unionType.members.length).to.eq(1);
 		expect(unionType.members[0]).to.eq("T");
+	});
+
+	it("should set the this reference in a function", async () => {
+		const data = await parseData(`
+			/**
+			 * @class Bar
+			 */
+
+			/**
+			 * @function Fuu
+			 * @this Bar
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		result.should.include.keys("Fuu");
+
+		const functionDeclaration = result.get("Fuu") as dom.FunctionDeclaration;
+		expect(functionDeclaration.parameters.length).to.equal(1);
+
+		const thisParam = functionDeclaration.parameters[0];
+		expect(thisParam.name).to.equal("this");
+		expect(thisParam.type).to.have.property("kind").which.equals("union");
+
+		const union = thisParam.type as dom.UnionType;
+		expect(union.members).to.include("Bar");
+	});
+
+	it("should add the this reference of a function always to the beginning", async () => {
+		const data = await parseData(`
+			/**
+			 * @class Bar
+			 */
+
+			/**
+			 * @function Fuu
+			 * @this Bar
+			 * @param {string} fuuBar
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		result.should.include.keys("Fuu");
+
+		const functionDeclaration = result.get("Fuu") as dom.FunctionDeclaration;
+		expect(functionDeclaration.parameters.length).to.equal(2);
+
+		const thisParam = functionDeclaration.parameters[0];
+		expect(thisParam.name).to.equal("this");
+		expect(thisParam.type).to.have.property("kind").which.equals("union");
+
+		const union = thisParam.type as dom.UnionType;
+		expect(union.members).to.include("Bar");
 	});
 });
