@@ -66,11 +66,15 @@ export class JSDocTsdParser {
 		for (const [longname, item] of results.entries()) {
 			try {
 				output += dom.emit(item);
+
 			} catch (err) {
+				/* istanbul ignore next */
 				this.log(`Unexpected error. Please report this error on github!\nCan't emit item ${longname}: ${err}\n\n${JSON.stringify(item, null, "\t")}`, console.error);
+				/* istanbul ignore next */
 				const jsdocItems = this.jsdocItems.filter((elem) => {
 					return (elem.hasOwnProperty("name") && elem.name.endsWith(longname)) || (elem.hasOwnProperty("longname") && elem.longname === longname);
 				});
+				/* istanbul ignore next */
 				this.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
 			}
 		}
@@ -92,7 +96,7 @@ export class JSDocTsdParser {
 		if (item) {
 			return item.map((i) => i.parsed);
 		} else {
-			throw new Error(`Item with name ${name} not found in result items`);
+			throw new Error(`Item with name '${name}' not found in result items`);
 		}
 	}
 
@@ -122,10 +126,14 @@ export class JSDocTsdParser {
 				const parsedItem: dom.DeclarationBase | null = this.parseJSDocItem(item);
 				if (parsedItem) {
 					if (item.kind !== "class") {
+						// @ts-ignore
 						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
 					}
 
-					this.handleFlags(item, parsedItem);
+					if ("flags" in parsedItem) {
+						this.handleFlags(item, parsedItem);
+					}
+
 					this.handleTags(item, parsedItem);
 					parsedItems.push({
 						longname: item.longname,
@@ -179,6 +187,7 @@ export class JSDocTsdParser {
 								this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
 								break;
 
+							/* istanbul ignore next */
 							default:
 								// parent type not supported
 								this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
@@ -307,6 +316,7 @@ export class JSDocTsdParser {
 				// the parameter is a property
 
 				if (!typeDef || !typeDef.properties) {
+					/* istanbul ignore next */
 					throw new Error(`Parent of property ${param.name} is missing or incorrect`);
 				}
 
@@ -323,6 +333,7 @@ export class JSDocTsdParser {
 					// the parameter is the last property
 
 					if (!propParam) {
+						/* istanbul ignore next */
 						throw new Error(`Parent of property ${param.name} is missing or incorrect`);
 					}
 
@@ -407,9 +418,9 @@ export class JSDocTsdParser {
 				} else if (parentItem) {
 					const parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
 					parentItemAsNamespace.members.some((item) => {
+						/* istanbul ignore else */
 						if (item.name === name) {
 							parentItem = item;
-
 							return true;
 						} else {
 							return false;
@@ -434,6 +445,7 @@ export class JSDocTsdParser {
 				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names);
 			} else {
 				// the jsdoc comment is incomplete, there is no type information for the return value
+				this.log(`Invalid return type. Check the documentation of function ${jsdocItem.longname}`);
 				functionReturnValue = dom.type.any;
 			}
 		} else {
@@ -484,6 +496,7 @@ export class JSDocTsdParser {
 
 	private log(message: string, logFunc: (msg: string) => void = console.log) {
 		if (!process.env.NO_CONSOLE) {
+			/* istanbul ignore next */
 			logFunc(message);
 		}
 	}
@@ -605,6 +618,7 @@ export class JSDocTsdParser {
 
 	private parseConstant(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
+			/* istanbul ignore next */
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
 		}
 
@@ -618,6 +632,7 @@ export class JSDocTsdParser {
 
 	private parseEnum(jsdocItem: IMemberDoclet): dom.DeclarationBase {
 		if (!jsdocItem.isEnum) {
+			/* istanbul ignore next */
 			throw new Error(`item ${jsdocItem.longname} is not an enum`);
 		}
 
@@ -713,6 +728,7 @@ export class JSDocTsdParser {
 
 			default:
 				if ((item as any).kind !== "package") {
+					/* istanbul ignore next */
 					this.log(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 				}
 				return null;
@@ -721,6 +737,7 @@ export class JSDocTsdParser {
 
 	private parseMember(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
+			/* istanbul ignore next */
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
 		}
 
@@ -738,26 +755,6 @@ export class JSDocTsdParser {
 
 	private parseNamespace(jsdocItem: INamespaceDoclet): dom.DeclarationBase {
 		return dom.create.namespace(jsdocItem.name);
-	}
-
-	private parseTypeAliasDefinition(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration {
-		// get the type of our type definition
-		let type: dom.Type;
-		if (jsdocItem.params) {
-			// the type definition is a function type, so we have to create a function type
-			// with the dts-dom module
-			type = dom.create.functionType(
-				this.createDomParams(jsdocItem.params, jsdocItem.name),
-				this.getFunctionReturnValue(jsdocItem as any),
-			);
-		} else {
-			type = this.mapVariableType(jsdocItem.type.names[0]);
-		}
-
-		return dom.create.alias(
-			jsdocItem.name,
-			type,
-		);
 	}
 
 	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase | null {
@@ -780,10 +777,18 @@ export class JSDocTsdParser {
 		return result;
 	}
 
-	private parseTypeDefinitionAsFunction(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration {
+	private parseTypeDefinitionAsFunction(jsdocItem: ITypedefDoclet): dom.DeclarationBase {
 		// if the jsdoc item has a property "type", we can be sure that it isn't a typedef
 		// which should be mapped to an interface. Instead we create a typeAlias-Declaration
-		return this.parseTypeAliasDefinition(jsdocItem);
+		const functionType = dom.create.functionType(
+			(jsdocItem.params) ? this.createDomParams(jsdocItem.params, jsdocItem.name) : [],
+			this.getFunctionReturnValue(jsdocItem as any),
+		);
+
+		return dom.create.alias(
+			jsdocItem.name,
+			functionType,
+		);
 	}
 
 	private parseTypeDefinitionAsObject(jsdocItem: ITypedefDoclet): dom.InterfaceDeclaration {
@@ -842,6 +847,7 @@ export class JSDocTsdParser {
 				classMemberToAdd = classMember;
 				break;
 
+			/* istanbul ignore next */
 			default:
 				this.log(`Can't add member '${(classMember as any).name}' to parent item '${(parsedClass as any).name}'. Unsupported member type: '${kind}'`);
 				break;
@@ -886,6 +892,7 @@ export class JSDocTsdParser {
 				interfaceMemberToAdd = interfaceMember;
 				break;
 
+			/* istanbul ignore next*/
 			default:
 				this.log(`Can't add member '${(interfaceMember as any).name}' to parent item '${(parsedInterface as any).name}'. Unsupported member type: '${interfaceMember.kind}'`);
 				break;
@@ -922,6 +929,7 @@ export class JSDocTsdParser {
 				moduleMemberToAdd = moduleMember;
 				break;
 
+			/* istanbul ignore next */
 			default:
 				this.log(`Can't add member '${(moduleMember as any).name}' to parent item '${(parsedModule as any).name}'. Unsupported member type: '${moduleMember.kind}'`);
 				break;
@@ -967,6 +975,7 @@ export class JSDocTsdParser {
 				namespaceMemberToAdd = namespaceMember;
 				break;
 
+			/* istanbul ignore next*/
 			default:
 				this.log(`Can't add member '${(namespaceMember as any).name}' to parent item '${parsedNamespace.name}'. Unsupported member type: '${(namespaceMember as any).kind}'`);
 				break;

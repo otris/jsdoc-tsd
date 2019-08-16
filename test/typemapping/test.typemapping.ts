@@ -3,6 +3,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { parseData } from "../jsdoc-helper";
 
 describe("Tests for the type mapping from jsdoc types to typescript types", () => {
 	const singleUntypedArray: ITypedefDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/singleUntypedArray.json"), { encoding: "utf-8" }));
@@ -112,5 +113,63 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const functionParamType: dom.Type = (functionDeclaration.parameters[0].type as dom.UnionType).members[0];
 		const expectedParmType = "{ [key: string]: myCustomType }";
 		expect(functionParamType).to.deep.eq(expectedParmType);
+	});
+
+	it("should map parameters without type to 'any'", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @param bar
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
+
+		expect(functionFuu.parameters.length).to.equal(1);
+		const paramBar = functionFuu.parameters[0];
+		expect(paramBar.name).to.equal("bar");
+		expect(paramBar.type).to.equal(dom.type.any);
+	});
+
+	it("should map functions with incomplete return annotation to any", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @returns Description of return value without specifying type
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
+		expect(functionFuu.returnType).to.equal(dom.type.any);
+	});
+
+	it("should map type 'function' to 'Function'", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @param bar {function}
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
+
+		expect(functionFuu.parameters.length).to.equal(1);
+		const paramBar = functionFuu.parameters[0];
+		expect(paramBar.name).to.equal("bar");
+
+		const union = paramBar.type as dom.UnionType;
+		expect(union.members[0]).to.equal("Function");
 	});
 });
