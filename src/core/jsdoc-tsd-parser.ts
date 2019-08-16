@@ -49,6 +49,7 @@ export class JSDocTsdParser {
 	 * (@see resolveMembership).
 	 */
 	private parsedItems: Map<string, IParsedJSDocItem[]>;
+	private _parsedClassess: IParsedJSDocItem[] | null = null;
 
 	constructor(config?: Configuration) {
 		this.parsedItems = new Map();
@@ -164,9 +165,8 @@ export class JSDocTsdParser {
 			for (const parsedItem of parsedItems) {
 
 					if (parsedItem.original.kind === "class" && parsedItem.original.augments) {
-					this.log(`Lookup ${parsedItem.longname} extends ${parsedItem.original.augments}`, console.error)
 						const parentItem: dom.ClassDeclaration | undefined =
-							this.findClassParent(parsedItem.original as IClassDoclet, domTopLevelDeclarations);
+							this.findClassParent(parsedItem.original as IClassDoclet);
 
 						if (parentItem) {
 							const classItem = parsedItem.parsed as dom.ClassDeclaration;
@@ -228,20 +228,40 @@ export class JSDocTsdParser {
 		return domTopLevelDeclarations;
 	}
 
-	private findClassParent(parsedItem: IClassDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.ClassDeclaration | undefined {
-		return parsedItem.augments && parsedItem.augments
+	private getAllClasses(): IParsedJSDocItem[] {
+		if (this._parsedClassess) return this._parsedClassess;
+
+		const parsedClasses: IParsedJSDocItem[] = [];
+		for (const items of this.parsedItems.values())
+			for (const item of items)
+				if (item.original.kind === 'class') parsedClasses.push(item);
+
+		return this._parsedClassess = parsedClasses;
+	}
+
+	private findClassParent(parsedItem: IClassDoclet): dom.ClassDeclaration | undefined {
+		if (!parsedItem.augments) return;
+
+		const classes = this.getAllClasses();
+		const output = parsedItem.augments
 			.map(augments => {
 				try {
-					const classItem = this.findParentItem(augments, domTopLevelDeclarations) as dom.ClassDeclaration;
-					this.log(`${parsedItem.name} extends ${classItem.name}`, console.error)
-					return classItem;
+					const classItem = classes.find(
+						cls => {
+							return cls.longname === augments ||
+								(cls.original.name === augments && parsedItem.memberof === cls.memberof)
+						}
+					);
+
+					return classItem && classItem.parsed;
 				}
-				finally {
-					this.log(`${parsedItem.name} cannot find ${augments}`, console.error)
+				catch (e) {
 					return;
 				}
 			})
 			.find(x => x) as dom.ClassDeclaration;
+
+		return output;
 	}
 
 	// private findInterfaceParent(parsedItem: IClassDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.ClassDeclaration | undefined {
