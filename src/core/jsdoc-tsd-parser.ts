@@ -117,7 +117,10 @@ export class JSDocTsdParser {
 		this.jsdocItems = [];
 
 		for (const item of jsdocItems) {
-			if (this.evaluateSinceTag(item.since) && !item.ignore && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
+			// Ignore inherited items
+			// JDoc will duplicate inherited items. If we don't ignore them,
+			// inherited items will also be duplicated in the output
+			if (this.evaluateSinceTag(item.since) && !item.ignore && !item.inherited && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
 				const parsedItems: IParsedJSDocItem[] = this.parsedItems.get(item.longname) || [];
 				if (parsedItems.length === 0) {
 					this.jsdocItems.push(item);

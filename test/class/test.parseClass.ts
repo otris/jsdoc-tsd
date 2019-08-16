@@ -110,6 +110,50 @@ describe("JSDocTsdParser.parse.class", () => {
 		expect(methodDeclarations[0].flags).to.eq(dom.DeclarationFlags.Private);
 	});
 
+	it("should not duplicate inherited members", async () => {
+		const data = await parseData(`
+			/**
+			 * @class
+			 */
+			function A() {
+				/** @type {number} */
+				this.memberOfA = 0;
+			}
+
+			/**
+			 * @class
+			 * @extends A
+			 */
+			function B() {
+				/** @type {number} */
+				this.memberOfB = 0;
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const results = parser.resolveMembership();
+		results.should.include.keys("A");
+		results.should.include.keys("B");
+
+		const classA = results.get("A") as dom.ClassDeclaration;
+		// @ts-ignore
+		const classAMemberNames = classA.members.filter((member) => member.kind === "property").map((member) => member.name);
+		expect(classAMemberNames).to.deep.equal([
+			"memberOfA",
+		]);
+
+		const classB = results.get("B") as dom.ClassDeclaration;
+
+		// @ts-ignore
+		const classBMemberNames = classB.members.filter((member) => member.kind === "property").map((member) => member.name);
+		expect(classBMemberNames).to.deep.equal([
+			// before these fixes, "memberofA" was also added to "Class B"
+			"memberOfB",
+		]);
+	});
+
 	it("Should not add the constructor if tag 'hideconstructor' is set", async () => {
 		const data = await parseData(`
 			/**
@@ -127,4 +171,5 @@ describe("JSDocTsdParser.parse.class", () => {
 		// Should has no members. A constructor would be a member
 		expect(classFuu.members).to.deep.equal([]);
 	});
+
 });
