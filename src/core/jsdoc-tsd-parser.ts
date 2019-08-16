@@ -147,7 +147,7 @@ export class JSDocTsdParser {
 	}
 
 	/**
-	 * Resolves the membership of all parsed items. For example a namespace member will be
+	 * Resolves the membership of all parsed items. For example a namspace member will be
 	 * added to the member-property of the parsed namespace, if the namespace was parsed.
 	 * Otherwise the member will be added to the top level declaration.
 	 * @returns Map with the top level declarations and resolved memberships. The key is the
@@ -158,7 +158,10 @@ export class JSDocTsdParser {
 		for (const parsedItems of this.parsedItems.values()) {
 			for (const parsedItem of parsedItems) {
 				if (parsedItem.memberof) {
-					const parentItem = this.findParentItem(parsedItem.memberof, this.parsedItems);
+					// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
+					//       Maybe the parent item was not processed yet, then it will not be
+					//       found
+					const parentItem = this.findParentItem(parsedItem.memberof, domTopLevelDeclarations);
 
 					if (parentItem) {
 						// add the items we parsed before as a member of the top level declaration
@@ -394,22 +397,22 @@ export class JSDocTsdParser {
 	 * @param parentItemLongname Long name of the searched item
 	 * @param domTopLevelDeclarations Source items to search in
 	 */
-	private findParentItem(parentItemLongname: string, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration | IParsedJSDocItem[]>): dom.TopLevelDeclaration | null {
+	private findParentItem(parentItemLongname: string, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.TopLevelDeclaration | undefined {
 		// we have to find the parent item
-		let parentItem: dom.TopLevelDeclaration | null = null;
+		let parentItem: dom.TopLevelDeclaration | undefined;
 
 		if (parentItemLongname) {
 			const parentItemNames = parentItemLongname.split(".");
 			parentItemNames.forEach((name, index) => {
 
 				if (index < 1) {
-					parentItem = this.getItemFromMap(name, domTopLevelDeclarations);
+					parentItem = domTopLevelDeclarations.get(name);
 
 					if (!parentItem) {
 						if (this.parsedItems.has(name)) {
 							const parsedItem = (this.parsedItems.get(name) as IParsedJSDocItem[])[0];
 							domTopLevelDeclarations.set(name, parsedItem.parsed as dom.TopLevelDeclaration);
-							parentItem = this.getItemFromMap(name, domTopLevelDeclarations);
+							parentItem = domTopLevelDeclarations.get(name);
 						}
 					}
 				} else if (parentItem) {
@@ -451,25 +454,6 @@ export class JSDocTsdParser {
 		}
 
 		return functionReturnValue;
-	}
-
-	private getItemFromMap(key: string, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration | IParsedJSDocItem[]>): dom.TopLevelDeclaration | null {
-		const item = domTopLevelDeclarations.get(key);
-		if (item) {
-			if (Array.isArray(item)) {
-				if (item.length > 1) {
-					throw new Error("Found multiple items with name '" + key + "': " + JSON.stringify(item, null, "\t"));
-				} else if (item.length === 0) {
-					throw new Error("Found no item with name '" + key + "'");
-				} else {
-					return item[0].parsed as dom.TopLevelDeclaration;
-				}
-			} else {
-				return item;
-			}
-		}
-
-		return null;
 	}
 
 	/**
