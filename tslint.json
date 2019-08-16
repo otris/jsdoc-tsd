@@ -43,6 +43,7 @@
 	  ],
 	  "no-empty-interface": false,
 	  "one-variable-per-declaration": false,
-	  "no-unused-expression": true
+	  "no-unused-expression": true,
+	  "array-type": false
 	}
   }

@@ -122,10 +122,14 @@ export class JSDocTsdParser {
 				const parsedItem: dom.DeclarationBase | null = this.parseJSDocItem(item);
 				if (parsedItem) {
 					if (item.kind !== "class") {
+						// @ts-ignore
 						parsedItem.jsDocComment = this.cleanJSDocComment(item.comment);
 					}
 
-					this.handleFlags(item, parsedItem);
+					if ("flags" in parsedItem) {
+						this.handleFlags(item, parsedItem);
+					}
+
 					this.handleTags(item, parsedItem);
 					parsedItems.push({
 						longname: item.longname,
@@ -741,26 +745,6 @@ export class JSDocTsdParser {
 		return dom.create.namespace(jsdocItem.name);
 	}
 
-	private parseTypeAliasDefinition(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration {
-		// get the type of our type definition
-		let type: dom.Type;
-		if (jsdocItem.params) {
-			// the type definition is a function type, so we have to create a function type
-			// with the dts-dom module
-			type = dom.create.functionType(
-				this.createDomParams(jsdocItem.params, jsdocItem.name),
-				this.getFunctionReturnValue(jsdocItem as any),
-			);
-		} else {
-			type = this.mapVariableType(jsdocItem.type.names[0]);
-		}
-
-		return dom.create.alias(
-			jsdocItem.name,
-			type,
-		);
-	}
-
 	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase | null {
 		let result: dom.DeclarationBase | null = null;
 		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0) {
@@ -781,10 +765,18 @@ export class JSDocTsdParser {
 		return result;
 	}
 
-	private parseTypeDefinitionAsFunction(jsdocItem: ITypedefDoclet): dom.TypeAliasDeclaration {
+	private parseTypeDefinitionAsFunction(jsdocItem: ITypedefDoclet): dom.DeclarationBase {
 		// if the jsdoc item has a property "type", we can be sure that it isn't a typedef
 		// which should be mapped to an interface. Instead we create a typeAlias-Declaration
-		return this.parseTypeAliasDefinition(jsdocItem);
+		const functionType = dom.create.functionType(
+			(jsdocItem.params) ? this.createDomParams(jsdocItem.params, jsdocItem.name) : [],
+			this.getFunctionReturnValue(jsdocItem as any),
+		);
+
+		return dom.create.alias(
+			jsdocItem.name,
+			functionType,
+		);
 	}
 
 	private parseTypeDefinitionAsObject(jsdocItem: ITypedefDoclet): dom.InterfaceDeclaration {
