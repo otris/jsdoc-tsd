@@ -66,11 +66,15 @@ export class JSDocTsdParser {
 		for (const [longname, item] of results.entries()) {
 			try {
 				output += dom.emit(item);
+
 			} catch (err) {
+				/* istanbul ignore next */
 				this.log(`Unexpected error. Please report this error on github!\nCan't emit item ${longname}: ${err}\n\n${JSON.stringify(item, null, "\t")}`, console.error);
+				/* istanbul ignore next */
 				const jsdocItems = this.jsdocItems.filter((elem) => {
 					return (elem.hasOwnProperty("name") && elem.name.endsWith(longname)) || (elem.hasOwnProperty("longname") && elem.longname === longname);
 				});
+				/* istanbul ignore next */
 				this.log(`JSDoc items: \n${JSON.stringify(jsdocItems, null, "\t")}`);
 			}
 		}
@@ -183,6 +187,7 @@ export class JSDocTsdParser {
 								this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
 								break;
 
+							/* istanbul ignore next */
 							default:
 								// parent type not supported
 								this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
@@ -311,6 +316,7 @@ export class JSDocTsdParser {
 				// the parameter is a property
 
 				if (!typeDef || !typeDef.properties) {
+					/* istanbul ignore next */
 					throw new Error(`Parent of property ${param.name} is missing or incorrect`);
 				}
 
@@ -327,6 +333,7 @@ export class JSDocTsdParser {
 					// the parameter is the last property
 
 					if (!propParam) {
+						/* istanbul ignore next */
 						throw new Error(`Parent of property ${param.name} is missing or incorrect`);
 					}
 
@@ -411,9 +418,9 @@ export class JSDocTsdParser {
 				} else if (parentItem) {
 					const parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
 					parentItemAsNamespace.members.some((item) => {
+						/* istanbul ignore else */
 						if (item.name === name) {
 							parentItem = item;
-
 							return true;
 						} else {
 							return false;
@@ -489,6 +496,7 @@ export class JSDocTsdParser {
 
 	private log(message: string, logFunc: (msg: string) => void = console.log) {
 		if (!process.env.NO_CONSOLE) {
+			/* istanbul ignore next */
 			logFunc(message);
 		}
 	}
@@ -610,6 +618,7 @@ export class JSDocTsdParser {
 
 	private parseConstant(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
+			/* istanbul ignore next */
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
 		}
 
@@ -623,6 +632,7 @@ export class JSDocTsdParser {
 
 	private parseEnum(jsdocItem: IMemberDoclet): dom.DeclarationBase {
 		if (!jsdocItem.isEnum) {
+			/* istanbul ignore next */
 			throw new Error(`item ${jsdocItem.longname} is not an enum`);
 		}
 
@@ -718,6 +728,7 @@ export class JSDocTsdParser {
 
 			default:
 				if ((item as any).kind !== "package") {
+					/* istanbul ignore next */
 					this.log(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 				}
 				return null;
@@ -726,6 +737,7 @@ export class JSDocTsdParser {
 
 	private parseMember(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
+			/* istanbul ignore next */
 			throw new Error(`item ${jsdocItem.longname} is an enum`);
 		}
 
@@ -835,6 +847,7 @@ export class JSDocTsdParser {
 				classMemberToAdd = classMember;
 				break;
 
+			/* istanbul ignore next */
 			default:
 				this.log(`Can't add member '${(classMember as any).name}' to parent item '${(parsedClass as any).name}'. Unsupported member type: '${kind}'`);
 				break;
@@ -879,6 +892,7 @@ export class JSDocTsdParser {
 				interfaceMemberToAdd = interfaceMember;
 				break;
 
+			/* istanbul ignore next*/
 			default:
 				this.log(`Can't add member '${(interfaceMember as any).name}' to parent item '${(parsedInterface as any).name}'. Unsupported member type: '${interfaceMember.kind}'`);
 				break;
@@ -915,6 +929,7 @@ export class JSDocTsdParser {
 				moduleMemberToAdd = moduleMember;
 				break;
 
+			/* istanbul ignore next */
 			default:
 				this.log(`Can't add member '${(moduleMember as any).name}' to parent item '${(parsedModule as any).name}'. Unsupported member type: '${moduleMember.kind}'`);
 				break;
@@ -960,6 +975,7 @@ export class JSDocTsdParser {
 				namespaceMemberToAdd = namespaceMember;
 				break;
 
+			/* istanbul ignore next*/
 			default:
 				this.log(`Can't add member '${(namespaceMember as any).name}' to parent item '${parsedNamespace.name}'. Unsupported member type: '${(namespaceMember as any).kind}'`);
 				break;
