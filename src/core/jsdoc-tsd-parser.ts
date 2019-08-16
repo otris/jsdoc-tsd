@@ -264,22 +264,6 @@ export class JSDocTsdParser {
 		return output;
 	}
 
-	// private findInterfaceParent(parsedItem: IClassDoclet, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.ClassDeclaration | undefined {
-	// 	return parsedItem.augments && parsedItem.augments
-	// 		.map(augments => this.findParentItem(augments, domTopLevelDeclarations))
-	// 		.find((x: dom.DeclarationBase | undefined) => {
-	// 			if (!x)
-	// 				return;
-	// 			try {
-	// 				const classItem = x as dom.ClassDeclaration;
-	// 				return classItem;
-	// 			}
-	// 			finally {
-	// 				return;
-	// 			}
-	// 		}) as dom.ClassDeclaration;
-	// }
-
 	/**
 	 * Creates the comment for the jsdoc item
 	 * @param comment The complete comment text of the item
