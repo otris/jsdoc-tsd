@@ -154,6 +154,42 @@ describe("JSDocTsdParser.parse.class", () => {
 		]);
 	});
 
+	it("should parse extended classes", async () => {
+		const data = await parseData(`
+			/**
+			 * @class
+			 */
+			function A() {
+				/** @type {number} */
+				this.memberOfA = 0;
+			}
+
+			/**
+			 * @class
+			 * @extends A
+			 */
+			function B() {
+				/** @type {number} */
+				this.memberOfB = 0;
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const results = parser.resolveMembershipAndExtends();
+		results.should.include.keys("A");
+		results.should.include.keys("B");
+
+		const classA = results.get("A") as dom.ClassDeclaration;
+		const classB = results.get("B") as dom.ClassDeclaration;
+
+		// If baseType is set, it will be printed as "B extends A"
+		expect(classB.baseType).to.deep.equal(classA);
+		const output = parser.generateTypeDefinition();
+		expect(output).to.match(/B extends A/);
+	});
+
 	it("Should not add the constructor if tag 'hideconstructor' is set", async () => {
 		const data = await parseData(`
 			/**
@@ -171,5 +207,4 @@ describe("JSDocTsdParser.parse.class", () => {
 		// Should has no members. A constructor would be a member
 		expect(classFuu.members).to.deep.equal([]);
 	});
-
 });
