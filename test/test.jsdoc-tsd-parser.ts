@@ -23,4 +23,50 @@ describe("General tests for the parser", () => {
 		const result = parser.resolveMembership();
 		expect(result.size).to.equal(0);
 	});
+
+	it("Should not duplicate members by resolving membership multiple times", async () => {
+		const data = await parseData(`
+			/**
+			 * @class
+			 */
+			function A() {
+				/** @type {number} */
+				this.memberOfA = 0;
+			}
+
+			/**
+			 * @class
+			 * @extends A
+			 */
+			function B() {
+				/** @type {number} */
+				this.memberOfB = 0;
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		// Call resolveMembership twice. Before the fixes, members were duplicated
+		let results = parser.resolveMembership();
+		results = parser.resolveMembership();
+
+		results.should.include.keys("A");
+		results.should.include.keys("B");
+
+		const classA = results.get("A") as dom.ClassDeclaration;
+		// @ts-ignore
+		const classAMemberNames = classA.members.filter((member) => member.kind === "property").map((member) => member.name);
+		expect(classAMemberNames).to.deep.equal([
+			"memberOfA",
+		]);
+
+		const classB = results.get("B") as dom.ClassDeclaration;
+
+		// @ts-ignore
+		const classBMemberNames = classB.members.filter((member) => member.kind === "property").map((member) => member.name);
+		expect(classBMemberNames).to.deep.equal([
+			"memberOfB",
+		]);
+	});
 });
