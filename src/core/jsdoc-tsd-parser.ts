@@ -92,7 +92,7 @@ export class JSDocTsdParser {
 		if (item) {
 			return item.map((i) => i.parsed);
 		} else {
-			throw new Error(`Item with name ${name} not found in result items`);
+			throw new Error(`Item with name '${name}' not found in result items`);
 		}
 	}
 
@@ -434,6 +434,7 @@ export class JSDocTsdParser {
 				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names);
 			} else {
 				// the jsdoc comment is incomplete, there is no type information for the return value
+				this.log(`Invalid return type. Check the documentation of function ${jsdocItem.longname}`);
 				functionReturnValue = dom.type.any;
 			}
 		} else {

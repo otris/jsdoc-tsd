@@ -550,5 +550,4 @@ describe("JSDocTsdParser.parse.function", () => {
 		const union = thisParam.type as dom.UnionType;
 		expect(union.members).to.include("Bar");
 	});
-
 });

@@ -134,4 +134,20 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		expect(paramBar.name).to.equal("bar");
 		expect(paramBar.type).to.equal(dom.type.any);
 	});
+
+	it("should map functions with incomplete return annotation to any", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @returns Description of return value without specifying type
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembership();
+		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
+		expect(functionFuu.returnType).to.equal(dom.type.any);
+	});
 });
