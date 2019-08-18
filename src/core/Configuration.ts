@@ -18,6 +18,10 @@ export class Configuration {
 		return this._ignoreScopes;
 	}
 
+	public set ignoreScopes(val: string[]) {
+		this._ignoreScopes = val;
+	}
+
 	/**
 	 * Latest version tag for the version comparator function
 	 */
@@ -28,6 +32,11 @@ export class Configuration {
 	public set latestVersion(value: string) {
 		this._latestVersion = value;
 	}
+
+	/**
+	 * Ignores undocumented items
+	 */
+	public skipUndocumented: boolean;
 
 	public set versionComparator(value: VersionComparatorFunction | string) {
 		// Its possible to pass the version comparator via the jsdoc config
@@ -63,6 +72,7 @@ export class Configuration {
 		this._ignoreScopes = [];
 		this._versionComparator = this.defaultVersionComparator;
 		this._latestVersion = "";
+		this.skipUndocumented = true;
 
 		if (filePath) {
 			this.loadFromFile(filePath);
