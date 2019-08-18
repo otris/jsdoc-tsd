@@ -191,31 +191,32 @@ export class JSDocTsdParser {
 						if (parentItem) {
 							// add the items we parsed before as a member of the top level declaration
 							const dtsItem = parsedItem.parsed;
-							switch (parentItem.kind) {
+							const kind = (parentItem as any).kind;
+							switch (kind) {
 								case "namespace":
-									this.resolveNamespaceMembership(dtsItem as dom.NamespaceMember, parentItem);
+									this.resolveNamespaceMembership(dtsItem as dom.NamespaceMember, parentItem as dom.NamespaceDeclaration);
 									break;
 
 								case "class":
-									this.resolveClassMembership(dtsItem as dom.ClassMember, parentItem);
+									this.resolveClassMembership(dtsItem as dom.ClassMember, parentItem as dom.ClassDeclaration);
 									break;
 
 								case "enum":
-									this.resolveEnumMembership(dtsItem as dom.EnumMemberDeclaration, parentItem);
+									this.resolveEnumMembership(dtsItem as dom.EnumMemberDeclaration, parentItem as dom.EnumDeclaration);
 									break;
 
 								case "interface":
-									this.resolveInterfaceMembership(dtsItem as dom.ObjectTypeMember, parentItem);
+									this.resolveInterfaceMembership(dtsItem as dom.ObjectTypeMember, parentItem as dom.InterfaceDeclaration);
 									break;
 
 								case "module":
-									this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
+									this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem as dom.ModuleDeclaration);
 									break;
 
 								/* istanbul ignore next */
 								default:
 									// parent type not supported
-									this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
+									this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${kind}'.`, this.log);
 									break;
 							}
 						} else {
@@ -449,40 +450,19 @@ export class JSDocTsdParser {
 	 * @param parentItemLongname Long name of the searched item
 	 * @param domTopLevelDeclarations Source items to search in
 	 */
-	private findParentItem(parentItemLongname: string, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.TopLevelDeclaration | undefined {
-		// we have to find the parent item
-		let parentItem: dom.TopLevelDeclaration | undefined;
-
-		if (parentItemLongname) {
-			const parentItemNames = parentItemLongname.split(".");
-			parentItemNames.forEach((name, index) => {
-
-				if (index < 1) {
-					parentItem = domTopLevelDeclarations.get(name);
-
-					if (!parentItem) {
-						if (this.parsedItems.has(name)) {
-							const parsedItem = (this.parsedItems.get(name) as IParsedJSDocItem[])[0];
-							domTopLevelDeclarations.set(name, parsedItem.parsed as dom.TopLevelDeclaration);
-							parentItem = domTopLevelDeclarations.get(name);
-						}
-					}
-				} else if (parentItem) {
-					const parentItemAsNamespace = parentItem as dom.NamespaceDeclaration;
-					parentItemAsNamespace.members.some((item) => {
-						/* istanbul ignore else */
-						if (item.name === name) {
-							parentItem = item;
-							return true;
-						} else {
-							return false;
-						}
-					});
-				}
-			}, this);
+	private findParentItem(parentItemLongname: string, domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration>): dom.DeclarationBase | null {
+		// The parsed items are stored with their longname and by reference.
+		// This is why we can simply return the stored elements in the parsedItems-map
+		const parentItem = this.parsedItems.get(parentItemLongname);
+		if (parentItem) {
+			if (parentItem.length === 1) {
+				return parentItem[0].parsed;
+			} else if (parentItem.length > 1) {
+				throw new Error(`Found ${parentItem.length} items with name ${parentItemLongname} as possible parent items: ${JSON.stringify(parentItem)}`);
+			}
 		}
 
-		return parentItem;
+		return null;
 	}
 
 	private getAllClasses(): IParsedJSDocItem[] {
