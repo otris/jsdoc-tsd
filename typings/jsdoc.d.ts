@@ -110,6 +110,7 @@ declare interface IClassDoclet extends IDocletBase {
     mixes?: string[];
     virtual?: boolean;
     classdesc?: string;
+    hideconstructor?: boolean;
 }
 
 declare interface IFileDoclet extends IDocletBase {

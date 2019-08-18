@@ -601,17 +601,19 @@ export class JSDocTsdParser {
 			domClass.jsDocComment = jsdocItem.classdesc;
 		}
 
-		// Add the constructor
-		let constructorDeclaration: dom.ConstructorDeclaration;
-		if (jsdocItem.params && jsdocItem.params.length > 0) {
-			constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params));
-		} else {
-			// no params
-			constructorDeclaration = dom.create.constructor([]);
-		}
+		if (!jsdocItem.hideconstructor) {
+			// Add the constructor
+			let constructorDeclaration: dom.ConstructorDeclaration;
+			if (jsdocItem.params && jsdocItem.params.length > 0) {
+				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params));
+			} else {
+				// no params
+				constructorDeclaration = dom.create.constructor([]);
+			}
 
-		constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
-		domClass.members.push(constructorDeclaration);
+			constructorDeclaration.jsDocComment = this.cleanJSDocComment(jsdocItem.comment);
+			domClass.members.push(constructorDeclaration);
+		}
 
 		return domClass;
 	}

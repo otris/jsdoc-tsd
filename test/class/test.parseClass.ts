@@ -4,7 +4,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
-import { parseFile } from "../jsdoc-helper";
+import { parseFile, parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.class", () => {
@@ -35,8 +35,8 @@ describe("JSDocTsdParser.parse.class", () => {
 		 * @param {string} myParam My param description
 		 * @class
 		 */`;
-		 let myClass = JSON.parse(JSON.stringify(emptyClassData));
-		 myClass.comment = comment;
+		let myClass = JSON.parse(JSON.stringify(emptyClassData));
+		myClass.comment = comment;
 
 		let parser = new JSDocTsdParser();
 		parser.parse([myClass]);
@@ -108,5 +108,23 @@ describe("JSDocTsdParser.parse.class", () => {
 		});
 		expect(methodDeclarations.length).to.eq(1);
 		expect(methodDeclarations[0].flags).to.eq(dom.DeclarationFlags.Private);
+	});
+
+	it("Should not add the constructor if tag 'hideconstructor' is set", async () => {
+		const data = await parseData(`
+			/**
+			 * @class Fuu
+			 * @hideconstructor
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+		const results = parser.resolveMembership();
+		results.should.include.keys("Fuu");
+		const classFuu = results.get("Fuu") as dom.ClassDeclaration;
+
+		// Should has no members. A constructor would be a member
+		expect(classFuu.members).to.deep.equal([]);
 	});
 });
