@@ -774,14 +774,20 @@ export class JSDocTsdParser {
 				return this.parseTypeDefinition(item as ITypedefDoclet);
 
 			case "class":
-				let parsedItems: IParsedJSDocItem[];
-				if (this.parsedItems.has(item.longname) && (parsedItems = this.parsedItems.get(item.longname) as IParsedJSDocItem[]).length === 1) {
-					// class is already created, only add the constructor to the class
-					this.parseClass(item as IClassDoclet, parsedItems[0].parsed as dom.ClassDeclaration);
-					return null;
-				} else {
-					return this.parseClass(item as IClassDoclet);
+				if (this.parsedItems.has(item.longname)) {
+					const parsedItems = this.parsedItems.get(item.longname) as IParsedJSDocItem[];
+					if (parsedItems.length > 0) {
+						// @ts-ignore
+						const parsedClass = parsedItems.filter((parsedItem) => parsedItem.parsed.kind === "class");
+						if (parsedClass.length > 0) {
+							// class is already created, only add the constructor to the class
+							this.parseClass(item as IClassDoclet, parsedClass[0].parsed as dom.ClassDeclaration);
+							return null;
+						}
+					}
+
 				}
+				return this.parseClass(item as IClassDoclet);
 
 			case "interface":
 				return this.parseInterface(item as IClassDoclet);
