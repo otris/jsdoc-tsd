@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 import { extname } from "path";
 import stripJsonComments = require("strip-json-comments");
+import { Logger } from "./Logger";
 
 /**
  * Function for comparing version strings of since-tags
@@ -33,11 +34,6 @@ export class Configuration {
 		this._latestVersion = value;
 	}
 
-	/**
-	 * Ignores undocumented items
-	 */
-	public skipUndocumented: boolean;
-
 	public set versionComparator(value: VersionComparatorFunction | string) {
 		// Its possible to pass the version comparator via the jsdoc config
 		// either as function string or as a file path to a js-file which
@@ -64,6 +60,21 @@ export class Configuration {
 
 		this._versionComparator = newVersionComparator;
 	}
+
+	/**
+	 * Indicates wether to skip since tag check or not
+	 */
+	public ignoreSinceTag: boolean;
+
+	/**
+	 * Logs every item which is ignored by the since tag
+	 */
+	public logItemsSkippedBySince: boolean;
+
+	/**
+	 * Ignores undocumented items
+	 */
+	public skipUndocumented: boolean;
 	private _ignoreScopes: string[];
 	private _latestVersion: string;
 	private _versionComparator: VersionComparatorFunction;
@@ -73,6 +84,8 @@ export class Configuration {
 		this._versionComparator = this.defaultVersionComparator;
 		this._latestVersion = "";
 		this.skipUndocumented = true;
+		this.ignoreSinceTag = false;
+		this.logItemsSkippedBySince = true;
 
 		if (filePath) {
 			this.loadFromFile(filePath);
@@ -85,8 +98,13 @@ export class Configuration {
 	 * @param taggedVersion Current version tag
 	 * @param latestVersion Latest version tag from config
 	 */
-	public compareVersions(taggedVersion: string, latestVersion: string): boolean {
-		return this._versionComparator(taggedVersion, latestVersion);
+	public compareVersions(taggedVersion: string, latestVersion: string, itemName: string): boolean {
+		const isItemInRange = this.ignoreSinceTag || this._versionComparator(taggedVersion, latestVersion);
+		if (!isItemInRange && this.logItemsSkippedBySince) {
+			Logger.log(`Skipping item ${itemName} because it's since tag (${taggedVersion}) is less then the latest tag (${latestVersion})`);
+		}
+
+		return isItemInRange;
 	}
 
 	public ignoreScope(scope: string): boolean {

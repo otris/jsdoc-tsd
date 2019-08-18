@@ -159,7 +159,7 @@ describe("Test for parsing the since tag", () => {
 		parser.parse([myClass]);
 
 		const results = parser.getParsedItems();
-		expect(Object.keys(results).length).to.eq(0);
+		expect(results.size).to.eq(0);
 	});
 
 	it("should use the comparator function if it's passed as function", () => {
@@ -237,4 +237,29 @@ describe("Test for parsing the since tag", () => {
 		expect(Object.keys(results).length).to.eq(0);
 	});
 
+	it("Should skip the since tag check", async () => {
+		const myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
+		myClass.since = "v1.1.0";
+		myClass.name = myClass.longname = "MyTestClass";
+
+		const parserConfig = new Configuration();
+		parserConfig.latestVersion = "v1.0.0";
+
+		// Now the class would be ignored because of the since tag. We disable the check
+		// in the configuration and the item should be parsed.
+		parserConfig.ignoreSinceTag = true;
+
+		let parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		let results = parser.getParsedItems();
+		results.should.include.keys("MyTestClass");
+
+		// Opposite test
+		parserConfig.ignoreSinceTag = false;
+		parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+		results = parser.getParsedItems();
+		expect(results.size).to.equal(0);
+	});
 });
