@@ -4,6 +4,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.parameterWithProperties", () => {
@@ -60,5 +61,28 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 
 		const interfaceType = dom.create.array(paramInterface);
 		expect(parameters[0].type).to.eql(interfaceType);
+	});
+
+	it("should map property params if it's an array", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @param bar {object[]} Because of an error this was an array of type null
+			 * @param bar[].fuubar {string}
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
+
+		const arrayParam = functionFuu.parameters[0];
+		expect(arrayParam.type).to.be.an("object");
+
+		const arrType = arrayParam.type as dom.ArrayTypeReference;
+		expect(arrType.kind).to.equal("array");
+		expect(arrType.type).to.equal(dom.type.object);
 	});
 });
