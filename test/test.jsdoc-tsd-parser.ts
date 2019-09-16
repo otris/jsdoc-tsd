@@ -20,7 +20,7 @@ describe("General tests for the parser", () => {
 
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		expect(result.size).to.equal(0);
 	});
 
