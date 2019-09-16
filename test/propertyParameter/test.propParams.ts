@@ -83,6 +83,35 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 
 		const arrType = arrayParam.type as dom.ArrayTypeReference;
 		expect(arrType.kind).to.equal("array");
-		expect(arrType.type).to.equal(dom.type.object);
+
+		const interfaceType: dom.InterfaceDeclaration = arrType.type as dom.InterfaceDeclaration;
+		expect(interfaceType.name).to.equal("Fuu_bar");
+		console.log(parser.generateTypeDefinition());
 	});
+
+	it("should map property params if it's an array", async () => {
+		const data = await parseData(`
+		/**
+		 * TestFunction
+		 * @param {object[]} fuu an array of objects
+		 * @param {string} fuu[].id id
+		 * @function TestFunction
+		 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		const functionFuu = result.get("TestFunction") as dom.FunctionDeclaration;
+
+		const arrayParam = functionFuu.parameters[0];
+		const arrType = arrayParam.type as dom.ArrayTypeReference;
+		expect(arrType.kind).to.equal("array");
+		expect(arrType.type).to.be.an("object");
+
+		const interfaceType = arrType.type as dom.InterfaceDeclaration;
+		expect(interfaceType.name).to.equal("TestFunction_fuu");
+	});
+
 });
