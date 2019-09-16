@@ -40,7 +40,7 @@ describe("JSDocTsdParser.parse.namespace", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(enumInNamespaceData);
 
-		const resultItems = parser.resolveMembership();
+		const resultItems = parser.resolveMembershipAndExtends();
 		resultItems.should.include.keys("Fuu");
 
 		const fuuNamespace: dom.NamespaceDeclaration = resultItems.get("Fuu") as dom.NamespaceDeclaration;
@@ -56,7 +56,7 @@ describe("JSDocTsdParser.parse.namespace", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(inlineAnnotationsData);
 
-		const resultItems = parser.resolveMembership();
+		const resultItems = parser.resolveMembershipAndExtends();
 		resultItems.should.include.keys("Fuu");
 		expect([...resultItems.keys()]).to.not.include.keys("iShouldNotBePrintedToTheFileTypeDefinition");
 	});

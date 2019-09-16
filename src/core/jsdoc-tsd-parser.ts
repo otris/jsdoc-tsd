@@ -11,10 +11,12 @@ const jsdocCommentParser = require("comment-parser");
 export interface IParsedJSDocItem {
 	longname: string;
 	memberof?: string;
+	original: TDoclet;
 	parsed: dom.DeclarationBase;
 }
 
 export class JSDocTsdParser {
+	private _parsedClassess: IParsedJSDocItem[] | null = null;
 
 	/**
 	 * Maps the access flags from JSDoc to declaration flags of dts-dom
@@ -49,6 +51,11 @@ export class JSDocTsdParser {
 	 */
 	private parsedItems: Map<string, IParsedJSDocItem[]>;
 
+	/**
+	 * Already resolved items. Will be set by "resolvedItems"
+	 */
+	private resolvedItems: Map<string, dom.TopLevelDeclaration> | undefined;
+
 	constructor(config?: Configuration) {
 		this.parsedItems = new Map();
 		this.jsdocItems = [];
@@ -62,7 +69,7 @@ export class JSDocTsdParser {
 	public generateTypeDefinition(targetPath?: string): string {
 		let output = "";
 
-		const results = this.resolveMembership();
+		const results = this.resolveMembershipAndExtends();
 		for (const [longname, item] of results.entries()) {
 			try {
 				output += dom.emit(item);
@@ -117,7 +124,10 @@ export class JSDocTsdParser {
 		this.jsdocItems = [];
 
 		for (const item of jsdocItems) {
-			if (this.evaluateSinceTag(item.since) && !item.ignore && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
+			// Ignore inherited items
+			// JDoc will duplicate inherited items. If we don't ignore them,
+			// inherited items will also be duplicated in the output
+			if (this.evaluateSinceTag(item.since) && !item.ignore && !item.inherited && !this.config.ignoreScope(item.scope) && (!item.comment || !(item.comment.match("@type ") && item.scope === "inner"))) {
 				const parsedItems: IParsedJSDocItem[] = this.parsedItems.get(item.longname) || [];
 				if (parsedItems.length === 0) {
 					this.jsdocItems.push(item);
@@ -138,6 +148,7 @@ export class JSDocTsdParser {
 					parsedItems.push({
 						longname: item.longname,
 						memberof: item.memberof,
+						original: item,
 						parsed: parsedItem,
 					});
 					this.parsedItems.set(item.longname, parsedItems);
@@ -153,62 +164,78 @@ export class JSDocTsdParser {
 	 * @returns Map with the top level declarations and resolved memberships. The key is the
 	 *          long name of the item, the value is the @see {dom.TopLevelDeclaration}
 	 */
-	public resolveMembership(): Map<string, dom.TopLevelDeclaration> {
-		const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
-		for (const parsedItems of this.parsedItems.values()) {
-			for (const parsedItem of parsedItems) {
-				if (parsedItem.memberof) {
-					// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
-					//       Maybe the parent item was not processed yet, then it will not be
-					//       found
-					const parentItem = this.findParentItem(parsedItem.memberof, domTopLevelDeclarations);
+	public resolveMembershipAndExtends(): Map<string, dom.TopLevelDeclaration> {
+		if (this.resolvedItems) {
+			return this.resolvedItems;
+		} else {
+			const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
+			for (const parsedItems of this.parsedItems.values()) {
+				for (const parsedItem of parsedItems) {
 
-					if (parentItem) {
-						// add the items we parsed before as a member of the top level declaration
-						const dtsItem = parsedItem.parsed;
-						switch (parentItem.kind) {
-							case "namespace":
-								this.resolveNamespaceMembership(dtsItem as dom.NamespaceMember, parentItem);
-								break;
+					if (parsedItem.original.kind === "class" && parsedItem.original.augments) {
+						const parentItem: dom.ClassDeclaration | undefined =
+							this.findClassParent(parsedItem.original as IClassDoclet);
 
-							case "class":
-								this.resolveClassMembership(dtsItem as dom.ClassMember, parentItem);
-								break;
+						if (parentItem) {
+							const classItem = parsedItem.parsed as dom.ClassDeclaration;
+							classItem.baseType = parentItem;
+						}
+					}
 
-							case "enum":
-								this.resolveEnumMembership(dtsItem as dom.EnumMemberDeclaration, parentItem);
-								break;
+					if (parsedItem.memberof) {
+						// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
+						//       Maybe the parent item was not processed yet, then it will not be
+						//       found
+						const parentItem = this.findParentItem(parsedItem.memberof, domTopLevelDeclarations);
 
-							case "interface":
-								this.resolveInterfaceMembership(dtsItem as dom.ObjectTypeMember, parentItem);
-								break;
+						if (parentItem) {
+							// add the items we parsed before as a member of the top level declaration
+							const dtsItem = parsedItem.parsed;
+							switch (parentItem.kind) {
+								case "namespace":
+									this.resolveNamespaceMembership(dtsItem as dom.NamespaceMember, parentItem);
+									break;
 
-							case "module":
-								this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
-								break;
+								case "class":
+									this.resolveClassMembership(dtsItem as dom.ClassMember, parentItem);
+									break;
 
-							/* istanbul ignore next */
-							default:
-								// parent type not supported
-								this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
-								break;
+								case "enum":
+									this.resolveEnumMembership(dtsItem as dom.EnumMemberDeclaration, parentItem);
+									break;
+
+								case "interface":
+									this.resolveInterfaceMembership(dtsItem as dom.ObjectTypeMember, parentItem);
+									break;
+
+								case "module":
+									this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
+									break;
+
+								/* istanbul ignore next */
+								default:
+									// parent type not supported
+									this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
+									break;
+							}
+						} else {
+							this.log("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.", console.warn);
 						}
 					} else {
-						this.log("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.", console.warn);
-					}
-				} else {
-					// member has no parent, add the item as top-level declaration
-					if (!domTopLevelDeclarations.has(parsedItem.longname)) {
-						domTopLevelDeclarations.set(
-							parsedItem.longname,
-							parsedItem.parsed as dom.TopLevelDeclaration,
-						);
+						// member has no parent, add the item as top-level declaration
+						if (!domTopLevelDeclarations.has(parsedItem.longname)) {
+							domTopLevelDeclarations.set(
+								parsedItem.longname,
+								parsedItem.parsed as dom.TopLevelDeclaration,
+							);
+						}
 					}
 				}
 			}
-		}
 
-		return domTopLevelDeclarations;
+			this.resolvedItems = domTopLevelDeclarations;
+			return domTopLevelDeclarations;
+		}
 	}
 
 	/**
@@ -342,6 +369,7 @@ export class JSDocTsdParser {
 					this.parsedItems.set(typeDef.longname, [{
 						longname: typeDef.longname,
 						memberof: typeDef.memberof,
+						original: typeDef,
 						parsed: domInterface,
 					}]);
 
@@ -392,6 +420,30 @@ export class JSDocTsdParser {
 		}
 	}
 
+	private findClassParent(parsedItem: IClassDoclet): dom.ClassDeclaration | undefined {
+		if (!parsedItem.augments) { return; }
+
+		const classes = this.getAllClasses();
+		const output = parsedItem.augments
+			.map((augments) => {
+				try {
+					const classItem = classes.find(
+						(cls) => {
+							return cls.longname === augments ||
+								(cls.original.name === augments && parsedItem.memberof === cls.memberof);
+						},
+					);
+
+					return classItem && classItem.parsed;
+				} catch (e) {
+					return;
+				}
+			})
+			.find((x) => x) as dom.ClassDeclaration;
+
+		return output;
+	}
+
 	/**
 	 * Tries to find the parent item of the passed jsdoc item
 	 * @param parentItemLongname Long name of the searched item
@@ -431,6 +483,19 @@ export class JSDocTsdParser {
 		}
 
 		return parentItem;
+	}
+
+	private getAllClasses(): IParsedJSDocItem[] {
+		if (this._parsedClassess) { return this._parsedClassess; }
+
+		const parsedClasses: IParsedJSDocItem[] = [];
+		for (const items of this.parsedItems.values()) {
+			for (const item of items) {
+				if (item.original.kind === "class") { parsedClasses.push(item); }
+			}
+		}
+
+		return this._parsedClassess = parsedClasses;
 	}
 
 	/**

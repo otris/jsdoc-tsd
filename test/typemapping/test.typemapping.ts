@@ -126,7 +126,7 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
 
 		expect(functionFuu.parameters.length).to.equal(1);
@@ -146,7 +146,7 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
 		expect(functionFuu.returnType).to.equal(dom.type.any);
 	});
@@ -162,7 +162,7 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
 
 		expect(functionFuu.parameters.length).to.equal(1);

@@ -16,7 +16,7 @@ describe("Tests for declaring types", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("NumberLike");
 
 		const typeAlias = result.get("NumberLike") as dom.TypeAliasDeclaration;

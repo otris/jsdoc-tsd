@@ -52,6 +52,6 @@ export function publish(data: any, opts: any) {
 	try {
 		fs.writeFileSync(outputFilePath, parser.generateTypeDefinition());
 	} catch (err) {
-		throw new Error("Can't write results to file '" + outputFilePath + "': " + err);
+		throw new Error("Can't write results to file '" + outputFilePath + "': " + err.stack);
 	}
 }

@@ -81,7 +81,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should create a private class member", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classDataPrivateMembers);
-		let results = parser.resolveMembership();
+		let results = parser.resolveMembershipAndExtends();
 
 		results.should.include.keys("classWithPrivateMembers");
 		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
@@ -97,7 +97,7 @@ describe("JSDocTsdParser.parse.class", () => {
 	it("should create a private class member method", () => {
 		let parser = new JSDocTsdParser();
 		parser.parse(classDataPrivateMembers);
-		let results = parser.resolveMembership();
+		let results = parser.resolveMembershipAndExtends();
 
 		results.should.include.keys("classWithPrivateMembers");
 		let classDeclaration: dom.ClassDeclaration = results.get("classWithPrivateMembers") as dom.ClassDeclaration;
@@ -110,6 +110,86 @@ describe("JSDocTsdParser.parse.class", () => {
 		expect(methodDeclarations[0].flags).to.eq(dom.DeclarationFlags.Private);
 	});
 
+	it("should not duplicate inherited members", async () => {
+		const data = await parseData(`
+			/**
+			 * @class
+			 */
+			function A() {
+				/** @type {number} */
+				this.memberOfA = 0;
+			}
+
+			/**
+			 * @class
+			 * @extends A
+			 */
+			function B() {
+				/** @type {number} */
+				this.memberOfB = 0;
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const results = parser.resolveMembershipAndExtends();
+		results.should.include.keys("A");
+		results.should.include.keys("B");
+
+		const classA = results.get("A") as dom.ClassDeclaration;
+		// @ts-ignore
+		const classAMemberNames = classA.members.filter((member) => member.kind === "property").map((member) => member.name);
+		expect(classAMemberNames).to.deep.equal([
+			"memberOfA",
+		]);
+
+		const classB = results.get("B") as dom.ClassDeclaration;
+
+		// @ts-ignore
+		const classBMemberNames = classB.members.filter((member) => member.kind === "property").map((member) => member.name);
+		expect(classBMemberNames).to.deep.equal([
+			// before these fixes, "memberofA" was also added to "Class B"
+			"memberOfB",
+		]);
+	});
+
+	it("should parse extended classes", async () => {
+		const data = await parseData(`
+			/**
+			 * @class
+			 */
+			function A() {
+				/** @type {number} */
+				this.memberOfA = 0;
+			}
+
+			/**
+			 * @class
+			 * @extends A
+			 */
+			function B() {
+				/** @type {number} */
+				this.memberOfB = 0;
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const results = parser.resolveMembershipAndExtends();
+		results.should.include.keys("A");
+		results.should.include.keys("B");
+
+		const classA = results.get("A") as dom.ClassDeclaration;
+		const classB = results.get("B") as dom.ClassDeclaration;
+
+		// If baseType is set, it will be printed as "B extends A"
+		expect(classB.baseType).to.deep.equal(classA);
+		const output = parser.generateTypeDefinition();
+		expect(output).to.match(/B extends A/);
+	});
+
 	it("Should not add the constructor if tag 'hideconstructor' is set", async () => {
 		const data = await parseData(`
 			/**
@@ -120,7 +200,7 @@ describe("JSDocTsdParser.parse.class", () => {
 
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
-		const results = parser.resolveMembership();
+		const results = parser.resolveMembershipAndExtends();
 		results.should.include.keys("Fuu");
 		const classFuu = results.get("Fuu") as dom.ClassDeclaration;
 

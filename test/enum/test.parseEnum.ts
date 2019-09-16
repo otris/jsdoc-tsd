@@ -44,7 +44,7 @@ describe("JSDocTsdParser.parse.enum", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(enumData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myStupidEnum");
 
 		const enumDeclaration: dom.EnumDeclaration = result.get("myStupidEnum") as dom.EnumDeclaration;
@@ -55,7 +55,7 @@ describe("JSDocTsdParser.parse.enum", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(enumInNamespaceData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myNamespace");
 
 		const namespace = result.get("myNamespace") as dom.NamespaceDeclaration;

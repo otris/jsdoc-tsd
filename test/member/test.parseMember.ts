@@ -13,7 +13,7 @@ describe("JSDocTsdParser.parse.member", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(classData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestClass");
 
 		const myClass: dom.ClassDeclaration = result.get("myTestClass") as dom.ClassDeclaration;

@@ -46,7 +46,7 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse([typeDefinition]);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("someOtherObject");
 
 		const interfaceDeclaration: dom.InterfaceDeclaration = result.get("someOtherObject") as dom.InterfaceDeclaration;
@@ -63,7 +63,7 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(typeData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("FuuBar");
 
 		const typeDeclaration: dom.TypeAliasDeclaration = result.get("FuuBar") as dom.TypeAliasDeclaration;
@@ -82,7 +82,7 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(typeData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("Fuu");
 
 		const interfaceDeclaration: dom.InterfaceDeclaration = result.get("Fuu") as dom.InterfaceDeclaration;

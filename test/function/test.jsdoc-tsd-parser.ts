@@ -459,7 +459,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("function1");
 
 		const functionDeclaration: dom.FunctionDeclaration = result.get("function1") as dom.FunctionDeclaration;
@@ -474,7 +474,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(functionData);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTemplateFunction");
 
 		const functionDeclaration: dom.FunctionDeclaration = result.get("myTemplateFunction") as dom.FunctionDeclaration;
@@ -507,7 +507,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("Fuu");
 
 		const functionDeclaration = result.get("Fuu") as dom.FunctionDeclaration;
@@ -537,7 +537,7 @@ describe("JSDocTsdParser.parse.function", () => {
 		const parser = new JSDocTsdParser();
 		parser.parse(data);
 
-		const result = parser.resolveMembership();
+		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("Fuu");
 
 		const functionDeclaration = result.get("Fuu") as dom.FunctionDeclaration;
