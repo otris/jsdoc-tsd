@@ -367,24 +367,31 @@ export class JSDocTsdParser {
 					}
 
 					// create an interface from the typedef
+					// the property param can also be an array, e. g. @param {fuu[]}, @param {fuu[].bar}
+					const interfaceTypeMatches = typeDef.type.names[0].match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
+					const isArray = (!!interfaceTypeMatches);
+					typeDef.type.names[0] = ((interfaceTypeMatches) ? interfaceTypeMatches[1] : typeDef.type.names[0]) as any;
 					const domInterface: dom.InterfaceDeclaration = this.parseTypeDefinition(typeDef) as dom.InterfaceDeclaration;
-					this.parsedItems.set(typeDef.longname, [{
-						longname: typeDef.longname,
-						memberof: typeDef.memberof,
-						original: typeDef,
-						parsed: domInterface,
-					}]);
+					if (domInterface) {
+						this.parsedItems.set(typeDef.longname, [{
+							longname: typeDef.longname,
+							memberof: typeDef.memberof,
+							original: typeDef,
+							parsed: domInterface,
+						}]);
 
-					// create the parameter with the interface as type
-					let interfaceType;
-					const matchArray = typeDef.type.names[0].match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
-					if (matchArray) {
-						interfaceType = dom.create.array(this.mapVariableTypeString(matchArray[1]));
+						// create the parameter with the interface as type
+						let interfaceType;
+						if (isArray) {
+							interfaceType = dom.create.array(domInterface);
+						} else {
+							interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
+						}
+
+						domParam = dom.create.parameter(propParam.name, interfaceType);
 					} else {
-						interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
+						Logger.log(`Can't create interface for property param. Invalid typedef: ${JSON.stringify(typeDef)}`);
 					}
-
-					domParam = dom.create.parameter(propParam.name, interfaceType);
 				}
 
 			} else if (param.type && param.type.names.length > 0) {
