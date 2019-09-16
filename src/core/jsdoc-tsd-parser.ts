@@ -16,6 +16,7 @@ export interface IParsedJSDocItem {
 }
 
 export class JSDocTsdParser {
+	private _parsedClassess: IParsedJSDocItem[] | null = null;
 
 	/**
 	 * Maps the access flags from JSDoc to declaration flags of dts-dom
@@ -49,7 +50,6 @@ export class JSDocTsdParser {
 	 * (@see resolveMembership).
 	 */
 	private parsedItems: Map<string, IParsedJSDocItem[]>;
-	private _parsedClassess: IParsedJSDocItem[] | null = null;
 
 	/**
 	 * Already resolved items. Will be set by "resolvedItems"
@@ -238,42 +238,6 @@ export class JSDocTsdParser {
 		}
 	}
 
-	private getAllClasses(): IParsedJSDocItem[] {
-		if (this._parsedClassess) return this._parsedClassess;
-
-		const parsedClasses: IParsedJSDocItem[] = [];
-		for (const items of this.parsedItems.values())
-			for (const item of items)
-				if (item.original.kind === 'class') parsedClasses.push(item);
-
-		return this._parsedClassess = parsedClasses;
-	}
-
-	private findClassParent(parsedItem: IClassDoclet): dom.ClassDeclaration | undefined {
-		if (!parsedItem.augments) return;
-
-		const classes = this.getAllClasses();
-		const output = parsedItem.augments
-			.map(augments => {
-				try {
-					const classItem = classes.find(
-						cls => {
-							return cls.longname === augments ||
-								(cls.original.name === augments && parsedItem.memberof === cls.memberof)
-						}
-					);
-
-					return classItem && classItem.parsed;
-				}
-				catch (e) {
-					return;
-				}
-			})
-			.find(x => x) as dom.ClassDeclaration;
-
-		return output;
-	}
-
 	/**
 	 * Creates the comment for the jsdoc item
 	 * @param comment The complete comment text of the item
@@ -456,6 +420,30 @@ export class JSDocTsdParser {
 		}
 	}
 
+	private findClassParent(parsedItem: IClassDoclet): dom.ClassDeclaration | undefined {
+		if (!parsedItem.augments) { return; }
+
+		const classes = this.getAllClasses();
+		const output = parsedItem.augments
+			.map((augments) => {
+				try {
+					const classItem = classes.find(
+						(cls) => {
+							return cls.longname === augments ||
+								(cls.original.name === augments && parsedItem.memberof === cls.memberof);
+						},
+					);
+
+					return classItem && classItem.parsed;
+				} catch (e) {
+					return;
+				}
+			})
+			.find((x) => x) as dom.ClassDeclaration;
+
+		return output;
+	}
+
 	/**
 	 * Tries to find the parent item of the passed jsdoc item
 	 * @param parentItemLongname Long name of the searched item
@@ -495,6 +483,19 @@ export class JSDocTsdParser {
 		}
 
 		return parentItem;
+	}
+
+	private getAllClasses(): IParsedJSDocItem[] {
+		if (this._parsedClassess) { return this._parsedClassess; }
+
+		const parsedClasses: IParsedJSDocItem[] = [];
+		for (const items of this.parsedItems.values()) {
+			for (const item of items) {
+				if (item.original.kind === "class") { parsedClasses.push(item); }
+			}
+		}
+
+		return this._parsedClassess = parsedClasses;
 	}
 
 	/**
