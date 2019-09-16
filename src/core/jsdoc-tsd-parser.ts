@@ -51,6 +51,11 @@ export class JSDocTsdParser {
 	private parsedItems: Map<string, IParsedJSDocItem[]>;
 	private _parsedClassess: IParsedJSDocItem[] | null = null;
 
+	/**
+	 * Already resolved items. Will be set by "resolvedItems"
+	 */
+	private resolvedItems: Map<string, dom.TopLevelDeclaration> | undefined;
+
 	constructor(config?: Configuration) {
 		this.parsedItems = new Map();
 		this.jsdocItems = [];
@@ -160,9 +165,12 @@ export class JSDocTsdParser {
 	 *          long name of the item, the value is the @see {dom.TopLevelDeclaration}
 	 */
 	public resolveMembershipAndExtends(): Map<string, dom.TopLevelDeclaration> {
-		const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
-		for (const parsedItems of this.parsedItems.values()) {
-			for (const parsedItem of parsedItems) {
+		if (this.resolvedItems) {
+			return this.resolvedItems;
+		} else {
+			const domTopLevelDeclarations: Map<string, dom.TopLevelDeclaration> = new Map();
+			for (const parsedItems of this.parsedItems.values()) {
+				for (const parsedItem of parsedItems) {
 
 					if (parsedItem.original.kind === "class" && parsedItem.original.augments) {
 						const parentItem: dom.ClassDeclaration | undefined =
@@ -174,58 +182,60 @@ export class JSDocTsdParser {
 						}
 					}
 
-				if (parsedItem.memberof) {
-					// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
-					//       Maybe the parent item was not processed yet, then it will not be
-					//       found
-					const parentItem = this.findParentItem(parsedItem.memberof, domTopLevelDeclarations);
+					if (parsedItem.memberof) {
+						// @todo Do not pass the domTopLevelDeclarations but the parsedItems map.
+						//       Maybe the parent item was not processed yet, then it will not be
+						//       found
+						const parentItem = this.findParentItem(parsedItem.memberof, domTopLevelDeclarations);
 
-					if (parentItem) {
-						// add the items we parsed before as a member of the top level declaration
-						const dtsItem = parsedItem.parsed;
-						switch (parentItem.kind) {
-							case "namespace":
-								this.resolveNamespaceMembership(dtsItem as dom.NamespaceMember, parentItem);
-								break;
+						if (parentItem) {
+							// add the items we parsed before as a member of the top level declaration
+							const dtsItem = parsedItem.parsed;
+							switch (parentItem.kind) {
+								case "namespace":
+									this.resolveNamespaceMembership(dtsItem as dom.NamespaceMember, parentItem);
+									break;
 
-							case "class":
-								this.resolveClassMembership(dtsItem as dom.ClassMember, parentItem);
-								break;
+								case "class":
+									this.resolveClassMembership(dtsItem as dom.ClassMember, parentItem);
+									break;
 
-							case "enum":
-								this.resolveEnumMembership(dtsItem as dom.EnumMemberDeclaration, parentItem);
-								break;
+								case "enum":
+									this.resolveEnumMembership(dtsItem as dom.EnumMemberDeclaration, parentItem);
+									break;
 
-							case "interface":
-								this.resolveInterfaceMembership(dtsItem as dom.ObjectTypeMember, parentItem);
-								break;
+								case "interface":
+									this.resolveInterfaceMembership(dtsItem as dom.ObjectTypeMember, parentItem);
+									break;
 
-							case "module":
-								this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
-								break;
+								case "module":
+									this.resolveModuleMembership(dtsItem as dom.ModuleMember, parentItem);
+									break;
 
-							/* istanbul ignore next */
-							default:
-								// parent type not supported
-								this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
-								break;
+								/* istanbul ignore next */
+								default:
+									// parent type not supported
+									this.log(`Can't add member '${parsedItem.longname}' to parent item '${(parentItem as any).name}'. Unsupported parent member type: '${parentItem.kind}'.`, this.log);
+									break;
+							}
+						} else {
+							this.log("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.", console.warn);
 						}
 					} else {
-						this.log("Missing top level declaration '" + parsedItem.memberof + "' for member '" + parsedItem.longname + "'.", console.warn);
-					}
-				} else {
-					// member has no parent, add the item as top-level declaration
-					if (!domTopLevelDeclarations.has(parsedItem.longname)) {
-						domTopLevelDeclarations.set(
-							parsedItem.longname,
-							parsedItem.parsed as dom.TopLevelDeclaration,
-						);
+						// member has no parent, add the item as top-level declaration
+						if (!domTopLevelDeclarations.has(parsedItem.longname)) {
+							domTopLevelDeclarations.set(
+								parsedItem.longname,
+								parsedItem.parsed as dom.TopLevelDeclaration,
+							);
+						}
 					}
 				}
 			}
-		}
 
-		return domTopLevelDeclarations;
+			this.resolvedItems = domTopLevelDeclarations;
+			return domTopLevelDeclarations;
+		}
 	}
 
 	private getAllClasses(): IParsedJSDocItem[] {
