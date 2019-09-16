@@ -379,7 +379,7 @@ export class JSDocTsdParser {
 					let interfaceType;
 					const matchArray = typeDef.type.names[0].match(/(?:Array\.<([^>]+)>)|(?:([^\[]*)\[\])/i);
 					if (matchArray) {
-						interfaceType = dom.create.array(domInterface);
+						interfaceType = dom.create.array(this.mapVariableTypeString(matchArray[1]));
 					} else {
 						interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
 					}
