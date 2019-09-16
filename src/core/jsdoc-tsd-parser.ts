@@ -630,6 +630,10 @@ export class JSDocTsdParser {
 			resultType = (resultTypeStr || variableType) as dom.Type;
 		}
 
+		if (resultType === null) {
+			resultType = dom.type.null;
+		}
+
 		return resultType;
 	}
 
