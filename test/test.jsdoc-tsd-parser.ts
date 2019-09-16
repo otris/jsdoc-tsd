@@ -3,6 +3,7 @@ import { expect } from "chai";
 import * as dom from "dts-dom";
 import { JSDocTsdParser } from "../src/core/jsdoc-tsd-parser";
 import { parseData } from "./jsdoc-helper";
+import { Configuration } from "../src/core/Configuration";
 chai.should();
 
 describe("General tests for the parser", () => {
@@ -69,5 +70,30 @@ describe("General tests for the parser", () => {
 		expect(classBMemberNames).to.deep.equal([
 			"memberOfB",
 		]);
+	});
+
+	it("should ignore undocumented members by default", async () => {
+		const data = await parseData(`
+			var myCustomNamespace = {};
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+		const result = parser.resolveMembershipAndExtends();
+		expect(result.size).to.equal(0);
+	});
+
+	it("should not ignore undocumented members if configured", async () => {
+		const data = await parseData(`
+			var myCustomNamespace = {};
+		`);
+
+		const config = new Configuration();
+		config.skipUndocumented = false;
+		const parser = new JSDocTsdParser(config);
+		parser.parse(data);
+		const result = parser.resolveMembershipAndExtends();
+		expect(result.size).to.equal(1);
+		result.should.include.keys("myCustomNamespace");
 	});
 });
