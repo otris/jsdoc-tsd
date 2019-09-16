@@ -1,5 +1,6 @@
 import chai = require("chai");
 import { expect } from "chai";
+import * as dom from "dts-dom";
 import { JSDocTsdParser } from "../src/core/jsdoc-tsd-parser";
 import { parseData } from "./jsdoc-helper";
 chai.should();
