@@ -138,11 +138,16 @@ export class Configuration {
 		// quick and dirty iterate over public config properties
 		const _config = new Configuration();
 		for (const property of Object.keys(_config)) {
-			if (configObj[property]) {
+			if (configObj.hasOwnProperty(property)) {
 				const privateProp = "_" + property;
 
-				// @ts-ignore
-				this[privateProp] = configObj[property];
+				if (this.hasOwnProperty(privateProp)) {
+					// @ts-ignore
+					this[privateProp] = configObj[property];
+				} else {
+					// @ts-ignore
+					this[property] = configObj[property];
+				}
 			}
 		}
 	}
