@@ -1,5 +1,41 @@
 ## Changelog
 
+# v2.0.0
+Bugfixes
+  - Inline annotations will now be ignored by default. E. g. for this annotation
+    ```js
+    /** @type {string} */
+    var fuu = "bar";
+    ```
+    were created a member in the corresponding namespace
+  - Fixed errors in log messages
+  - Module types were not parsed correctly ( [#39](https://github.com/otris/jsdoc-tsd/issues/39) and [#52](https://github.com/otris/jsdoc-tsd/issues/52))
+  - Support for `@extends`
+  - Fixes for resolving memberships in classes
+  - Property params of type arrays caused an exception while generating the definition file
+    ```js
+    /**
+     * @param {object[]} fuu
+     * @param {string} fuu[].bar <= Caused exception
+     */
+    ```
+  - In some cases, type `null` caused exceptions
+
+New features in this release:
+  - Type definitions != object will be transformed to type declarations, e. g.
+    ```js
+    /** @typedef {string|number} NumberLike */
+    ```
+    will be transformed to 
+    ```ts
+    declare type NumberLike: string|number;
+    ```
+  - Support for annotation `@this` ([#54](https://github.com/otris/jsdoc-tsd/issues/54))
+  - Support for annotation `@hideconstructor` ([#53](https://github.com/otris/jsdoc-tsd/issues/53))
+  - Support for annotation `@extends` ([#56](https://github.com/otris/jsdoc-tsd/issues/56))
+  - Undocumented members will be skipped by default (can be configured)
+  - Possibility to disable the since-tag check
+
 # v1.0.4
 Bugfixes
  - We updated [dts-dom](https://github.com/RyanCavanaugh/dts-dom) to fix [#49](https://github.com/otris/jsdoc-tsd/issues/49)

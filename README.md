@@ -59,6 +59,10 @@ module.exports = function(taggedVersion, latestVersion) {
     // do what you need to
 }
 ```
+* **ignoreSinceTag [=false]** Indicates wether to skip since tag check or not
+* **logItemsSkippedBySince [=true]** Logs every item which is ignored by the since tag
+* **skipUndocumented [=true]** Ignores undocumented items
+
 ## Supported Tags
 * @enum
 * @function (implicitly)
@@ -76,6 +80,9 @@ module.exports = function(taggedVersion, latestVersion) {
 * @module (function and variable declarations)
 * @private (not completed yet)
 * @const / @constant
+* @this
+* @hideconstructor
+* @extends
 
 ## Supported typscript tags
 * @template Note: You can write here any value you want, there will be no validation
