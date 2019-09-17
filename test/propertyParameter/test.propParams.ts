@@ -8,12 +8,33 @@ import { parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.parameterWithProperties", () => {
-	const interfaceData: TDoclet[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, "data/propParams.json"), { encoding: "utf-8" }));
-	expect(interfaceData.length).to.eq(4);
-
-	it("should create a function with a parameter with properties", () => {
+	it("should create a function with a parameter with properties", async () => {
 		const parser = new JSDocTsdParser();
-		parser.parse(interfaceData);
+		const data = await parseData(`
+			/**
+			 * My test interface
+			 * @interface myTestInterface
+			 */
+
+			/**
+			 * A simple function
+			 * @memberof myTestInterface
+			 * @function mySimpleFunction
+			 * @param {object} propertyParameter My parameter with properties
+			 * @param {string} propertyParameter.myProperty1 Description of myProperty1
+			 * @param {number} propertyParameter.myProperty2 Description of myProperty2
+			 */
+
+			/**
+			 * Assign the project to a list of employees
+			 * @memberof myTestInterface
+			 * @function myEmployeeFunction
+			 * @param {Object[]} employees - The employees who are responsible for the project
+			 * @param {string} employees[].name - The name of an employee
+			 * @param {string} employees[].department - The employee's department
+			 */
+		`);
+		parser.parse(data);
 
 		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestInterface");
@@ -37,9 +58,33 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		expect(parameters[0].type).to.eql(interfaceType);
 	});
 
-	it("should create a function with an array of parameters with properties", () => {
+	it("should create a function with an array of parameters with properties", async () => {
 		const parser = new JSDocTsdParser();
-		parser.parse(interfaceData);
+		const data = await parseData(`
+			/**
+			 * My test interface
+			 * @interface myTestInterface
+			 */
+
+			/**
+			 * A simple function
+			 * @memberof myTestInterface
+			 * @function mySimpleFunction
+			 * @param {object} propertyParameter My parameter with properties
+			 * @param {string} propertyParameter.myProperty1 Description of myProperty1
+			 * @param {number} propertyParameter.myProperty2 Description of myProperty2
+			 */
+
+			/**
+			 * Assign the project to a list of employees
+			 * @memberof myTestInterface
+			 * @function myEmployeeFunction
+			 * @param {Object[]} employees - The employees who are responsible for the project
+			 * @param {string} employees[].name - The name of an employee
+			 * @param {string} employees[].department - The employee's department
+			 */
+		`);
+		parser.parse(data);
 
 		const result = parser.resolveMembershipAndExtends();
 		result.should.include.keys("myTestInterface");
