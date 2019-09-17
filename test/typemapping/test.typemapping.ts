@@ -172,4 +172,26 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const union = paramBar.type as dom.UnionType;
 		expect(union.members[0]).to.equal("Function");
 	});
+
+	it("should map type null to string null", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @param bar {null}
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		const functionFuu = result.get("Fuu") as dom.FunctionDeclaration;
+
+		expect(functionFuu.parameters.length).to.equal(1);
+		const paramBar = functionFuu.parameters[0];
+		expect(paramBar.name).to.equal("bar");
+
+		const union = paramBar.type as dom.UnionType;
+		expect(union.members[0]).to.equal(dom.type.null);
+	});
 });
