@@ -516,7 +516,11 @@ export class JSDocTsdParser {
 		obj.flags = dom.DeclarationFlags.None;
 
 		obj.flags |= this.accessFlagMap[doclet.access];
-		obj.flags |= doclet.optional || doclet.defaultvalue !== undefined ? dom.ParameterFlags.Optional : dom.DeclarationFlags.None;
+		obj.flags |= doclet.optional || doclet.defaultvalue !== undefined
+			? doclet.kind !== "function"
+				? dom.ParameterFlags.Optional
+				: dom.DeclarationFlags.None
+			: obj.flags
 		obj.flags |= doclet.variable ? dom.ParameterFlags.Rest : dom.DeclarationFlags.None;
 		obj.flags |= doclet.virtual ? dom.DeclarationFlags.Abstract : dom.DeclarationFlags.None;
 		obj.flags |= doclet.readonly ? dom.DeclarationFlags.ReadOnly : dom.DeclarationFlags.None;
