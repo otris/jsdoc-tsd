@@ -355,6 +355,7 @@ export class JSDocTsdParser {
 					description: param.description,
 					name: param.name.substr(param.name.indexOf(".") + 1),
 					type: param.type,
+					optional: param.optional
 				};
 				typeDef.properties.push(prop);
 
