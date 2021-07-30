@@ -13,6 +13,37 @@ declare type VersionComparatorFunction = (taggedVersion: string, latestVersion: 
 export class Configuration {
 
 	/**
+	 * Indicates wether to skip since tag check or not
+	 */
+	public ignoreSinceTag: boolean;
+
+	/**
+	 * Logs every item which is ignored by the since tag
+	 */
+	public logItemsSkippedBySince: boolean;
+
+	/**
+	 * Ignores undocumented items
+	 */
+	public skipUndocumented: boolean;
+	private _ignoreScopes: string[];
+	private _latestVersion: string;
+	private _versionComparator: VersionComparatorFunction;
+
+	constructor(filePath?: string) {
+		this._ignoreScopes = [];
+		this._versionComparator = this.defaultVersionComparator;
+		this._latestVersion = "";
+		this.skipUndocumented = true;
+		this.ignoreSinceTag = false;
+		this.logItemsSkippedBySince = true;
+
+		if (filePath) {
+			this.loadFromFile(filePath);
+		}
+	}
+
+	/**
 	 * Scopes to ignore
 	 */
 	public get ignoreScopes(): string[] {
@@ -59,37 +90,6 @@ export class Configuration {
 		}
 
 		this._versionComparator = newVersionComparator;
-	}
-
-	/**
-	 * Indicates wether to skip since tag check or not
-	 */
-	public ignoreSinceTag: boolean;
-
-	/**
-	 * Logs every item which is ignored by the since tag
-	 */
-	public logItemsSkippedBySince: boolean;
-
-	/**
-	 * Ignores undocumented items
-	 */
-	public skipUndocumented: boolean;
-	private _ignoreScopes: string[];
-	private _latestVersion: string;
-	private _versionComparator: VersionComparatorFunction;
-
-	constructor(filePath?: string) {
-		this._ignoreScopes = [];
-		this._versionComparator = this.defaultVersionComparator;
-		this._latestVersion = "";
-		this.skipUndocumented = true;
-		this.ignoreSinceTag = false;
-		this.logItemsSkippedBySince = true;
-
-		if (filePath) {
-			this.loadFromFile(filePath);
-		}
 	}
 
 	/**
