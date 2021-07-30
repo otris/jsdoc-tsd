@@ -548,6 +548,13 @@ export class JSDocTsdParser {
 						break;
 				}
 			}
+		} else if (doclet.comment) {
+			const matches = doclet.comment.match(/@template\s?([^\r\n]+)\r?\n?/);
+			if (matches) {
+				obj.typeParameters.push(
+					dom.create.typeParameter(matches[1]),
+				);
+			}
 		}
 	}
 
