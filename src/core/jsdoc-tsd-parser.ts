@@ -3,11 +3,7 @@ import { ParameterFlags } from "dts-dom";
 import { writeFileSync } from "fs";
 import { Configuration } from "./Configuration";
 import { Logger } from "./Logger";
-
-/* tslint:disable:no-var-requires */
-// These modules only exports a function, so require is necessary here
-const jsdocCommentParser = require("comment-parser");
-/* tslint:enable:no-var-requires */
+import { parse as jsdocCommentParser } from "comment-parser";
 
 export interface IParsedJSDocItem {
 	longname: string;
@@ -263,41 +259,43 @@ export class JSDocTsdParser {
 		]);
 
 		let cleanedComment = "";
-		const parsedComments = jsdocCommentParser(comment);
-		if (parsedComments.length > 0) { // This should be maximum 1 element (except you pass more than one jsdoc comment, which is here never the case)
-			const parsedComment = parsedComments[0];
+		if (comment) {
+			const parsedComments = jsdocCommentParser(comment);
+			if (parsedComments.length > 0) { // This should be maximum 1 element (except you pass more than one jsdoc comment, which is here never the case)
+				const parsedComment = parsedComments[0];
 
-			// First, add the description
-			// The comment parser removes the " * " by line breaks, so we have to add these again
-			let itemDescription = "";
-			if (parsedComment.description.length > 0) {
-				itemDescription = parsedComment.description;
-			}
-
-			// Then add all tags as we receive them
-			for (const annotation of parsedComment.tags) {
-				if (tagsToPass.has(annotation.tag) && tagsToPass.get(annotation.tag)) {
-					cleanedComment += "\n@" + annotation.tag;
-
-					const tagValue = (annotation.name + " " + annotation.description).trim();
-					if (tagValue.length > 0) {
-						// The comment parser removes the " * " by line breaks, so we have to add these again
-						// The format everything well, we insert as much spaces as the annotation name + 2, because
-						// of the "@" char and a white space
-						let spacesToInsert = annotation.tag.length + 2;
-						if (annotation.name === "param") {
-							spacesToInsert += annotation.name.length;
-						}
-
-						cleanedComment += " " + tagValue.replace(/\r?\n/g, "\n" + " ".repeat(spacesToInsert));
-					}
-				} else if (annotation.tag === "description") {
-					itemDescription = annotation.name + " " + annotation.description;
+				// First, add the description
+				// The comment parser removes the " * " by line breaks, so we have to add these again
+				let itemDescription = "";
+				if (parsedComment.description.length > 0) {
+					itemDescription = parsedComment.description;
 				}
-			}
 
-			if (itemDescription.length > 0) {
-				cleanedComment = itemDescription.replace(/\r?\n/g, "\n") + cleanedComment;
+				// Then add all tags as we receive them
+				for (const annotation of parsedComment.tags) {
+					if (tagsToPass.has(annotation.tag) && tagsToPass.get(annotation.tag)) {
+						cleanedComment += "\n@" + annotation.tag;
+
+						const tagValue = (annotation.name + " " + annotation.description).trim();
+						if (tagValue.length > 0) {
+							// The comment parser removes the " * " by line breaks, so we have to add these again
+							// The format everything well, we insert as much spaces as the annotation name + 2, because
+							// of the "@" char and a white space
+							let spacesToInsert = annotation.tag.length + 2;
+							if (annotation.name === "param") {
+								spacesToInsert += annotation.name.length;
+							}
+
+							cleanedComment += " " + tagValue.replace(/\r?\n/g, "\n" + " ".repeat(spacesToInsert));
+						}
+					} else if (annotation.tag === "description") {
+						itemDescription = annotation.name + " " + annotation.description;
+					}
+				}
+
+				if (itemDescription.length > 0) {
+					cleanedComment = itemDescription.replace(/\r?\n/g, "\n") + cleanedComment;
+				}
 			}
 		}
 
