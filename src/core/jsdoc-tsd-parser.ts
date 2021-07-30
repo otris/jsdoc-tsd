@@ -1,9 +1,9 @@
+import { parse as jsdocCommentParser } from "comment-parser";
 import * as dom from "dts-dom";
 import { ParameterFlags } from "dts-dom";
 import { writeFileSync } from "fs";
 import { Configuration } from "./Configuration";
 import { Logger } from "./Logger";
-import { parse as jsdocCommentParser } from "comment-parser";
 
 export interface IParsedJSDocItem {
 	longname: string;
@@ -352,8 +352,8 @@ export class JSDocTsdParser {
 					comment: param.comment,
 					description: param.description,
 					name: param.name.substr(param.name.indexOf(".") + 1),
+					optional: param.optional,
 					type: param.type,
-					optional: param.optional
 				};
 				typeDef.properties.push(prop);
 
