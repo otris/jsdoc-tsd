@@ -1,0 +1,7 @@
+timeout: 36000000
+ui: bdd
+require:
+  - ts-node/register
+  - source-map-support/register
+forbid-only: true
+exit: true
