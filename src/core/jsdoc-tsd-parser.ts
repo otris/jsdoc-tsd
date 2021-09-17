@@ -966,7 +966,7 @@ export class JSDocTsdParser {
 		}
 
 		if (interfaceMemberToAdd) {
-			parsedInterface.members.push(interfaceMember);
+			parsedInterface.members.push(interfaceMemberToAdd);
 		}
 	}
 
