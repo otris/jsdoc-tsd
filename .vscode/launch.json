@@ -9,8 +9,8 @@
 			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
 			"stopOnEntry": false,
 			"args": [
-				"--opts",
-				"test/mocha-single.opts",
+				"--forbid-only",
+				"false",
 				"${file}"
 			],
 			"cwd": "${workspaceRoot}",
@@ -26,10 +26,7 @@
 			"request": "launch",
 			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
 			"stopOnEntry": false,
-			"args": [
-				"--opts",
-				"test/mocha.opts"
-			],
+			"args": [],
 			"cwd": "${workspaceRoot}",
 			"env": {
 				"TS_NODE_PROJECT": "test/tsconfig.json",
