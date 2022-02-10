@@ -573,6 +573,10 @@ export class JSDocTsdParser {
 		// resolve array types
 		// jsdoc will provide arrays always as "Array.<>" if it's typed or as "Array" if it's not typed
 		let resultType: dom.Type = dom.type.any;
+		if (variableType.startsWith("external:")) {
+			return dom.type.any;
+		}
+
 		while (/^Array/i.test(variableType)) {
 			// it's an array, check if it's typed
 			//                                           Array.< (bllaaa|bla)  >
@@ -798,7 +802,7 @@ export class JSDocTsdParser {
 				return null;
 
 			default:
-				if ((item as any).kind !== "package") {
+				if ((item as any).kind !== "package" && (item as any).kind !== "external") {
 					/* istanbul ignore next */
 					Logger.log(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 				}
