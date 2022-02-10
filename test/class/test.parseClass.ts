@@ -207,4 +207,32 @@ describe("JSDocTsdParser.parse.class", () => {
 		// Should has no members. A constructor would be a member
 		expect(classFuu.members).to.deep.equal([]);
 	});
+
+	it("Should not add the constructor if tag 'hideconstructor' is set", async () => {
+		const data = await parseData(`
+			/**
+			 * @class Fuu
+			 * @param {object} param1
+			 * @param {string} param1.p1
+			 */
+			function Fuu(param1) {
+
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+		const results = parser.resolveMembershipAndExtends();
+		results.should.include.keys("Fuu");
+		const classFuu = results.get("Fuu") as dom.ClassDeclaration;
+
+		// Should has no members. A constructor would be a member
+		expect(classFuu.members.length).to.equal(1);
+
+		const constructor = classFuu.members[0] as dom.ConstructorDeclaration;
+		expect(constructor.parameters.length).to.equal(1);
+
+		const parameter = constructor.parameters[0];
+		expect((parameter.type as dom.TypeParameter).name).to.equal("FuuConstructor_param1");
+	});
 });

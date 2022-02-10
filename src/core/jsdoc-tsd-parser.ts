@@ -308,7 +308,7 @@ export class JSDocTsdParser {
 	 * @param params
 	 * @param functionName
 	 */
-	private createDomParams(params: IDocletProp[], functionName?: string): dom.Parameter[] {
+	private createDomParams(params: IDocletProp[], functionName: string): dom.Parameter[] {
 		const domParams: dom.Parameter[] = [];
 		let typeDef: ITypedefDoclet | undefined;
 		let propParam: IDocletProp | undefined;
@@ -668,7 +668,7 @@ export class JSDocTsdParser {
 			// Add the constructor
 			let constructorDeclaration: dom.ConstructorDeclaration;
 			if (jsdocItem.params && jsdocItem.params.length > 0) {
-				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params));
+				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params, `${jsdocItem.name}Constructor`));
 			} else {
 				// no params
 				constructorDeclaration = dom.create.constructor([]);
@@ -831,13 +831,13 @@ export class JSDocTsdParser {
 	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase | null {
 		let result: dom.DeclarationBase | null = null;
 		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0) {
-			const typedefType = jsdocItem.type.names.filter(t => t === "object" || t === "function")[0] || "".toLowerCase();
+			const typedefType = (jsdocItem.type.names.filter(t => t.toLowerCase() === "object" || t.toLowerCase() === "function")[0] || "").toLowerCase();
 			if (typedefType === "function") {
 				result = this.parseTypeDefinitionAsFunction(jsdocItem);
-				jsdocItem.type.names = jsdocItem.type.names.filter(t => t !== "function");
+				jsdocItem.type.names = jsdocItem.type.names.filter(t => t.toLowerCase() !== "function");
 			} else if (typedefType === "object") {
 				result = this.parseTypeDefinitionAsObject(jsdocItem);
-				jsdocItem.type.names = jsdocItem.type.names.filter(t => t !== "object");
+				jsdocItem.type.names = jsdocItem.type.names.filter(t => t.toLowerCase() !== "object");
 			} else {
 				result = this.parseTypeDefinitionAsType(jsdocItem);
 				jsdocItem.type.names.shift();
