@@ -387,6 +387,10 @@ export class JSDocTsdParser {
 							interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
 						}
 
+						if (typeDef.type && typeDef.type && typeDef.type.names.length > 0) {
+							interfaceType = dom.create.union([interfaceType, ...typeDef.type.names.map(n => this.mapVariableType(n))]);
+						}
+
 						domParam = dom.create.parameter(propParam.name, interfaceType);
 					} else {
 						Logger.log(`Can't create interface for property param. Invalid typedef: ${JSON.stringify(typeDef)}`);
@@ -827,13 +831,16 @@ export class JSDocTsdParser {
 	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase | null {
 		let result: dom.DeclarationBase | null = null;
 		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0) {
-			const typedefType = jsdocItem.type.names[0].toLowerCase();
+			const typedefType = jsdocItem.type.names.filter(t => t === "object" || t === "function")[0] || "".toLowerCase();
 			if (typedefType === "function") {
 				result = this.parseTypeDefinitionAsFunction(jsdocItem);
+				jsdocItem.type.names = jsdocItem.type.names.filter(t => t !== "function");
 			} else if (typedefType === "object") {
 				result = this.parseTypeDefinitionAsObject(jsdocItem);
+				jsdocItem.type.names = jsdocItem.type.names.filter(t => t !== "object");
 			} else {
 				result = this.parseTypeDefinitionAsType(jsdocItem);
+				jsdocItem.type.names.shift();
 			}
 		} else {
 			// No type specified (@typedef <Name> instead of @typedef {<type>} <Name>)
