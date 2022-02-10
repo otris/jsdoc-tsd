@@ -13,7 +13,7 @@
 	  ],
 	  "no-bitwise": false,
 	  "object-literal-sort-keys": true,
-	  "arrow-parens": true,
+	  "arrow-parens": false,
 	  "only-arrow-functions": [
 		false
 	  ],
