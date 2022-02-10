@@ -308,7 +308,7 @@ export class JSDocTsdParser {
 	 * @param params
 	 * @param functionName
 	 */
-	private createDomParams(params: IDocletProp[], functionName?: string): dom.Parameter[] {
+	private createDomParams(params: IDocletProp[], functionName: string): dom.Parameter[] {
 		const domParams: dom.Parameter[] = [];
 		let typeDef: ITypedefDoclet | undefined;
 		let propParam: IDocletProp | undefined;
@@ -385,6 +385,10 @@ export class JSDocTsdParser {
 							interfaceType = dom.create.array(domInterface);
 						} else {
 							interfaceType = dom.create.typeParameter(typeDef.name, domInterface);
+						}
+
+						if (typeDef.type && typeDef.type && typeDef.type.names.length > 0) {
+							interfaceType = dom.create.union([interfaceType, ...typeDef.type.names.map(n => this.mapVariableType(n))]);
 						}
 
 						domParam = dom.create.parameter(propParam.name, interfaceType);
@@ -569,6 +573,10 @@ export class JSDocTsdParser {
 		// resolve array types
 		// jsdoc will provide arrays always as "Array.<>" if it's typed or as "Array" if it's not typed
 		let resultType: dom.Type = dom.type.any;
+		if (variableType.startsWith("external:")) {
+			return dom.type.any;
+		}
+
 		while (/^Array/i.test(variableType)) {
 			// it's an array, check if it's typed
 			//                                           Array.< (bllaaa|bla)  >
@@ -664,7 +672,7 @@ export class JSDocTsdParser {
 			// Add the constructor
 			let constructorDeclaration: dom.ConstructorDeclaration;
 			if (jsdocItem.params && jsdocItem.params.length > 0) {
-				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params));
+				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params, `${jsdocItem.name}Constructor`));
 			} else {
 				// no params
 				constructorDeclaration = dom.create.constructor([]);
@@ -794,7 +802,7 @@ export class JSDocTsdParser {
 				return null;
 
 			default:
-				if ((item as any).kind !== "package") {
+				if ((item as any).kind !== "package" && (item as any).kind !== "external") {
 					/* istanbul ignore next */
 					Logger.log(`Unsupported jsdoc item kind: ${item.kind} (item name: ${item.longname})`);
 				}
@@ -827,13 +835,16 @@ export class JSDocTsdParser {
 	private parseTypeDefinition(jsdocItem: ITypedefDoclet): dom.DeclarationBase | null {
 		let result: dom.DeclarationBase | null = null;
 		if (jsdocItem.type && jsdocItem.type && jsdocItem.type.names.length > 0) {
-			const typedefType = jsdocItem.type.names[0].toLowerCase();
+			const typedefType = (jsdocItem.type.names.filter(t => t.toLowerCase() === "object" || t.toLowerCase() === "function")[0] || "").toLowerCase();
 			if (typedefType === "function") {
 				result = this.parseTypeDefinitionAsFunction(jsdocItem);
+				jsdocItem.type.names = jsdocItem.type.names.filter(t => t.toLowerCase() !== "function");
 			} else if (typedefType === "object") {
 				result = this.parseTypeDefinitionAsObject(jsdocItem);
+				jsdocItem.type.names = jsdocItem.type.names.filter(t => t.toLowerCase() !== "object");
 			} else {
 				result = this.parseTypeDefinitionAsType(jsdocItem);
+				jsdocItem.type.names.shift();
 			}
 		} else {
 			// No type specified (@typedef <Name> instead of @typedef {<type>} <Name>)

@@ -550,4 +550,31 @@ describe("JSDocTsdParser.parse.function", () => {
 		const union = thisParam.type as dom.UnionType;
 		expect(union.members).to.include("Bar");
 	});
+
+	it("should create a union type for a typedef function parameter", async () => {
+		const data = await parseData(`
+			/**
+			 * @function Fuu
+			 * @param {string|object} fuuBar
+			 * @param {string} fuuBar.fuu
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		result.should.include.keys("Fuu");
+
+		const functionDeclaration = result.get("Fuu") as dom.FunctionDeclaration;
+		expect(functionDeclaration.parameters.length).to.equal(1);
+
+		const parameter = functionDeclaration.parameters[0];
+		expect((parameter.type as dom.UnionType).kind).to.equal("union");
+
+		const unionParameter = parameter.type as dom.UnionType;
+		expect(unionParameter.members.length).to.equal(2);
+		expect((unionParameter.members[0] as dom.TypeParameter).kind).to.equal("type-parameter");
+		expect(unionParameter.members[1]).to.equal("string");
+	});
 });
