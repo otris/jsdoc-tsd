@@ -4,6 +4,7 @@ import * as dom from "dts-dom";
 import * as fs from "fs";
 import * as path from "path";
 import { JSDocTsdParser } from "../../src/core/jsdoc-tsd-parser";
+import { parseData } from "../jsdoc-helper";
 chai.should();
 
 describe("JSDocTsdParser.parse.enum", () => {
@@ -66,5 +67,41 @@ describe("JSDocTsdParser.parse.enum", () => {
 		expect(enumMember.members.length).to.eq(2);
 		expect(enumMember.members[0].name).to.eq("VAL1");
 		expect(enumMember.members[1].name).to.eq("VAL2");
+	});
+
+	it("should parse enum members with object types", async () => {
+		const data = await parseData(`
+			/**
+			 * @typedef {object} EnumDataType
+			 * @property {number} value
+			 * @property {string} name
+			 * @property {string} property
+			 */
+
+			/**
+			 * My enum
+			 * @enum {EnumDataType}
+			 */
+			var MyEnum = {
+				MY_MEMBER: {
+					value: 0,
+					name: "fuu",
+					property: "bar"
+				}
+			};
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		result.should.include.keys("MyEnum");
+
+		const myEnum = result.get("MyEnum") as dom.EnumDeclaration;
+		expect(myEnum.members.length).to.equal(1);
+
+		const member = myEnum.members[0] as dom.EnumMemberDeclaration;
+		expect(member.value).to.be.undefined;
+
 	});
 });

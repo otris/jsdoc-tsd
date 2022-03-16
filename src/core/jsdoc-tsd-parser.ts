@@ -708,7 +708,17 @@ export class JSDocTsdParser {
 		const domEnum: dom.EnumDeclaration = dom.create.enum(jsdocItem.name, (jsdocItem.kind === "constant"));
 		if (jsdocItem.properties) {
 			for (const property of jsdocItem.properties) {
-				const domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, property.defaultvalue);
+				let isJSONValue = false;
+				if (property.defaultvalue) {
+					try {
+						JSON.parse(property.defaultvalue as string);
+						isJSONValue = true;
+					} catch (err) {
+						isJSONValue = false;
+					}
+				}
+
+				const domEnumMember: dom.EnumMemberDeclaration = dom.create.enumValue(property.name, isJSONValue ? undefined : property.defaultvalue);
 				domEnumMember.jsDocComment = this.cleanJSDocComment(property.comment);
 				domEnum.members.push(domEnumMember);
 			}
