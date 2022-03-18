@@ -687,8 +687,7 @@ export class JSDocTsdParser {
 
 	private parseConstant(jsdocItem: IMemberDoclet) {
 		if (jsdocItem.isEnum) {
-			/* istanbul ignore next */
-			throw new Error(`item ${jsdocItem.longname} is an enum`);
+			return this.parseEnum(jsdocItem);
 		}
 
 		let propertyType: dom.Type = dom.type.any;

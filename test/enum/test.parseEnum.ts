@@ -104,4 +104,40 @@ describe("JSDocTsdParser.parse.enum", () => {
 		expect(member.value).to.be.undefined;
 
 	});
+
+	it("should parse const enums", async () => {
+		const data = await parseData(`
+			/**
+			 * @typedef {object} EnumDataType
+			 * @property {number} value
+			 * @property {string} name
+			 * @property {string} property
+			 */
+
+			/**
+			 * My enum
+			 * @enum {EnumDataType}
+			 */
+			const MyEnum = {
+				MY_MEMBER: {
+					value: 0,
+					name: "fuu",
+					property: "bar"
+				}
+			};
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		result.should.include.keys("MyEnum");
+
+		const myEnum = result.get("MyEnum") as dom.EnumDeclaration;
+		expect(myEnum.members.length).to.equal(1);
+
+		const member = myEnum.members[0] as dom.EnumMemberDeclaration;
+		expect(member.value).to.be.undefined;
+
+	});
 });
