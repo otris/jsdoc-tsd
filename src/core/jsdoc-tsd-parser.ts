@@ -905,7 +905,10 @@ export class JSDocTsdParser {
 			Logger.log(`Invalid typedef. Typedef type is '${jsdocItem.type.names[0]}' and properties are defined.
 			Properties are only allowed for type definitions of type 'object': ${JSON.stringify(jsdocItem)}`);
 		} else {
-			result = dom.create.alias(jsdocItem.name, jsdocItem.type.names.join("|") as dom.Type);
+			result = dom.create.alias(
+				jsdocItem.name,
+				jsdocItem.type.names.map(t => this.mapVariableType(t)).join("|") as dom.Type
+			);
 		}
 
 		return result;

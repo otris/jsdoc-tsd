@@ -92,4 +92,22 @@ describe("JSDocTsdParser.parse.typedef", () => {
 		const members = interfaceDeclaration.members.map((member) => member.name);
 		expect(members).to.include("bar");
 	});
+
+	it("should parse a type definition with key index signature", async () => {
+		const typeData = await parseData(`
+			/**
+			 * @typedef {Object.<string, boolean>} Fuu
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(typeData);
+
+		const result = parser.resolveMembershipAndExtends();
+		result.should.include.keys("Fuu");
+
+		const alias: dom.TypeAliasDeclaration = result.get("Fuu") as dom.TypeAliasDeclaration;
+		expect(alias.kind).to.eq("alias");
+		expect(alias.type).to.equal("{ [key: string]: boolean }")
+	});
 });
