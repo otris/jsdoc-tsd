@@ -1016,6 +1016,8 @@ export class JSDocTsdParser {
 			case "namespace":
 			case "const":
 			case "var":
+			// @ts-ignore
+			case "enum":
 				moduleMemberToAdd = moduleMember;
 				break;
 

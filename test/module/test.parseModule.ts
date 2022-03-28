@@ -114,11 +114,43 @@ describe("JSDocTsdParser.parse.module", () => {
 		expect([...result.keys()]).to.include("module:Fuu");
 
 		const moduleDeclaration: dom.ModuleDeclaration = result.get("module:Fuu") as dom.ModuleDeclaration;
-		
+
 		// @ts-ignore
 		const functionDeclaration: dom.FunctionDeclaration = moduleDeclaration.members.filter((member) => member.name === "testFunction")[0];
 		const returnType = (functionDeclaration.returnType as dom.UnionType).members[0] as dom.ArrayTypeReference;
 		expect(returnType.kind).to.equal("array");
 		expect(returnType.type).to.equal("Fuu.bar");
 	});
+
+	it("should parse module enums", async () => {
+		const data = await parseData(`
+			/**
+			 * @module Fuu
+			 */
+
+			/**
+			 * @enum {string} bar
+			 * @memberof module:Fuu
+			 */
+			var bar = {
+				FUU: "BAR",
+				BAR: "FUU"
+			};
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		expect([...result.keys()]).to.include("module:Fuu");
+		const moduleDeclaration: dom.ModuleDeclaration = result.get("module:Fuu") as dom.ModuleDeclaration;
+
+		// @ts-ignore
+		const enumDeclaration: dom.EnumDeclaration = moduleDeclaration.members[0] as dom.EnumDeclaration;
+		expect(enumDeclaration.members.length).to.be.greaterThan(0);
+		expect(enumDeclaration.members[0].name).to.equal("FUU");
+		expect(enumDeclaration.members[0].value).to.equal("BAR");
+		expect(enumDeclaration.members[1].name).to.equal("BAR");
+		expect(enumDeclaration.members[1].value).to.equal("FUU");
+	})
 });
