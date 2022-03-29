@@ -159,4 +159,37 @@ describe("JSDocTsdParser.parse.parameterWithProperties", () => {
 		expect(interfaceType.name).to.equal("TestFunction_fuu");
 	});
 
+	it("should parse an optional property param", async () => {
+		const data = await parseData(`
+			/**
+			 * My awesome function
+			 * @param {string} param1 my first param
+			 * @param {object} [param2] my optional param
+			 * @param {string} param2.prop1 prop 1 is mandatory
+			 * @param {number} [param3.prop2] prop2 is optional
+			 */
+			function myAwesomeFunction(param1, param2) {}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+
+		const result = parser.resolveMembershipAndExtends();
+		expect([...result.keys()]).to.include("myAwesomeFunction");
+		const functionDeclaration: dom.FunctionDeclaration = result.get("myAwesomeFunction") as dom.FunctionDeclaration;
+		const params = functionDeclaration.parameters;
+		expect(params.length).to.equal(2);
+
+		const param2 = params[1];
+		expect(param2.flags, "Param not optional").to.equal(dom.DeclarationFlags.Private);
+
+		const typeParam = param2 as unknown as dom.TypeParameter;
+		const interfaceDeclaration = result.get((typeParam as any).type.name) as dom.InterfaceDeclaration;
+		expect((interfaceDeclaration.members[0] as dom.PropertyDeclaration).name).to.equal("prop1");
+		expect((interfaceDeclaration.members[0] as dom.PropertyDeclaration).flags).to.equal(dom.DeclarationFlags.None);
+		expect((interfaceDeclaration.members[1] as dom.PropertyDeclaration).name).to.equal("prop2");
+		expect((interfaceDeclaration.members[1] as dom.PropertyDeclaration).flags).to.equal(dom.DeclarationFlags.Optional);
+
+	})
+
 });

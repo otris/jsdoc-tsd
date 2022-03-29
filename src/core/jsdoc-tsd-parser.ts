@@ -392,6 +392,9 @@ export class JSDocTsdParser {
 						}
 
 						domParam = dom.create.parameter(propParam.name, interfaceType);
+						if (propParam.optional) {
+							domParam.flags = dom.ParameterFlags.Optional;
+						}
 					} else {
 						Logger.log(`Can't create interface for property param. Invalid typedef: ${JSON.stringify(typeDef)}`);
 					}
