@@ -216,4 +216,35 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const union = paramBar.type as dom.UnionType;
 		expect(union.members[0]).to.equal(dom.type.any);
 	});
+
+	it("should map type external to any", async () => {
+		const data = await parseData(`
+			/**
+			 * @module MyModule
+			 */
+
+			/**
+			 * @typedef {Object} MyTypedef
+			 * @property {string} prop1
+			 * @memberof module:MyModule
+			 */
+
+			/**
+			 * @function myFunction
+			 * @param {module:MyModule.MyTypedef} param1
+			 * @memberof module:MyModule
+			 */
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+		const result = parser.resolveMembershipAndExtends();
+		const myModule = result.get("module:MyModule") as dom.ModuleDeclaration;
+		const functionDeclaration = myModule.members[1] as dom.FunctionDeclaration;
+		expect(functionDeclaration.parameters.length).to.equal(1);
+
+		const param = functionDeclaration.parameters[0];
+		const union = param.type as dom.UnionType;
+		expect(union.members[0]).to.equal("MyTypedef")
+	});
 });

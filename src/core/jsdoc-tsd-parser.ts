@@ -308,7 +308,7 @@ export class JSDocTsdParser {
 	 * @param params
 	 * @param functionName
 	 */
-	private createDomParams(params: IDocletProp[], functionName: string): dom.Parameter[] {
+	private createDomParams(params: IDocletProp[], functionName: string, jsdocItem: TDoclet): dom.Parameter[] {
 		const domParams: dom.Parameter[] = [];
 		let typeDef: ITypedefDoclet | undefined;
 		let propParam: IDocletProp | undefined;
@@ -388,7 +388,7 @@ export class JSDocTsdParser {
 						}
 
 						if (typeDef.type && typeDef.type && typeDef.type.names.length > 0) {
-							interfaceType = dom.create.union([interfaceType, ...typeDef.type.names.map(n => this.mapVariableType(n))]);
+							interfaceType = dom.create.union([interfaceType, ...typeDef.type.names.map(n => this.mapVariableType(n, jsdocItem))]);
 						}
 
 						domParam = dom.create.parameter(propParam.name, interfaceType);
@@ -402,7 +402,7 @@ export class JSDocTsdParser {
 
 			} else if (param.type && param.type.names.length > 0) {
 				// the param has a simple type
-				domParam = dom.create.parameter(param.name, this.mapTypesToUnion(param.type.names));
+				domParam = dom.create.parameter(param.name, this.mapTypesToUnion(param.type.names, jsdocItem));
 
 			} else {
 				// the param has no type => map to "any"
@@ -500,7 +500,7 @@ export class JSDocTsdParser {
 
 		if (jsdocItem.returns && jsdocItem.returns.length > 0) {
 			if (jsdocItem.returns[0].type) {
-				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names);
+				functionReturnValue = this.mapTypesToUnion(jsdocItem.returns[0].type.names, jsdocItem);
 			} else {
 				// the jsdoc comment is incomplete, there is no type information for the return value
 				Logger.log(`Invalid return type. Check the documentation of function ${jsdocItem.longname}`);
@@ -563,21 +563,28 @@ export class JSDocTsdParser {
 		}
 	}
 
-	private mapTypesToUnion(types: string[]): dom.UnionType {
+	private mapTypesToUnion(types: string[], jsdocItem: TDoclet): dom.UnionType {
 		const domTypes: dom.Type[] = [];
 		for (const type of types) {
-			domTypes.push(this.mapVariableType(type));
+			domTypes.push(this.mapVariableType(type, jsdocItem));
 		}
 
 		return dom.create.union(domTypes);
 	}
 
-	private mapVariableType(variableType: string) {
+	private mapVariableType(variableType: string, jsdocItem: TDoclet) {
 		// resolve array types
 		// jsdoc will provide arrays always as "Array.<>" if it's typed or as "Array" if it's not typed
 		let resultType: dom.Type = dom.type.any;
 		if (variableType.startsWith("external:")) {
 			return dom.type.any;
+		}
+
+		if (jsdocItem && jsdocItem.memberof && variableType.startsWith(jsdocItem.memberof)) {
+			variableType = variableType.substring(jsdocItem.memberof.length);
+			if (variableType.startsWith(".") || variableType.startsWith("~")) {
+				variableType = variableType.substring(1);
+			}
 		}
 
 		while (/^Array/i.test(variableType)) {
@@ -586,7 +593,7 @@ export class JSDocTsdParser {
 			const arrayTypeMatches = variableType.match(/Array\.<(\(?[\w|~:]+\)?)>/i); // @todo: can contain namepaths
 			if (arrayTypeMatches && arrayTypeMatches[1]) {
 				const arrayTypeString: string = arrayTypeMatches[1];
-				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString);
+				const arrayType = (arrayTypeString.toLowerCase() === "array") ? dom.type.array(dom.type.any) : this.mapVariableTypeString(arrayTypeString, jsdocItem);
 				resultType = (resultType === dom.type.any)
 					? dom.type.array(arrayType)
 					: dom.type.array(resultType); // nested array
@@ -608,14 +615,14 @@ export class JSDocTsdParser {
 			if (objectTypeMatches && objectTypeMatches.length === 3) {
 				resultType = `{ [key: ${objectTypeMatches[1]}]: ${objectTypeMatches[2]} }` as dom.Type;
 			} else {
-				resultType = this.mapVariableTypeString(variableType);
+				resultType = this.mapVariableTypeString(variableType, jsdocItem);
 			}
 		}
 
 		return resultType;
 	}
 
-	private mapVariableTypeString(variableType: string): dom.Type {
+	private mapVariableTypeString(variableType: string, jsdocItem: TDoclet): dom.Type {
 		let resultTypeStr: string = "";
 		let resultType: dom.Type | null = null;
 		if (variableType === "bool") {
@@ -640,7 +647,7 @@ export class JSDocTsdParser {
 			// check if it's a union type
 			if (!resultTypeStr && !resultType && variableType.indexOf("|") > -1) {
 				variableType = variableType.replace(/\(|\)/g, "");
-				resultType = this.mapTypesToUnion(variableType.split("|"));
+				resultType = this.mapTypesToUnion(variableType.split("|"), jsdocItem);
 			}
 
 			// check if it's a type parameter
@@ -649,7 +656,7 @@ export class JSDocTsdParser {
 			if (!resultTypeStr && !resultType && typeParameterMatches && typeParameterMatches.length === 3) {
 				// it's not a pretty nice solution, but it works for now
 				resultType = dom.create.typeParameter(
-					`${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2]).toString()}>`,
+					`${typeParameterMatches[1]}<${this.mapVariableType(typeParameterMatches[2], jsdocItem).toString()}>`,
 				);
 			}
 		}
@@ -675,7 +682,7 @@ export class JSDocTsdParser {
 			// Add the constructor
 			let constructorDeclaration: dom.ConstructorDeclaration;
 			if (jsdocItem.params && jsdocItem.params.length > 0) {
-				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params, `${jsdocItem.name}Constructor`));
+				constructorDeclaration = dom.create.constructor(this.createDomParams(jsdocItem.params, `${jsdocItem.name}Constructor`, jsdocItem));
 			} else {
 				// no params
 				constructorDeclaration = dom.create.constructor([]);
@@ -695,7 +702,7 @@ export class JSDocTsdParser {
 
 		let propertyType: dom.Type = dom.type.any;
 		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
-			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names, jsdocItem);
 		}
 
 		return dom.create.const(jsdocItem.name, propertyType);
@@ -745,7 +752,7 @@ export class JSDocTsdParser {
 		}
 
 		if (jsdocItem.params && jsdocItem.params.length > 0) {
-			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params, jsdocItem.name), functionReturnValue);
+			domFunction = dom.create.function(jsdocItem.name, this.createDomParams(jsdocItem.params, jsdocItem.name, jsdocItem), functionReturnValue);
 		} else {
 			// no params => create a single function declaration
 			domFunction = dom.create.function(jsdocItem.name, [], functionReturnValue);
@@ -830,7 +837,7 @@ export class JSDocTsdParser {
 
 		let propertyType: dom.Type = dom.type.any;
 		if (jsdocItem.type && jsdocItem.type.names.length > 0) {
-			propertyType = this.mapTypesToUnion(jsdocItem.type.names);
+			propertyType = this.mapTypesToUnion(jsdocItem.type.names, jsdocItem);
 		}
 
 		return dom.create.property(jsdocItem.name, propertyType);
@@ -871,7 +878,7 @@ export class JSDocTsdParser {
 		// if the jsdoc item has a property "type", we can be sure that it isn't a typedef
 		// which should be mapped to an interface. Instead we create a typeAlias-Declaration
 		const functionType = dom.create.functionType(
-			(jsdocItem.params) ? this.createDomParams(jsdocItem.params, jsdocItem.name) : [],
+			(jsdocItem.params) ? this.createDomParams(jsdocItem.params, jsdocItem.name, jsdocItem) : [],
 			this.getFunctionReturnValue(jsdocItem as any),
 		);
 
@@ -888,7 +895,7 @@ export class JSDocTsdParser {
 			for (const property of jsdocItem.properties) {
 				let propertyType: dom.Type = dom.type.any;
 				if (property.type) {
-					propertyType = this.mapTypesToUnion(property.type.names);
+					propertyType = this.mapTypesToUnion(property.type.names, jsdocItem);
 				}
 
 				const domProperty = dom.create.property(property.name, propertyType);
@@ -910,7 +917,7 @@ export class JSDocTsdParser {
 		} else {
 			result = dom.create.alias(
 				jsdocItem.name,
-				jsdocItem.type.names.map(t => this.mapVariableType(t)).join("|") as dom.Type
+				jsdocItem.type.names.map(t => this.mapVariableType(t, jsdocItem)).join("|") as dom.Type
 			);
 		}
 

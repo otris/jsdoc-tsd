@@ -86,7 +86,7 @@ describe("JSDocTsdParser.parse.module", () => {
 		// @ts-ignore
 		const functionDeclaration: dom.FunctionDeclaration = moduleDeclaration.members.filter((member) => member.name === "testFunction")[0];
 		const returnType = (functionDeclaration.returnType as dom.UnionType).members[0];
-		expect(returnType).to.equal("Fuu.bar");
+		expect(returnType).to.equal("bar");
 	});
 
 	it("should transform module members as arrays successfully (#52)", async () => {
