@@ -581,7 +581,13 @@ export class JSDocTsdParser {
 		}
 
 		if (jsdocItem && jsdocItem.memberof && variableType.startsWith(jsdocItem.memberof)) {
-			variableType = variableType.substring(jsdocItem.memberof.length);
+			if (variableType === jsdocItem.memberof) {
+				const index = variableType.replace(/~/g, ".").lastIndexOf(".");
+				variableType = variableType.substring(index);
+			} else {
+				variableType = variableType.substring(jsdocItem.memberof.length);
+			}
+
 			if (variableType.startsWith(".") || variableType.startsWith("~")) {
 				variableType = variableType.substring(1);
 			}

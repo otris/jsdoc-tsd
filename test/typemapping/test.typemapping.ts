@@ -247,4 +247,38 @@ describe("Tests for the type mapping from jsdoc types to typescript types", () =
 		const union = param.type as dom.UnionType;
 		expect(union.members[0]).to.equal("MyTypedef")
 	});
+
+	it("should not trim context info from type if the type is equal to the context", async () => {
+		const data = await parseData(`
+			/**
+			 * @namespace MyNamespace
+			 */
+
+			/**
+			 * @class MyClass
+			 * @memberof MyNamespace
+			 */
+			function MyClass() {
+				/**
+				 * @param {MyNamespace.MyClass} param1
+				 * @memberof MyNamespace.MyClass
+				 */
+				function myFunction(param1) {
+
+				}
+			}
+		`);
+
+		const parser = new JSDocTsdParser();
+		parser.parse(data);
+		const result = parser.resolveMembershipAndExtends();
+		const myNamespace = result.get("MyNamespace") as dom.NamespaceDeclaration;
+		const myClass = myNamespace.members[0] as dom.ClassDeclaration;
+		expect(myClass.members.length).to.equal(2);
+
+		const functionDeclaration = myClass.members[1] as dom.MethodDeclaration;
+		const param = functionDeclaration.parameters[0];
+		const union = param.type as dom.UnionType;
+		expect(union.members[0]).to.equal("MyClass")
+	});
 });
