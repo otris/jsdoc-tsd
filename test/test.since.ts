@@ -262,4 +262,39 @@ describe("Test for parsing the since tag", () => {
 		results = parser.getParsedItems();
 		expect(results.size).to.equal(0);
 	});
+
+	it("should use versionComparator and latestVersion from configuration file", () => {
+		const myClass: TDoclet = JSON.parse(JSON.stringify(emptyClassData));
+		myClass.since = "abc";
+		myClass.name = myClass.longname = "MyTestClass";
+
+		let configFileContent = {
+			"latestVersion": "abcd",
+			"versionComparator": path.join(__dirname, "versionComparators/versionComparatorAbc.js")
+		};
+		let configFileName = path.join(__dirname, "config.json");
+		fs.writeFileSync(configFileName, JSON.stringify(configFileContent));
+		
+		let parserConfig = new Configuration(configFileName);
+		let parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		let results = parser.getParsedItems();
+		expect(Object.keys(results).length).to.eq(0);
+
+		// opposite test
+		configFileContent = {
+			"latestVersion": "abc",
+			"versionComparator": path.join(__dirname, "versionComparators/versionComparatorAbc.js")
+		};
+		configFileName = path.join(__dirname, "config.json");
+		fs.writeFileSync(configFileName, JSON.stringify(configFileContent));
+		
+		parserConfig = new Configuration(configFileName);
+		parser = new JSDocTsdParser(parserConfig);
+		parser.parse([myClass]);
+
+		results = parser.getParsedItems();
+		results.should.include.keys("MyTestClass");
+	});
 });

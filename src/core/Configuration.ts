@@ -137,11 +137,15 @@ export class Configuration {
 
 		// quick and dirty iterate over public config properties
 		const _config = new Configuration();
-		for (const property of Object.keys(_config)) {
+		for (let property of Object.keys(_config)) {
+			// setters latestVersion and versionComparator not in Object.keys()
+			property = property.startsWith("_") ? property.slice(1) : property;
 			if (configObj.hasOwnProperty(property)) {
 				const privateProp = "_" + property;
 
-				if (this.hasOwnProperty(privateProp)) {
+				if (property === "versionComparator") {
+					this.versionComparator = configObj[property];
+				} else if (this.hasOwnProperty(privateProp)) {
 					// @ts-ignore
 					this[privateProp] = configObj[property];
 				} else {
