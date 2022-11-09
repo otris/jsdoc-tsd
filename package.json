@@ -33,6 +33,7 @@
 		"cross-env": "^7.0.3",
 		"grunt": "^1.5.3",
 		"grunt-jsdoc": "^2.4.1",
+		"jsdoc": "^4.0.0",
 		"jsdoc3-parser": "^2.0.0",
 		"mocha": "^10.1.0",
 		"nyc": "^15.1.0",
@@ -50,6 +51,6 @@
 		"shelljs": "^0.8.5"
 	},
 	"peerDependencies": {
-		"jsdoc": "^3.5.5"
+		"jsdoc": "^4.0.0"
 	}
 }
